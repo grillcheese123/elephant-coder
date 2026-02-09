@@ -1,0 +1,232 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_5b9c8cda6867",
+  "session_id": "dummy_event_mesh_20260209T185230Z_event_summary_01_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Event mesh engine is a minimal Python benchmark project implementing a work-item processing pipeline with abstract contracts and a concrete Ticket model. No dispatch logic or concrete implementations are present yet.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"docs/summary/project_architecture.md\", \"content\": \"# Project Architecture\\n\\n## File-Level Map\\n\\n```\\nsrc/event_mesh/\\n\u251c\u2500\u2500 __init__.py\\n\u251c\u2500\u2500 contracts/\\n\u2502   \u251c\u2500\u2500 __init__.py\\n\u2502   \u251c\u2500\u2500 processor.py      # Processor (ABC)\\n\u2502   \u251c\u2500\u2500 repository.py     # WorkItemRepository (ABC)\\n\u2502   \u2514\u2500\u2500 work_item.py      # WorkItem (ABC)\\n\u251c\u2500\u2500 models/\\n\u2502   \u251c\u2500\u2500 __init__.py\\n\u2502   \u251c\u2500\u2500 run_result.py     # RunResult (dataclass)\\n\u2502   \u2514\u2500\u2500 ticket.py         # Ticket (concrete WorkItem)\\n\u2514\u2500\u2500 ...\\n```\\n\\n## Abstract Contracts\\n\\n### `WorkItem` (`contracts/work_item.py`)\\n- **Purpose**: Unit of work dispatched through the system.\\n- **Abstract properties**:\\n  - `identifier: str` \u2014 stable ID for traceability.\\n  - `channel: str` \u2014 delivery channel (e.g., email, sms).\\n  - `payload: dict[str, str]` \u2014 message content.\\n\\n### `Processor` (`contracts/processor.py`)\\n- **Purpose**: Processes work items for a supported channel.\\n- **Abstract members**:\\n  - `name: str` \u2014 human-readable name.\\n  - `supports(item: WorkItem) -> bool` \u2014 eligibility check.\\n  - `process(item: WorkItem) -> RunResult` \u2014 execution.\\n\\n### `WorkItemRepository` (`contracts/repository.py`)\\n- **Purpose**: Persistence boundary for work items.\\n- **Abstract methods**:\\n  - `save(item: WorkItem) -> None`\\n  - `get(identifier: str) -> WorkItem | None`\\n  - `list_by_channel(channel: str) -> list[WorkItem]`\\n  - `list_all() -> list[WorkItem]`\\n\\n## Concrete Subclasses\\n\\n### `Ticket` (`models/ticket.py`)\\n- **Implements**: `WorkItem`\\n- **Fields**:\\n  - `ticket_id: str` \u2192 `identifier`\\n  - `target_channel: str` \u2192 `channel`\\n  - `data: dict[str, str]` \u2192 `payload`\\n- **Immutable** (`frozen=True`).\\n\\n### `RunResult` (`models/run_result.py`)\\n- **Type**: `@dataclass(frozen=True)`\\n- **Fields**:\\n  - `processor: str`\\n  - `item_id: str`\\n  - `success: bool`\\n  - `details: str`\\n\\n## Dispatch Flow\\n\\nNo dispatch logic is implemented yet. The architecture defines:\\n\\n1. **WorkItem** (`Ticket`) is created with `identifier`, `channel`, and `payload`.\\n2. A `Processor` subclass would:\\n   - Check `supports(item)`.\\n   - Call `process(item)` returning `RunResult`.\\n3. A `WorkItemRepository` implementation would persist and retrieve items.\\n\\nDispatch orchestration (e.g., routing items to processors) is not present in the current codebase.\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}, \"python\": [], \"pythonDev\": [], \"rust\": [], \"go\": [], \"cpp\": []}, \"commands\": []}"
+      }
+    ],
+    "files_touched": [
+      "docs/summary/project_architecture.md"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 1886,
+          "completion_tokens": 769,
+          "total_tokens": 2655
+        },
+        "estimated_cost_usd": 0.0003590928
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "planner_local",
+      "selection_reason": "task-heuristic role=planner"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Summarize this repository into docs/summary/project_architecture.md. Include a file-level map, abstract contracts, concrete subclasses, and the dispatch flow. Follow the rules from the source code.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T185338Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 25,
+      "files_indexed": 25,
+      "files_skipped": 0,
+      "files_deleted": 0,
+      "parse_errors": 25,
+      "symbols_total": 0,
+      "edges_total": 0,
+      "elapsed_ms": 25
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 56,
+        "semantic_dims": 28,
+        "dim": 896,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "full",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "src/event_mesh/__init__.py",
+            "src/event_mesh/contracts/__init__.py",
+            "src/event_mesh/contracts/processor.py",
+            "src/event_mesh/contracts/repository.py",
+            "src/event_mesh/contracts/work_item.py",
+            "src/event_mesh/models/__init__.py",
+            "src/event_mesh/models/run_result.py",
+            "src/event_mesh/models/ticket.py"
+          ],
+          "count": 8,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 0,
+          "edge_count": 0,
+          "files_considered": [
+            "src/event_mesh/__init__.py",
+            "src/event_mesh/contracts/__init__.py",
+            "src/event_mesh/contracts/processor.py",
+            "src/event_mesh/contracts/repository.py",
+            "src/event_mesh/contracts/work_item.py",
+            "src/event_mesh/models/__init__.py",
+            "src/event_mesh/models/run_result.py",
+            "src/event_mesh/models/ticket.py",
+            "src/event_mesh/processors/__init__.py",
+            "src/event_mesh/processors/base_processor.py",
+            "src/event_mesh/processors/email_processor.py",
+            "src/event_mesh/processors/sms_processor.py",
+            "src/event_mesh/processors/webhook_processor.py",
+            "src/event_mesh/repositories/__init__.py",
+            "src/event_mesh/repositories/in_memory_repository.py",
+            "src/event_mesh/runtime/__init__.py",
+            "src/event_mesh/runtime/bootstrap.py",
+            "src/event_mesh/runtime/registry.py",
+            "src/event_mesh/services/__init__.py",
+            "src/event_mesh/services/dispatcher.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 1,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "src/event_mesh/__init__.py",
+        "src/event_mesh/contracts/__init__.py",
+        "src/event_mesh/contracts/processor.py",
+        "src/event_mesh/contracts/repository.py",
+        "src/event_mesh/contracts/work_item.py",
+        "src/event_mesh/models/__init__.py",
+        "src/event_mesh/models/run_result.py",
+        "src/event_mesh/models/ticket.py",
+        "src/event_mesh/processors/__init__.py",
+        "src/event_mesh/processors/base_processor.py",
+        "src/event_mesh/processors/email_processor.py",
+        "src/event_mesh/processors/sms_processor.py",
+        "src/event_mesh/processors/webhook_processor.py",
+        "src/event_mesh/repositories/__init__.py",
+        "src/event_mesh/repositories/in_memory_repository.py",
+        "src/event_mesh/runtime/__init__.py",
+        "src/event_mesh/runtime/bootstrap.py",
+        "src/event_mesh/runtime/registry.py",
+        "src/event_mesh/services/__init__.py",
+        "src/event_mesh/services/dispatcher.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Event mesh engine is a minimal Python benchmark project implementing a work-item processing pipeline with abstract contracts and a concrete Ticket model. No dispatch logic or concrete implementations are present yet.",
+    "apply_report": {
+      "files_written": [
+        "docs/summary/project_architecture.md"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T18:54:03Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T185338Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 1886,
+    "output_tokens": 769,
+    "total_tokens": 2655,
+    "estimated_cost_usd": 0.0003590928,
+    "latency_ms": 9839
+  },
+  "warnings": [],
+  "errors": []
+}

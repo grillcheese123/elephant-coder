@@ -1,0 +1,9 @@
+[project]
+name = "dummy-oop-project"
+version = "0.1.0"
+description = "Synthetic inheritance-heavy project for Elephant benchmark scenarios."
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+

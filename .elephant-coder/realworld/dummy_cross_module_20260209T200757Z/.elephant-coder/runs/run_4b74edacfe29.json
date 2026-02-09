@@ -1,0 +1,251 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_4b74edacfe29",
+  "session_id": "dummy_cross_module_20260209T195922Z_cross_invariant_04_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\n  \"summary\": \"Created docs/quality/invariants.md documenting four architectural invariants: DeliveryInterface contract, Processor hierarchy (PushProcessor \u2192 ReliableProcessor \u2192 ChannelBoundProcessor), Registry contract, and WorkItemRepository contract. No runtime behavior changed.\",\n  \"project\": {\n    \"language\": \"python\"\n  },\n  \"files\": [\n    {\n      \"path\": \"docs/quality/invariants.md\",\n      \"content\": \"# Architectural Invariants\\n\\nThis document specifies the extension contracts and architectural invariants that must be preserved when extending the cross-module engine.\\n\\n## Delivery Interface Contract\\n\\nThe `DeliveryInterface` defines the minimal contract for channel delivery adapters.\\n\\n```python\\nfrom abc import ABC, abstractmethod\\nfrom typing import Protocol\\n\\nclass DeliveryInterface(ABC):\\n    @property\\n    @abstractmethod\\n    def channel(self) -> str: ...\\n\\n    @abstractmethod\\n    def emit(self, message: str) -> str: ...\\n```\\n\\n**Invariants**:\\n- `channel` must return a non-empty string identifying the target channel.\\n- `emit` must transform and \\\"send\\\" the message, returning a delivery confirmation string.\\n- Implementations must be stateless or safely reentrant.\\n\\n**Extensions must**:\\n- Implement both `channel` and `emit`.\\n- Preserve the semantics that `emit` is idempotent for the same message.\\n\\n## Cross-Module Processor Hierarchy\\n\\nProcessors form a strict hierarchy with clear responsibilities:\\n\\n1. `Processor` (abstract base)\\n   - `name: str`\\n   - `supports(item: WorkItem) -> bool`\\n   - `process(item: WorkItem) -> RunResult`\\n\\n2. `ChannelBoundProcessor` (abstract)\\n   - Binds a `DeliveryInterface` adapter.\\n   - Provides `render_message(item)` and `_deliver(item)` helpers.\\n\\n3. `PushProcessor` (concrete)\\n   - Implements `supports` by matching `item.channel == \\\"push\\\"`.\\n   - Delegates delivery via `_get_adapter()` and `_render_message()`.\\n\\n4. `ReliableProcessor` (concrete)\\n   - Extends `ChannelBoundProcessor`.\\n   - Overrides `process` to wrap `_deliver` in reliability logic (retry, persistence, etc.).\\n\\n**Invariants**:\\n- `supports` must be deterministic and not mutate state.\\n- `process` must return a `RunResult` with `success`, `processor`, and `details`.\\n- Subclasses must not override `supports` unless they extend the matching logic.\\n\\n**Extensions must**:\\n- Inherit from `Processor` or a known subclass.\\n- Respect the `supports` \u2192 `process` delegation chain.\\n- Preserve `RunResult` shape and semantics.\\n\\n## Registry Contract\\n\\nThe `Registry` binds processors to channels at runtime.\\n\\n```python\\nclass Registry:\\n    def register(self, processor: Processor) -> None: ...\\n    def resolve(self, item: WorkItem) -> Processor: ...\\n```\\n\\n**Invariants**:\\n- `resolve(item)` must return exactly one processor if `supports(item)` is true for any registered processor.\\n- `resolve(item)` must raise `LookupError` if no processor supports the item.\\n- Registration order must not affect resolution semantics.\\n\\n**Extensions must**:\\n- Register processors via `Registry.register` before `build_default_runtime()`.\\n- Ensure `supports` and `resolve` are consistent.\\n\\n## Repository Contract\\n\\nThe `WorkItemRepository` abstracts persistence for work items.\\n\\n```python\\nclass WorkItemRepository(ABC):\\n    @abstractmethod\\n    def save(self, item: WorkItem) -> None: ...\\n\\n    @abstractmethod\\n    def get(self, identifier: str) -> WorkItem | None: ...\\n\\n    @abstractmethod\\n    def list_by_channel(self, channel: str) -> list[WorkItem]: ...\\n\\n    @abstractmethod\\n    def list_all(self) -> list[WorkItem] -> list[WorkItem]: ...\\n```\\n\\n**Invariants**:\\n- `save` must persist the item without mutating it.\\n- `get(identifier)` must return the same item (by identity) if previously saved.\\n- `list_by_channel` must return only items where `item.channel == channel`.\\n- `list_all` must return all persisted items.\\n\\n**Extensions must**:\\n- Implement all four methods.\\n- Preserve idempotency of `save` for the same item identifier.\\n\"\n    }\n  ],\n  \"dependencies\": {\n    \"dependencies\": {},\n    \"devDependencies\": {},\n    \"python\": [],\n    \"pythonDev\": [],\n    \"rust\": [],\n    \"go\": [],\n    \"cpp\": []\n  },\n  \"commands\": []\n}\n```"
+      }
+    ],
+    "files_touched": [
+      "docs/quality/invariants.md"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 3933,
+          "completion_tokens": 1045,
+          "total_tokens": 4978
+        },
+        "estimated_cost_usd": 0.0005829219
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create docs/quality/invariants.md describing extension contracts and architectural invariants (delivery interface contract, cross-module processor hierarchy, registry contract, repository contract). Keep runtime behavior unchanged.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_cross_module_20260209T200757Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 36,
+      "files_indexed": 23,
+      "files_skipped": 13,
+      "files_deleted": 0,
+      "parse_errors": 23,
+      "symbols_total": 44,
+      "edges_total": 17,
+      "elapsed_ms": 35
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 80,
+        "semantic_dims": 28,
+        "dim": 1280,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "full",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "run_dispatch_demo.py",
+            "src/cross_module_engine/__init__.py",
+            "src/cross_module_engine/channels/__init__.py",
+            "src/cross_module_engine/channels/delivery_adapter.py",
+            "src/cross_module_engine/channels/message_template.py",
+            "src/cross_module_engine/contracts/__init__.py",
+            "src/cross_module_engine/contracts/processor.py",
+            "src/cross_module_engine/contracts/repository.py"
+          ],
+          "count": 8,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 29,
+          "edge_count": 17,
+          "files_considered": [
+            "run_dispatch_demo.py",
+            "src/cross_module_engine/__init__.py",
+            "src/cross_module_engine/channels/__init__.py",
+            "src/cross_module_engine/channels/delivery_adapter.py",
+            "src/cross_module_engine/channels/message_template.py",
+            "src/cross_module_engine/contracts/__init__.py",
+            "src/cross_module_engine/contracts/processor.py",
+            "src/cross_module_engine/contracts/repository.py",
+            "src/cross_module_engine/contracts/work_item.py",
+            "src/cross_module_engine/interfaces/__init__.py",
+            "src/cross_module_engine/interfaces/delivery_interface.py",
+            "src/cross_module_engine/models/__init__.py",
+            "src/cross_module_engine/models/run_result.py",
+            "src/cross_module_engine/models/ticket.py",
+            "src/cross_module_engine/processors/__init__.py",
+            "src/cross_module_engine/processors/base_processor.py",
+            "src/cross_module_engine/processors/channel_bound_processor.py",
+            "src/cross_module_engine/processors/email_processor.py",
+            "src/cross_module_engine/processors/push_processor.py",
+            "src/cross_module_engine/processors/reliable_processor.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 7,
+          "commands": [
+            "/code"
+          ]
+        },
+        "capsule_transport": {
+          "enabled": false,
+          "mode": "hybrid",
+          "error": null,
+          "packet": null
+        }
+      },
+      "impacted_files_used": [
+        "run_dispatch_demo.py",
+        "src/cross_module_engine/__init__.py",
+        "src/cross_module_engine/channels/__init__.py",
+        "src/cross_module_engine/channels/delivery_adapter.py",
+        "src/cross_module_engine/channels/message_template.py",
+        "src/cross_module_engine/contracts/__init__.py",
+        "src/cross_module_engine/contracts/processor.py",
+        "src/cross_module_engine/contracts/repository.py",
+        "src/cross_module_engine/contracts/work_item.py",
+        "src/cross_module_engine/interfaces/__init__.py",
+        "src/cross_module_engine/interfaces/delivery_interface.py",
+        "src/cross_module_engine/models/__init__.py",
+        "src/cross_module_engine/models/run_result.py",
+        "src/cross_module_engine/models/ticket.py",
+        "src/cross_module_engine/processors/__init__.py",
+        "src/cross_module_engine/processors/base_processor.py",
+        "src/cross_module_engine/processors/channel_bound_processor.py",
+        "src/cross_module_engine/processors/email_processor.py",
+        "src/cross_module_engine/processors/push_processor.py",
+        "src/cross_module_engine/processors/reliable_processor.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "capsule_transport": {
+        "enabled": false,
+        "mode": "hybrid",
+        "error": null,
+        "packet": null
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "capsule_transport_config": {
+        "enabled": false,
+        "mode": "hybrid",
+        "dim": 768,
+        "max_items": 48,
+        "fingerprint_bits": 96
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Created docs/quality/invariants.md documenting four architectural invariants: DeliveryInterface contract, Processor hierarchy (PushProcessor \u2192 ReliableProcessor \u2192 ChannelBoundProcessor), Registry contract, and WorkItemRepository contract. No runtime behavior changed.",
+    "apply_report": {
+      "files_written": [
+        "docs/quality/invariants.md"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T20:09:43Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_cross_module_20260209T200757Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 3933,
+    "output_tokens": 1045,
+    "total_tokens": 4978,
+    "estimated_cost_usd": 0.0005829219,
+    "latency_ms": 19051
+  },
+  "warnings": [],
+  "errors": []
+}

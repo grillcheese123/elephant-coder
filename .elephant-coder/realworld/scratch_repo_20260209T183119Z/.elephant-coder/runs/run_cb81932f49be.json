@@ -1,0 +1,190 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_cb81932f49be",
+  "session_id": "realworld_scratch_20260209T183119Z_scratch_readme_02_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Create README.md for a minimal Python project with a main function and smoke test.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"README.md\", \"content\": \"# hello_app\\n\\nA minimal Python project.\\n\\n## Setup\\n\\n```bash\\npython -m venv venv\\nsource venv/bin/activate  # Windows: venv\\\\Scripts\\\\activate\\npip install -r requirements.txt\\n```\\n\\n## Run\\n\\n```bash\\npython -m hello_app.main\\n```\\n\\n## Test\\n\\n```bash\\npython -m unittest discover tests\\n```\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}}, \"commands\": [\"python -m venv venv\", \"source venv/bin/activate\", \"pip install -r requirements.txt\", \"python -m hello_app.main\", \"python -m unittest discover tests\"]}"
+      }
+    ],
+    "files_touched": [
+      "README.md"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 703,
+          "completion_tokens": 190,
+          "total_tokens": 893
+        },
+        "estimated_cost_usd": 0.0001051479
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "reviewer_local",
+      "selection_reason": "task-heuristic role=reviewer"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create README.md for this new project with setup, run, and test instructions.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\scratch_repo_20260209T183119Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 2,
+      "files_indexed": 0,
+      "files_skipped": 2,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 3,
+      "edges_total": 1,
+      "elapsed_ms": 5
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 64,
+        "semantic_dims": 28,
+        "dim": 1024,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "full",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "src/hello_app/main.py",
+            "tests/test_smoke.py"
+          ],
+          "count": 2,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 3,
+          "edge_count": 1,
+          "files_considered": [
+            "src/hello_app/main.py",
+            "tests/test_smoke.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 3,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "src/hello_app/main.py",
+        "tests/test_smoke.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Create README.md for a minimal Python project with a main function and smoke test.",
+    "apply_report": {
+      "files_written": [
+        "README.md"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T18:32:20Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\scratch_repo_20260209T183119Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 703,
+    "output_tokens": 190,
+    "total_tokens": 893,
+    "estimated_cost_usd": 0.0001051479,
+    "latency_ms": 6561
+  },
+  "warnings": [],
+  "errors": []
+}

@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: hello-app
+Version: 0.1.0
+Summary: A simple hello world app
+Requires-Python: >=3.8
+Provides-Extra: dev
+Requires-Dist: unittest-xml-reporting>=3.2.0; extra == "dev"

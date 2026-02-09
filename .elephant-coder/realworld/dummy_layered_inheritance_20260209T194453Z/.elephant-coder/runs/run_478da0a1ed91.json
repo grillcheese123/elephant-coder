@@ -1,0 +1,278 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_478da0a1ed91",
+  "session_id": "dummy_layered_inheritance_20260209T194035Z_layered_feature_03_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\n  \"summary\": \"Create run_dispatch_demo.py to dispatch one email ticket and attempt one push ticket, handling LookupError gracefully, with per-channel summary and audit snippets.\",\n  \"project\": {\n    \"language\": \"python\"\n  },\n  \"files\": [\n    {\n      \"path\": \"run_dispatch_demo.py\",\n      \"content\": \"from layered_engine.runtime.registry import build_default_runtime\\nfrom layered_engine.models.ticket import Ticket\\nfrom layered_engine.models.run_result import RunResult\\n\\n\\ndef main():\\n    runtime = build_default_runtime()\\n    \\n    email_ticket = Ticket(\\n        ticket_id=\\\"T-001\\\",\\n        target_channel=\\\"email\\\",\\n        data={\\\"to\\\": \\\"user@example.com\\\", \\\"subject\\\": \\\"Test\\\", \\\"body\\\": \\\"Hello\\\"}\\n    )\\n    \\n    push_ticket = Ticket(\\n        ticket_id=\\\"T-002\\\",\\n        target_channel=\\\"push\\\",\\n        data={\\\"title\\\": \\\"Alert\\\", \\\"message\\\": \\\"Test push\\\"}\\n    )\\n    \\n    results = {}\\n    \\n    # Dispatch email ticket\\n    email_result = runtime.dispatch(email_ticket)\\n    results[\\\"email\\\"] = email_result\\n    \\n    # Attempt push ticket\\n    try:\\n        push_result = runtime.dispatch(push_ticket)\\n        results[\\\"push\\\"] = push_result\\n    except LookupError:\\n        results[\\\"push\\\"] = None\\n    \\n    # Print per-channel summary\\n    print(\\\"=== Dispatch Summary ===\\\")\\n    for channel in [\\\"email\\\", \\\"push\\\"]:\\n        result = results[channel]\\n        if result is None:\\n            print(f\\\"{channel}: skipped (not available)\\\")\\n        elif isinstance(result, RunResult):\\n            status = \\\"success\\\" if result.success else \\\"failed\\\"\\n            print(f\\\"{channel}: {status} ({result.details})\\\")\\n        else:\\n            print(f\\\"{channel}: unknown result type\\\")\\n    \\n    # Audit detail snippets\\n    print(\\\"\\\\n=== Audit Snippets ===\\\")\\n    for channel in [\\\"email\\\", \\\"push\\\"]:\\n        result = results[channel]\\n        if result and hasattr(result, 'processor'):\\n            print(f\\\"{channel}: processor={result.processor}, item_id={result.item_id}\\\")\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    main()\\n\"\n    }\n  ],\n  \"dependencies\": {\n    \"dependencies\": {},\n    \"devDependencies\": {},\n    \"python\": [],\n    \"pythonDev\": [],\n    \"rust\": [],\n    \"go\": [],\n    \"cpp\": []\n  },\n  \"commands\": [\n    \"python run_dispatch_demo.py\"\n  ]\n}\n```"
+      }
+    ],
+    "files_touched": [
+      "run_dispatch_demo.py"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 4502,
+          "completion_tokens": 589,
+          "total_tokens": 5091
+        },
+        "estimated_cost_usd": 0.0004869216
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "reviewer_local",
+      "selection_reason": "task-heuristic role=reviewer"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create run_dispatch_demo.py that uses build_default_runtime, dispatches one email ticket, then attempts one push ticket. If push is not available, catch LookupError and continue. Print concise per-channel summary and include audit detail snippets.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_layered_inheritance_20260209T194453Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 34,
+      "files_indexed": 26,
+      "files_skipped": 8,
+      "files_deleted": 0,
+      "parse_errors": 22,
+      "symbols_total": 37,
+      "edges_total": 14,
+      "elapsed_ms": 40
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 72,
+        "semantic_dims": 28,
+        "dim": 1152,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "src/layered_engine/__init__.py",
+            "src/layered_engine/contracts/__init__.py",
+            "src/layered_engine/contracts/policy_rule.py",
+            "src/layered_engine/contracts/processor.py",
+            "src/layered_engine/contracts/repository.py",
+            "src/layered_engine/contracts/work_item.py",
+            "src/layered_engine/models/__init__.py",
+            "src/layered_engine/models/run_result.py",
+            "src/layered_engine/models/ticket.py",
+            "src/layered_engine/policies/__init__.py",
+            "src/layered_engine/policies/basic_rules.py",
+            "src/layered_engine/processors/__init__.py"
+          ],
+          "count": 12,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 37,
+          "edge_count": 14,
+          "files_considered": [
+            "src/layered_engine/__init__.py",
+            "src/layered_engine/contracts/__init__.py",
+            "src/layered_engine/contracts/policy_rule.py",
+            "src/layered_engine/contracts/processor.py",
+            "src/layered_engine/contracts/repository.py",
+            "src/layered_engine/contracts/work_item.py",
+            "src/layered_engine/models/__init__.py",
+            "src/layered_engine/models/run_result.py",
+            "src/layered_engine/models/ticket.py",
+            "src/layered_engine/policies/__init__.py",
+            "src/layered_engine/policies/basic_rules.py",
+            "src/layered_engine/processors/__init__.py",
+            "src/layered_engine/processors/auditable_mixin.py",
+            "src/layered_engine/processors/base_processor.py",
+            "src/layered_engine/processors/email_processor.py",
+            "src/layered_engine/processors/guarded_processor.py",
+            "src/layered_engine/processors/prioritized_processor.py",
+            "src/layered_engine/processors/push_processor.py",
+            "src/layered_engine/processors/sms_processor.py",
+            "src/layered_engine/processors/webhook_processor.py",
+            "src/layered_engine/repositories/__init__.py",
+            "src/layered_engine/repositories/in_memory_repository.py",
+            "src/layered_engine/runtime/__init__.py",
+            "src/layered_engine/runtime/bootstrap.py",
+            "src/layered_engine/runtime/registry.py",
+            "src/layered_engine/services/__init__.py",
+            "src/layered_engine/services/dispatcher.py",
+            "src/layered_engine/services/reporting.py",
+            "src/layered_engine/utils/__init__.py",
+            "src/layered_engine/utils/ids.py",
+            "tests/test_dispatcher.py",
+            "tests/test_layering.py",
+            "tests/test_push_processor.py",
+            "tests/test_registry.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        },
+        "capsule_transport": {
+          "enabled": false,
+          "mode": "hybrid",
+          "error": null,
+          "packet": null
+        }
+      },
+      "impacted_files_used": [
+        "src/layered_engine/__init__.py",
+        "src/layered_engine/contracts/__init__.py",
+        "src/layered_engine/contracts/policy_rule.py",
+        "src/layered_engine/contracts/processor.py",
+        "src/layered_engine/contracts/repository.py",
+        "src/layered_engine/contracts/work_item.py",
+        "src/layered_engine/models/__init__.py",
+        "src/layered_engine/models/run_result.py",
+        "src/layered_engine/models/ticket.py",
+        "src/layered_engine/policies/__init__.py",
+        "src/layered_engine/policies/basic_rules.py",
+        "src/layered_engine/processors/__init__.py",
+        "src/layered_engine/processors/auditable_mixin.py",
+        "src/layered_engine/processors/base_processor.py",
+        "src/layered_engine/processors/email_processor.py",
+        "src/layered_engine/processors/guarded_processor.py",
+        "src/layered_engine/processors/prioritized_processor.py",
+        "src/layered_engine/processors/push_processor.py",
+        "src/layered_engine/processors/sms_processor.py",
+        "src/layered_engine/processors/webhook_processor.py",
+        "src/layered_engine/repositories/__init__.py",
+        "src/layered_engine/repositories/in_memory_repository.py",
+        "src/layered_engine/runtime/__init__.py",
+        "src/layered_engine/runtime/bootstrap.py",
+        "src/layered_engine/runtime/registry.py",
+        "src/layered_engine/services/__init__.py",
+        "src/layered_engine/services/dispatcher.py",
+        "src/layered_engine/services/reporting.py",
+        "src/layered_engine/utils/__init__.py",
+        "src/layered_engine/utils/ids.py",
+        "tests/test_dispatcher.py",
+        "tests/test_layering.py",
+        "tests/test_push_processor.py",
+        "tests/test_registry.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "capsule_transport": {
+        "enabled": false,
+        "mode": "hybrid",
+        "error": null,
+        "packet": null
+      },
+      "capsule_transport_config": {
+        "enabled": false,
+        "mode": "hybrid",
+        "dim": 768,
+        "max_items": 48,
+        "fingerprint_bits": 96
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "baseline",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Create run_dispatch_demo.py to dispatch one email ticket and attempt one push ticket, handling LookupError gracefully, with per-channel summary and audit snippets.",
+    "apply_report": {
+      "files_written": [
+        "run_dispatch_demo.py"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T19:45:53Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_layered_inheritance_20260209T194453Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 4502,
+    "output_tokens": 589,
+    "total_tokens": 5091,
+    "estimated_cost_usd": 0.0004869216,
+    "latency_ms": 9574
+  },
+  "warnings": [],
+  "errors": []
+}

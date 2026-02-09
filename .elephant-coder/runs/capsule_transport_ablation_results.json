@@ -1,0 +1,72 @@
+{
+  "generated_at_utc": "2026-02-09T20:23:44Z",
+  "task_mode": "same fixtures/tasks, same budgets; only capsule transport toggled",
+  "capsule_mode": "capsule_only",
+  "rows": [
+    {
+      "fixture": "dummy_oop",
+      "text_token_reduction_pct": 36.18,
+      "capsule_token_reduction_pct": 33.89,
+      "delta_token_reduction_pct": -2.289999999999999,
+      "text_elephant_success_rate": 100.0,
+      "capsule_elephant_success_rate": 100.0,
+      "delta_elephant_success_rate": 0.0,
+      "text_elephant_avg_total_tokens": 3685.0,
+      "capsule_elephant_avg_total_tokens": 3796.0,
+      "delta_elephant_avg_total_tokens": 111.0
+    },
+    {
+      "fixture": "dummy_event_mesh",
+      "text_token_reduction_pct": 30.87,
+      "capsule_token_reduction_pct": 28.91,
+      "delta_token_reduction_pct": -1.9600000000000009,
+      "text_elephant_success_rate": 100.0,
+      "capsule_elephant_success_rate": 100.0,
+      "delta_elephant_success_rate": 0.0,
+      "text_elephant_avg_total_tokens": 2318.0,
+      "capsule_elephant_avg_total_tokens": 2402.0,
+      "delta_elephant_avg_total_tokens": 84.0
+    },
+    {
+      "fixture": "dummy_policy_engine",
+      "text_token_reduction_pct": 29.09,
+      "capsule_token_reduction_pct": 28.84,
+      "delta_token_reduction_pct": -0.25,
+      "text_elephant_success_rate": 100.0,
+      "capsule_elephant_success_rate": 100.0,
+      "delta_elephant_success_rate": 0.0,
+      "text_elephant_avg_total_tokens": 2416.0,
+      "capsule_elephant_avg_total_tokens": 2408.0,
+      "delta_elephant_avg_total_tokens": -8.0
+    },
+    {
+      "fixture": "dummy_layered_inheritance",
+      "text_token_reduction_pct": 22.77,
+      "capsule_token_reduction_pct": 28.88,
+      "delta_token_reduction_pct": 6.109999999999999,
+      "text_elephant_success_rate": 100.0,
+      "capsule_elephant_success_rate": 100.0,
+      "delta_elephant_success_rate": 0.0,
+      "text_elephant_avg_total_tokens": 3293.0,
+      "capsule_elephant_avg_total_tokens": 3175.0,
+      "delta_elephant_avg_total_tokens": -118.0
+    },
+    {
+      "fixture": "dummy_cross_module",
+      "text_token_reduction_pct": 13.96,
+      "capsule_token_reduction_pct": 15.68,
+      "delta_token_reduction_pct": 1.7199999999999989,
+      "text_elephant_success_rate": 0.0,
+      "capsule_elephant_success_rate": 100.0,
+      "delta_elephant_success_rate": 100.0,
+      "text_elephant_avg_total_tokens": 3025.0,
+      "capsule_elephant_avg_total_tokens": 2980.0,
+      "delta_elephant_avg_total_tokens": -45.0
+    }
+  ],
+  "averages": {
+    "delta_token_reduction_pct_mean": 0.6659999999999997,
+    "delta_elephant_success_rate_mean": 20.0,
+    "delta_elephant_avg_total_tokens_mean": 4.8
+  }
+}

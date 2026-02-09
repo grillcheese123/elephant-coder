@@ -1,0 +1,99 @@
+{
+  "protocol_version": "v1",
+  "generated_at_utc": "2026-02-09T20:20:58Z",
+  "benchmark_id": "dummy_oop_20260209T202042Z",
+  "comparison_track": "strategy",
+  "framework_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+  "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T202042Z",
+  "tasks_source": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.benchmarks\\tasks_dummy_oop_v1.json",
+  "tasks_total": 1,
+  "runs_total": 2,
+  "dry_run": false,
+  "apply_to_disk": true,
+  "no_apply": false,
+  "run_checks": true,
+  "budget_overrides": {
+    "max_input_tokens": 24000,
+    "max_output_tokens": 3000,
+    "max_cost_usd": 2.0
+  },
+  "results": [
+    {
+      "task_id": "dummy_summary_01",
+      "category": "analysis",
+      "prompt": "Create docs/summary/project_architecture.md. Summarize the repository with a file map, abstract contracts, concrete subclasses, and dispatch flow. Follow source-code rules and naming. Ensure the file is at least 200 characters.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T202042Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T202042Z_dummy_summary_01_baseline_r1",
+      "run_id": "run_7d170431056a",
+      "success": true,
+      "ok": true,
+      "input_tokens": 5119,
+      "output_tokens": 655,
+      "total_tokens": 5774,
+      "estimated_cost_usd": 0.0012789315,
+      "latency_ms": 5017,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "docs/summary/project_architecture.md"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/summary/project_architecture.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; low=text.lower(); keys=['workitem','processor','baseprocessor','repository','dispatcher']; hits=sum(1 for k in keys if k in low); sys.exit(0 if p.exists() and len(text)>=180 and hits>=3 else 1)\""
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "dummy_summary_01",
+      "category": "analysis",
+      "prompt": "Create docs/summary/project_architecture.md. Summarize the repository with a file map, abstract contracts, concrete subclasses, and dispatch flow. Follow source-code rules and naming. Ensure the file is at least 200 characters.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T202042Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T202042Z_dummy_summary_01_elephant_r1",
+      "run_id": "run_27bd46a689f4",
+      "success": true,
+      "ok": true,
+      "input_tokens": 3217,
+      "output_tokens": 468,
+      "total_tokens": 3685,
+      "estimated_cost_usd": 0.0003619341,
+      "latency_ms": 10199,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "docs/summary/project_architecture.md"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/summary/project_architecture.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; low=text.lower(); keys=['workitem','processor','baseprocessor','repository','dispatcher']; hits=sum(1 for k in keys if k in low); sys.exit(0 if p.exists() and len(text)>=180 and hits>=3 else 1)\""
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "aggregates": {
+    "baseline": {
+      "runs": 1,
+      "success_rate": 100.0,
+      "avg_total_tokens": 5774,
+      "avg_latency_ms": 5017,
+      "total_cost_usd": 0.001279
+    },
+    "elephant": {
+      "runs": 1,
+      "success_rate": 100.0,
+      "avg_total_tokens": 3685,
+      "avg_latency_ms": 10199,
+      "total_cost_usd": 0.000362
+    },
+    "token_reduction_pct": 36.18,
+    "quality_delta_pct_points": 0.0,
+    "latency_delta_ms": 5182
+  }
+}

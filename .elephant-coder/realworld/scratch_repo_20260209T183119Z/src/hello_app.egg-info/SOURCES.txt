@@ -1,0 +1,8 @@
+pyproject.toml
+src/hello_app/main.py
+src/hello_app.egg-info/PKG-INFO
+src/hello_app.egg-info/SOURCES.txt
+src/hello_app.egg-info/dependency_links.txt
+src/hello_app.egg-info/requires.txt
+src/hello_app.egg-info/top_level.txt
+tests/test_smoke.py

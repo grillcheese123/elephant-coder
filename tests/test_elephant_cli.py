@@ -34,6 +34,13 @@ def test_normalize_argv_supports_slash_prefix():
     assert elephant_cli._normalize_argv(["plan", "--task", "x"])[0] == "plan"
 
 
+def test_normalize_capsule_transport_mode_supports_auto():
+    assert elephant_cli._normalize_capsule_transport_mode("auto") == "auto"
+    assert elephant_cli._normalize_capsule_transport_mode("adaptive") == "auto"
+    assert elephant_cli._normalize_capsule_transport_mode("capsule") == "capsule_only"
+    assert elephant_cli._normalize_capsule_transport_mode("mixed") == "hybrid"
+
+
 def test_plan_command_envelope_and_run_record(tmp_path: Path, monkeypatch):
     (tmp_path / "pyproject.toml").write_text("[project]\nname='tmp'\n", encoding="utf-8")
     monkeypatch.setenv("ELEPHANT_PROJECT_ROOT", str(tmp_path))
@@ -445,6 +452,243 @@ def test_code_uses_openrouter_and_reports_metrics(tmp_path: Path, monkeypatch):
     assert "## Git Diff" in user_content
     assert "## Code Chunks" in user_content
     assert "## Test and Runtime Traces" in user_content
+
+
+def test_code_capsule_transport_capsule_only_uses_packet_prompt(tmp_path: Path, monkeypatch):
+    (tmp_path / "pyproject.toml").write_text("[project]\nname='tmp'\n", encoding="utf-8")
+    (tmp_path / "sample.py").write_text("def f():\n    return 1\n", encoding="utf-8")
+    elephant_cli.ensure_project_layout(tmp_path)
+    (tmp_path / ".elephant-coder" / "config.md").write_text(
+        "\n".join(
+            [
+                "output.default: text",
+                "model.default: gpt-4o-mini",
+                "model.fallbacks: ",
+                "model.max_retries: 0",
+                "model.retry_backoff_sec: 0",
+                "budgets.max_input_tokens: 12000",
+                "budgets.max_output_tokens: 3000",
+                "budgets.max_cost_usd: 1.0",
+                "cognition.world_model.enabled: true",
+                "cognition.world_model.dim: 512",
+                "cognition.world_model.capsule_dim: 32",
+                "cognition.world_model.semantic_dims: 28",
+                "cognition.world_model.max_edge_facts: 20000",
+                "cognition.world_model.max_symbol_facts: 5000",
+                "cognition.capsule_transport.enabled: true",
+                "cognition.capsule_transport.mode: capsule_only",
+                "cognition.capsule_transport.dim: 512",
+                "cognition.capsule_transport.max_items: 24",
+                "cognition.capsule_transport.fingerprint_bits: 64",
+                "plugins.allowed_permissions: read_fs",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("ELEPHANT_PROJECT_ROOT", str(tmp_path))
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+
+    class _FakeResult:
+        content = "diff --git a/a.py b/a.py\n+++ b/a.py\n@@\n+print('ok')\n"
+        usage = {"prompt_tokens": 9, "completion_tokens": 6, "total_tokens": 15}
+        estimated_cost_usd = 0.001
+
+    captured: dict[str, object] = {}
+
+    class _FakeClient:
+        def chat_completion(self, **kwargs: object):
+            captured.update(kwargs)
+            return _FakeResult()
+
+    monkeypatch.setattr(elephant_cli, "_new_openrouter_client", lambda _: _FakeClient())
+    args = _parse(
+        [
+            "code",
+            "--cwd",
+            str(tmp_path),
+            "--task",
+            "implement x",
+            "--output",
+            "json",
+        ]
+    )
+    code, response = elephant_cli.execute_command(args)
+
+    assert code == 0
+    assert response["ok"] is True
+    manifest = response["data"]["context_manifest"]["modalities"]
+    assert "capsule_transport" in manifest
+    assert manifest["capsule_transport"]["enabled"] is True
+    assert response["data"]["context_manifest"]["capsule_transport_config"]["enabled"] is True
+    assert (
+        response["data"]["context_manifest"]["capsule_transport_config"]["mode"]
+        == "capsule_only"
+    )
+    messages = captured.get("messages")
+    assert isinstance(messages, list)
+    user_content = str(messages[1]["content"])
+    assert "## Capsule Transport Packet" in user_content
+    assert "## Capsule Decoder Contract" in user_content
+    assert "## AST/Graph Features" not in user_content
+
+
+def test_code_capsule_transport_auto_routes_structured_task_to_capsule_only(
+    tmp_path: Path, monkeypatch
+):
+    (tmp_path / "pyproject.toml").write_text("[project]\nname='tmp'\n", encoding="utf-8")
+    (tmp_path / "sample.py").write_text("class Base:\n    pass\n", encoding="utf-8")
+    elephant_cli.ensure_project_layout(tmp_path)
+    (tmp_path / ".elephant-coder" / "config.md").write_text(
+        "\n".join(
+            [
+                "output.default: text",
+                "model.default: gpt-4o-mini",
+                "model.fallbacks: ",
+                "model.max_retries: 0",
+                "model.retry_backoff_sec: 0",
+                "budgets.max_input_tokens: 12000",
+                "budgets.max_output_tokens: 3000",
+                "budgets.max_cost_usd: 1.0",
+                "cognition.world_model.enabled: true",
+                "cognition.world_model.dim: 512",
+                "cognition.world_model.capsule_dim: 32",
+                "cognition.world_model.semantic_dims: 28",
+                "cognition.world_model.max_edge_facts: 20000",
+                "cognition.world_model.max_symbol_facts: 5000",
+                "cognition.capsule_transport.enabled: true",
+                "cognition.capsule_transport.mode: auto",
+                "cognition.capsule_transport.dim: 512",
+                "cognition.capsule_transport.max_items: 24",
+                "cognition.capsule_transport.fingerprint_bits: 64",
+                "plugins.allowed_permissions: read_fs",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("ELEPHANT_PROJECT_ROOT", str(tmp_path))
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+
+    class _FakeResult:
+        content = "diff --git a/a.py b/a.py\n+++ b/a.py\n@@\n+print('ok')\n"
+        usage = {"prompt_tokens": 9, "completion_tokens": 6, "total_tokens": 15}
+        estimated_cost_usd = 0.001
+
+    captured: dict[str, object] = {}
+
+    class _FakeClient:
+        def chat_completion(self, **kwargs: object):
+            captured.update(kwargs)
+            return _FakeResult()
+
+    monkeypatch.setattr(elephant_cli, "_new_openrouter_client", lambda _: _FakeClient())
+    args = _parse(
+        [
+            "code",
+            "--cwd",
+            str(tmp_path),
+            "--task",
+            "Create a class that extends an abstract interface and update registry wiring.",
+            "--output",
+            "json",
+        ]
+    )
+    code, response = elephant_cli.execute_command(args)
+
+    assert code == 0
+    assert response["ok"] is True
+    manifest = response["data"]["context_manifest"]["modalities"]["capsule_transport"]
+    assert manifest["enabled"] is True
+    assert manifest["mode"] == "capsule_only"
+    assert manifest["configured_mode"] == "auto"
+    assert manifest["routing"]["strategy"] == "auto"
+    assert response["data"]["context_manifest"]["capsule_transport_config"]["mode"] == "auto"
+
+    messages = captured.get("messages")
+    assert isinstance(messages, list)
+    user_content = str(messages[1]["content"])
+    assert "## Capsule Transport Packet" in user_content
+    assert "## Minimal Fallback Summary" not in user_content
+
+
+def test_code_capsule_transport_auto_routes_ambiguous_task_to_hybrid(
+    tmp_path: Path, monkeypatch
+):
+    (tmp_path / "pyproject.toml").write_text("[project]\nname='tmp'\n", encoding="utf-8")
+    (tmp_path / "sample.py").write_text("def f():\n    return 1\n", encoding="utf-8")
+    elephant_cli.ensure_project_layout(tmp_path)
+    (tmp_path / ".elephant-coder" / "config.md").write_text(
+        "\n".join(
+            [
+                "output.default: text",
+                "model.default: gpt-4o-mini",
+                "model.fallbacks: ",
+                "model.max_retries: 0",
+                "model.retry_backoff_sec: 0",
+                "budgets.max_input_tokens: 12000",
+                "budgets.max_output_tokens: 3000",
+                "budgets.max_cost_usd: 1.0",
+                "cognition.world_model.enabled: true",
+                "cognition.world_model.dim: 512",
+                "cognition.world_model.capsule_dim: 32",
+                "cognition.world_model.semantic_dims: 28",
+                "cognition.world_model.max_edge_facts: 20000",
+                "cognition.world_model.max_symbol_facts: 5000",
+                "cognition.capsule_transport.enabled: true",
+                "cognition.capsule_transport.mode: auto",
+                "cognition.capsule_transport.dim: 512",
+                "cognition.capsule_transport.max_items: 24",
+                "cognition.capsule_transport.fingerprint_bits: 64",
+                "plugins.allowed_permissions: read_fs",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("ELEPHANT_PROJECT_ROOT", str(tmp_path))
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+
+    class _FakeResult:
+        content = "diff --git a/a.py b/a.py\n+++ b/a.py\n@@\n+print('ok')\n"
+        usage = {"prompt_tokens": 9, "completion_tokens": 6, "total_tokens": 15}
+        estimated_cost_usd = 0.001
+
+    captured: dict[str, object] = {}
+
+    class _FakeClient:
+        def chat_completion(self, **kwargs: object):
+            captured.update(kwargs)
+            return _FakeResult()
+
+    monkeypatch.setattr(elephant_cli, "_new_openrouter_client", lambda _: _FakeClient())
+    args = _parse(
+        [
+            "code",
+            "--cwd",
+            str(tmp_path),
+            "--task",
+            "Maybe explore options and ideas for direction?",
+            "--output",
+            "json",
+        ]
+    )
+    code, response = elephant_cli.execute_command(args)
+
+    assert code == 0
+    assert response["ok"] is True
+    manifest = response["data"]["context_manifest"]["modalities"]["capsule_transport"]
+    assert manifest["enabled"] is True
+    assert manifest["mode"] == "hybrid"
+    assert manifest["configured_mode"] == "auto"
+    assert manifest["routing"]["strategy"] == "auto"
+    assert response["data"]["context_manifest"]["capsule_transport_config"]["mode"] == "auto"
+
+    messages = captured.get("messages")
+    assert isinstance(messages, list)
+    user_content = str(messages[1]["content"])
+    assert "## Capsule Transport Packet" in user_content
+    assert "## Minimal Fallback Summary" in user_content
 
 
 def test_code_retries_on_transient_model_error(tmp_path: Path, monkeypatch):

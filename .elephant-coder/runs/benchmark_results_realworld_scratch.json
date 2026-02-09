@@ -1,0 +1,235 @@
+{
+  "protocol_version": "v1",
+  "generated_at_utc": "2026-02-09T18:32:24Z",
+  "benchmark_id": "realworld_scratch_20260209T183119Z",
+  "comparison_track": "strategy",
+  "framework_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+  "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\scratch_repo_20260209T183119Z",
+  "tasks_source": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.benchmarks\\tasks_realworld_scratch_v1.json",
+  "tasks_total": 3,
+  "runs_total": 6,
+  "dry_run": false,
+  "apply_to_disk": true,
+  "no_apply": false,
+  "run_checks": true,
+  "budget_overrides": {
+    "max_input_tokens": 24000,
+    "max_output_tokens": 3000,
+    "max_cost_usd": 2.0
+  },
+  "results": [
+    {
+      "task_id": "scratch_python_01",
+      "category": "quality",
+      "prompt": "Initialize a new Python project from scratch with pyproject.toml, src/hello_app/main.py exposing get_message()->str that returns 'hello world', and tests/test_smoke.py using unittest to validate the message.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "realworld_scratch_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_scratch_20260209T183119Z_scratch_python_01_baseline_r1",
+      "run_id": "run_c092a2e68c6f",
+      "success": true,
+      "ok": true,
+      "input_tokens": 412,
+      "output_tokens": 297,
+      "total_tokens": 709,
+      "estimated_cost_usd": 0.0001167606,
+      "latency_ms": 3430,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "pyproject.toml",
+        "requirements-dev.txt",
+        "src/hello_app/main.py",
+        "tests/test_smoke.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; req=['pyproject.toml','src/hello_app/main.py','tests/test_smoke.py']; sys.exit(0 if all(Path(p).exists() for p in req) else 1)\"",
+        "uv run --python 3.12 python -m py_compile src/hello_app/main.py tests/test_smoke.py",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_*.py\" -v"
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": [
+        "Dependency install failed: uv pip install --python 3.12 -r requirements.txt (error: File not found: `requirements.txt`)",
+        "Dependency install failed: uv pip install --python 3.12 -r requirements-dev.txt (Using Python 3.12.10 environment at: C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.venv\nWARN Skipping file for unittest: unittest2-0.0.0.tar.gz\n  \u00c3\u2014 No solution found when resolving dependencies:\n  \u00e2\u2022\u00b0\u00e2\u201d\u20ac\u00e2\u2013\u00b6 Because there are no versions of unittest and you require unittest, we\n      can conclude that your requirements are unsatisfiable.)"
+      ]
+    },
+    {
+      "task_id": "scratch_python_01",
+      "category": "quality",
+      "prompt": "Initialize a new Python project from scratch with pyproject.toml, src/hello_app/main.py exposing get_message()->str that returns 'hello world', and tests/test_smoke.py using unittest to validate the message.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "realworld_scratch_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_scratch_20260209T183119Z_scratch_python_01_elephant_r1",
+      "run_id": "run_b6e4f9656fef",
+      "success": true,
+      "ok": true,
+      "input_tokens": 668,
+      "output_tokens": 350,
+      "total_tokens": 1018,
+      "estimated_cost_usd": 0.0001502424,
+      "latency_ms": 3985,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "package.json",
+        "pyproject.toml",
+        "requirements-dev.txt",
+        "tests/test_smoke.py",
+        "tsconfig.json"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; req=['pyproject.toml','src/hello_app/main.py','tests/test_smoke.py']; sys.exit(0 if all(Path(p).exists() for p in req) else 1)\"",
+        "uv run --python 3.12 python -m py_compile src/hello_app/main.py tests/test_smoke.py",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_*.py\" -v"
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": [
+        "Dependency install failed: npm install ([WinError 2] The system cannot find the file specified)",
+        "Dependency install failed: uv pip install --python 3.12 -r requirements.txt (error: File not found: `requirements.txt`)",
+        "Dependency install failed: uv pip install --python 3.12 -r requirements-dev.txt (WARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4-py2.7.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4-py3.2.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.1-py2.5.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.1-py2.6.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.1-py2.7.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.1-py3.2.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.2-py2.5.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.2-py2.6.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.2-py2.7.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.2-py3.2.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.3-py2.5.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.3-py2.6.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.4.3-py2.7.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.5.0-py2.5.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.5.0-py2.6.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.5.0-py2.7.egg\nWARN Skipping file for unittest-xml-reporting: unittest_xml_reporting-1.5.0-py3.2.egg\n  \u00c3\u2014 No solution found when resolving dependencies:\n  \u00e2\u2022\u00b0\u00e2\u201d\u20ac\u00e2\u2013\u00b6 Because there are no versions of unittest and you require unittest, we\n      can conclude that your requirements are unsatisfiable.)"
+      ]
+    },
+    {
+      "task_id": "scratch_readme_02",
+      "category": "quality",
+      "prompt": "Create README.md for this new project with setup, run, and test instructions.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "realworld_scratch_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_scratch_20260209T183119Z_scratch_readme_02_baseline_r1",
+      "run_id": "run_1f24ad7ddb49",
+      "success": true,
+      "ok": true,
+      "input_tokens": 563,
+      "output_tokens": 211,
+      "total_tokens": 774,
+      "estimated_cost_usd": 0.0001016829,
+      "latency_ms": 2167,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "README.md"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('README.md'); sys.exit(0 if p.exists() and len(p.read_text(encoding='utf-8', errors='replace').strip()) >= 60 else 1)\""
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "scratch_readme_02",
+      "category": "quality",
+      "prompt": "Create README.md for this new project with setup, run, and test instructions.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "realworld_scratch_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_scratch_20260209T183119Z_scratch_readme_02_elephant_r1",
+      "run_id": "run_cb81932f49be",
+      "success": true,
+      "ok": true,
+      "input_tokens": 703,
+      "output_tokens": 190,
+      "total_tokens": 893,
+      "estimated_cost_usd": 0.0001051479,
+      "latency_ms": 6561,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "README.md"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('README.md'); sys.exit(0 if p.exists() and len(p.read_text(encoding='utf-8', errors='replace').strip()) >= 60 else 1)\""
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "scratch_cli_03",
+      "category": "quality",
+      "prompt": "Add run_hello.py that imports get_message from src/hello_app/main.py and prints the message.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "realworld_scratch_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_scratch_20260209T183119Z_scratch_cli_03_baseline_r1",
+      "run_id": "run_8f15396de06c",
+      "success": true,
+      "ok": true,
+      "input_tokens": 571,
+      "output_tokens": 98,
+      "total_tokens": 669,
+      "estimated_cost_usd": 6.86763e-05,
+      "latency_ms": 1798,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "run_hello.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile run_hello.py",
+        "uv run --python 3.12 python run_hello.py"
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "scratch_cli_03",
+      "category": "quality",
+      "prompt": "Add run_hello.py that imports get_message from src/hello_app/main.py and prints the message.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "realworld_scratch_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_scratch_20260209T183119Z_scratch_cli_03_elephant_r1",
+      "run_id": "run_e63de8117147",
+      "success": true,
+      "ok": true,
+      "input_tokens": 859,
+      "output_tokens": 96,
+      "total_tokens": 955,
+      "estimated_cost_usd": 0.0002035935,
+      "latency_ms": 1476,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "run_hello.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile run_hello.py",
+        "uv run --python 3.12 python run_hello.py"
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "aggregates": {
+    "baseline": {
+      "runs": 3,
+      "success_rate": 100.0,
+      "avg_total_tokens": 717,
+      "avg_latency_ms": 2465,
+      "total_cost_usd": 0.000287
+    },
+    "elephant": {
+      "runs": 3,
+      "success_rate": 100.0,
+      "avg_total_tokens": 955,
+      "avg_latency_ms": 4007,
+      "total_cost_usd": 0.000459
+    },
+    "token_reduction_pct": -33.19,
+    "quality_delta_pct_points": 0.0,
+    "latency_delta_ms": 1542
+  }
+}

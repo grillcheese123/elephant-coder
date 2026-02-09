@@ -1,0 +1,207 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_c38265c4283f",
+  "session_id": "realworld_existing_20260209T183119Z_existing_docs_01_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Create docs/quality/benchmark_fairness.md with concise explanation of benchmark fairness risks and mitigations.\", \"project\": {\"language\": \"markdown\"}, \"files\": [{\"path\": \"docs/quality/benchmark_fairness.md\", \"content\": \"# Benchmark Fairness\\n\\n## Risks\\n\\n- **Prompt Parity Bias**: Benchmarks using identical prompts across runs may favor models that overfit to phrasing rather than robust reasoning.\\n- **Dataset Leakage**: Reusing code or test suites from the same project in training and evaluation inflates scores.\\n- **Environment Drift**: Changes in dependencies, tooling, or runtime between runs distort latency and cost comparisons.\\n- **Selection Bias**: Non-random task selection (e.g., only easy tasks) misrepresents real-world performance.\\n\\n## Mitigations\\n\\n- Randomize or rotate prompts while preserving intent.\\n- Isolate training and evaluation corpora; use external, versioned benchmarks.\\n- Freeze environment (dependencies, models, hardware) for each comparison round.\\n- Stratify tasks by difficulty and category; report per-stratum metrics.\\n- Log and version all inputs, configurations, and runtime metadata.\\n\"}"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17858,
+          "completion_tokens": 250,
+          "total_tokens": 18108
+        },
+        "estimated_cost_usd": 0.0013118094
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "planner_local",
+      "selection_reason": "task-heuristic role=planner"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "No file writes applied from agent output.",
+    "task": "Create docs/quality/benchmark_fairness.md with a concise explanation of benchmark fairness risks and mitigations.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\existing_repo_20260209T183119Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 11,
+      "files_indexed": 11,
+      "files_skipped": 0,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 264,
+      "edges_total": 20,
+      "elapsed_ms": 176
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 32,
+        "semantic_dims": 28,
+        "dim": 512,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "scripts/realworld_quality_runner.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py"
+          ],
+          "count": 10,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 20,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "scripts/realworld_quality_runner.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "scripts/realworld_quality_runner.py",
+        "tests/test_benchmark_runner.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "baseline",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T18:31:24Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\existing_repo_20260209T183119Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17858,
+    "output_tokens": 250,
+    "total_tokens": 18108,
+    "estimated_cost_usd": 0.0013118094,
+    "latency_ms": 4188
+  },
+  "warnings": [
+    "Structured plan contained no files; nothing was written unless bootstrap defaults were applied."
+  ],
+  "errors": []
+}

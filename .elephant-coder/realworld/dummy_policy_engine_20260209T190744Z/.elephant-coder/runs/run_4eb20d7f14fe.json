@@ -1,0 +1,228 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_4eb20d7f14fe",
+  "session_id": "dummy_policy_engine_20260209T190607Z_policy_feature_03_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\"summary\": \"Created run_dispatch_demo.py as specified, dispatching one email and one push ticket with error handling and per-channel summary output.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"run_dispatch_demo.py\", \"content\": \"from policy_engine.models.ticket import Ticket\\nfrom policy_engine.runtime import build_default_runtime\\n\\n\\ndef main():\\n    runtime = build_default_runtime()\\n\\n    email_ticket = Ticket(\\n        ticket_id=\\\"email-001\\\",\\n        target_channel=\\\"email\\\",\\n        data={\\\"to\\\": \\\"user@example.com\\\", \\\"subject\\\": \\\"Test\\\"}\\n    )\\n    push_ticket = Ticket(\\n        ticket_id=\\\"push-001\\\",\\n        target_channel=\\\"push\\\",\\n        data={\\\"message\\\": \\\"Hello\\\"}\\n    )\\n\\n    results = {}\\n\\n    # Dispatch email ticket\\n    email_result = runtime.dispatch(email_ticket)\\n    results[\\\"email\\\"] = email_result\\n\\n    # Attempt push ticket, catch LookupError if unavailable\\n    try:\\n        push_result = runtime.dispatch(push_ticket)\\n        results[\\\"push\\\"] = push_result\\n    except LookupError:\\n        results[\\\"push\\\"] = None\\n\\n    # Print per-channel summary\\n    for channel in [\\\"email\\\", \\\"push\\\"]:\\n        result = results[channel]\\n        if result is None:\\n            print(f\\\"{channel}: not available\\\")\\n        elif result.success:\\n            print(f\\\"{channel}: success - {result.details}\\\")\\n        else:\\n            print(f\\\"{channel}: failed - {result.details}\\\")\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    main()\\n\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}, \"python\": [], \"pythonDev\": [], \"rust\": [], \"go\": [], \"cpp\": []}, \"commands\": []}\n```"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 2282,
+          "completion_tokens": 413,
+          "total_tokens": 2695
+        },
+        "estimated_cost_usd": 0.0002808036
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "No file writes applied from agent output.",
+    "task": "Create run_dispatch_demo.py that uses build_default_runtime, dispatches one email ticket, then attempts one push ticket. If push is not available, catch LookupError and continue. Print a concise per-channel summary.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_policy_engine_20260209T190744Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 28,
+      "files_indexed": 28,
+      "files_skipped": 0,
+      "files_deleted": 0,
+      "parse_errors": 27,
+      "symbols_total": 1,
+      "edges_total": 0,
+      "elapsed_ms": 27
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 64,
+        "semantic_dims": 28,
+        "dim": 1024,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "full",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "run_dispatch_demo.py",
+            "src/policy_engine/__init__.py",
+            "src/policy_engine/contracts/__init__.py",
+            "src/policy_engine/contracts/processor.py",
+            "src/policy_engine/contracts/repository.py",
+            "src/policy_engine/contracts/work_item.py",
+            "src/policy_engine/models/__init__.py",
+            "src/policy_engine/models/run_result.py"
+          ],
+          "count": 8,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 1,
+          "edge_count": 0,
+          "files_considered": [
+            "run_dispatch_demo.py",
+            "src/policy_engine/__init__.py",
+            "src/policy_engine/contracts/__init__.py",
+            "src/policy_engine/contracts/processor.py",
+            "src/policy_engine/contracts/repository.py",
+            "src/policy_engine/contracts/work_item.py",
+            "src/policy_engine/models/__init__.py",
+            "src/policy_engine/models/run_result.py",
+            "src/policy_engine/models/ticket.py",
+            "src/policy_engine/processors/__init__.py",
+            "src/policy_engine/processors/base_processor.py",
+            "src/policy_engine/processors/email_processor.py",
+            "src/policy_engine/processors/push_processor.py",
+            "src/policy_engine/processors/sms_processor.py",
+            "src/policy_engine/processors/webhook_processor.py",
+            "src/policy_engine/repositories/__init__.py",
+            "src/policy_engine/repositories/in_memory_repository.py",
+            "src/policy_engine/runtime/__init__.py",
+            "src/policy_engine/runtime/bootstrap.py",
+            "src/policy_engine/runtime/registry.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 5,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "run_dispatch_demo.py",
+        "src/policy_engine/__init__.py",
+        "src/policy_engine/contracts/__init__.py",
+        "src/policy_engine/contracts/processor.py",
+        "src/policy_engine/contracts/repository.py",
+        "src/policy_engine/contracts/work_item.py",
+        "src/policy_engine/models/__init__.py",
+        "src/policy_engine/models/run_result.py",
+        "src/policy_engine/models/ticket.py",
+        "src/policy_engine/processors/__init__.py",
+        "src/policy_engine/processors/base_processor.py",
+        "src/policy_engine/processors/email_processor.py",
+        "src/policy_engine/processors/push_processor.py",
+        "src/policy_engine/processors/sms_processor.py",
+        "src/policy_engine/processors/webhook_processor.py",
+        "src/policy_engine/repositories/__init__.py",
+        "src/policy_engine/repositories/in_memory_repository.py",
+        "src/policy_engine/runtime/__init__.py",
+        "src/policy_engine/runtime/bootstrap.py",
+        "src/policy_engine/runtime/registry.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Created run_dispatch_demo.py as specified, dispatching one email and one push ticket with error handling and per-channel summary output.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T19:08:51Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_policy_engine_20260209T190744Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 2282,
+    "output_tokens": 413,
+    "total_tokens": 2695,
+    "estimated_cost_usd": 0.0002808036,
+    "latency_ms": 13528
+  },
+  "warnings": [],
+  "errors": []
+}

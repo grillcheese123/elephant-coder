@@ -1,0 +1,211 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_42cc991db103",
+  "session_id": "realworld_existing_20260209T183119Z_existing_script_02_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\n  \"summary\": \"Create scripts/print_quality_metrics.py to read benchmark_results.json and print token reduction info, with fallback if missing.\",\n  \"project\": {\n    \"language\": \"python\"\n  },\n  \"files\": [\n    {\n      \"path\": \"scripts/print_quality_metrics.py\",\n      \"content\": \"#!/usr/bin/env python3\\n\\\"\\\"\\\"Print token reduction metrics from benchmark results.\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport json\\nimport sys\\nfrom pathlib import Path\\n\\n\\ndef main() -> int:\\n    project_root = Path.cwd()\\n    results_path = project_root / \\\".elephant-coder\\\" / \\\"runs\\\" / \\\"benchmark_results.json\\\"\\n\\n    if not results_path.exists():\\n        print(\\\"No benchmark results found. Run benchmark_runner.py first.\\\")\\n        return 0\\n\\n    try:\\n        data = json.loads(results_path.read_text(encoding=\\\"utf-8\\\"))\\n    except Exception as exc:\\n        print(f\\\"Failed to read benchmark results: {exc}\\\")\\n        return 0\\n\\n    aggregates = data.get(\\\"aggregates\\\", {})\\n    token_reduction = aggregates.get(\\\"token_reduction_pct\\\", 0.0)\\n    baseline_tokens = aggregates.get(\\\"baseline\\\", {}).get(\\\"avg_total_tokens\\\", 0)\\n    elephant_tokens = aggregates.get(\\\"elephant\\\", {}).get(\\\"avg_total_tokens\\\", 0)\\n\\n    print(\\\"Token Reduction Metrics\\\")\\n    print(\\\"=======================\\\")\\n    print(f\\\"Baseline avg tokens:  {baseline_tokens}\\\")\\n    print(f\\\"Elephant avg tokens:  {elephant_tokens}\\\")\\n    print(f\\\"Token reduction:      {token_reduction:.1f}%\\\")\\n\\n    return 0\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    sys.exit(main())\\n\"\n    }\n  ],\n  \"dependencies\": {\n    \"dependencies\": {},\n    \"devDependencies\": {},\n    \"python\": [],\n    \"pythonDev\": [],\n    \"rust\": [],\n    \"go\": [],\n    \"cpp\": []\n  },\n  \"commands\": [\n    \"python scripts/print_quality_metrics.py\"\n  ]\n}\n```"
+      }
+    ],
+    "files_touched": [
+      "scripts/print_quality_metrics.py"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17894,
+          "completion_tokens": 471,
+          "total_tokens": 18365
+        },
+        "estimated_cost_usd": 0.0013799412
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create scripts/print_quality_metrics.py that reads .elephant-coder/runs/benchmark_results.json when available and prints token reduction information; if missing, print a clear fallback message and exit 0.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\existing_repo_20260209T183119Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 11,
+      "files_indexed": 0,
+      "files_skipped": 11,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 264,
+      "edges_total": 20,
+      "elapsed_ms": 22
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 32,
+        "semantic_dims": 28,
+        "dim": 512,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "scripts/realworld_quality_runner.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py"
+          ],
+          "count": 10,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 20,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "scripts/realworld_quality_runner.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "scripts/realworld_quality_runner.py",
+        "tests/test_benchmark_runner.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "baseline",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Create scripts/print_quality_metrics.py to read benchmark_results.json and print token reduction info, with fallback if missing.",
+    "apply_report": {
+      "files_written": [
+        "scripts/print_quality_metrics.py"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T18:31:34Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\existing_repo_20260209T183119Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17894,
+    "output_tokens": 471,
+    "total_tokens": 18365,
+    "estimated_cost_usd": 0.0013799412,
+    "latency_ms": 5348
+  },
+  "warnings": [],
+  "errors": []
+}

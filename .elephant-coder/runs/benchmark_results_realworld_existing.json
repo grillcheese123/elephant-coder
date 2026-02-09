@@ -1,0 +1,221 @@
+{
+  "protocol_version": "v1",
+  "generated_at_utc": "2026-02-09T18:31:59Z",
+  "benchmark_id": "realworld_existing_20260209T183119Z",
+  "comparison_track": "strategy",
+  "framework_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+  "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\existing_repo_20260209T183119Z",
+  "tasks_source": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.benchmarks\\tasks_realworld_existing_v1.json",
+  "tasks_total": 3,
+  "runs_total": 6,
+  "dry_run": false,
+  "apply_to_disk": true,
+  "no_apply": false,
+  "run_checks": true,
+  "budget_overrides": {
+    "max_input_tokens": 24000,
+    "max_output_tokens": 3000,
+    "max_cost_usd": 2.0
+  },
+  "results": [
+    {
+      "task_id": "existing_docs_01",
+      "category": "quality",
+      "prompt": "Create docs/quality/benchmark_fairness.md with a concise explanation of benchmark fairness risks and mitigations.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "realworld_existing_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_existing_20260209T183119Z_existing_docs_01_baseline_r1",
+      "run_id": "run_c38265c4283f",
+      "success": false,
+      "ok": true,
+      "input_tokens": 17858,
+      "output_tokens": 250,
+      "total_tokens": 18108,
+      "estimated_cost_usd": 0.0013118094,
+      "latency_ms": 4188,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [],
+      "checks_passed": [],
+      "checks_failed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/quality/benchmark_fairness.md'); sys.exit(0 if p.exists() and len(p.read_text(encoding='utf-8', errors='replace').strip()) >= 40 else 1)\" (code=1; Creating virtual environment at: .venv)"
+      ],
+      "errors": [],
+      "warnings": [
+        "Structured plan contained no files; nothing was written unless bootstrap defaults were applied."
+      ]
+    },
+    {
+      "task_id": "existing_docs_01",
+      "category": "quality",
+      "prompt": "Create docs/quality/benchmark_fairness.md with a concise explanation of benchmark fairness risks and mitigations.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "realworld_existing_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_existing_20260209T183119Z_existing_docs_01_elephant_r1",
+      "run_id": "run_c72e5ddd997e",
+      "success": true,
+      "ok": true,
+      "input_tokens": 3248,
+      "output_tokens": 257,
+      "total_tokens": 3505,
+      "estimated_cost_usd": 0.001024749,
+      "latency_ms": 3568,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "docs/quality/benchmark_fairness.md"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/quality/benchmark_fairness.md'); sys.exit(0 if p.exists() and len(p.read_text(encoding='utf-8', errors='replace').strip()) >= 40 else 1)\""
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "existing_script_02",
+      "category": "quality",
+      "prompt": "Create scripts/print_quality_metrics.py that reads .elephant-coder/runs/benchmark_results.json when available and prints token reduction information; if missing, print a clear fallback message and exit 0.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "realworld_existing_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_existing_20260209T183119Z_existing_script_02_baseline_r1",
+      "run_id": "run_42cc991db103",
+      "success": true,
+      "ok": true,
+      "input_tokens": 17894,
+      "output_tokens": 471,
+      "total_tokens": 18365,
+      "estimated_cost_usd": 0.0013799412,
+      "latency_ms": 5348,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "scripts/print_quality_metrics.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile scripts/print_quality_metrics.py",
+        "uv run --python 3.12 python scripts/print_quality_metrics.py"
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "existing_script_02",
+      "category": "quality",
+      "prompt": "Create scripts/print_quality_metrics.py that reads .elephant-coder/runs/benchmark_results.json when available and prints token reduction information; if missing, print a clear fallback message and exit 0.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "realworld_existing_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_existing_20260209T183119Z_existing_script_02_elephant_r1",
+      "run_id": "run_8e3ba31f757e",
+      "success": true,
+      "ok": true,
+      "input_tokens": 3489,
+      "output_tokens": 497,
+      "total_tokens": 3986,
+      "estimated_cost_usd": 0.002317491,
+      "latency_ms": 10417,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "scripts/print_quality_metrics.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile scripts/print_quality_metrics.py",
+        "uv run --python 3.12 python scripts/print_quality_metrics.py"
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "existing_module_03",
+      "category": "quality",
+      "prompt": "Create elephant_coder/quality_checks.py with function score_token_reduction(baseline_tokens:int, elephant_tokens:int)->float and create tests/test_quality_checks.py using unittest for normal and zero-baseline cases.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "realworld_existing_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_existing_20260209T183119Z_existing_module_03_baseline_r1",
+      "run_id": "run_7d4f54aabb28",
+      "success": true,
+      "ok": true,
+      "input_tokens": 18082,
+      "output_tokens": 466,
+      "total_tokens": 18548,
+      "estimated_cost_usd": 0.0013914846,
+      "latency_ms": 8390,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "elephant_coder/quality_checks.py",
+        "tests/test_quality_checks.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile elephant_coder/quality_checks.py tests/test_quality_checks.py",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_quality_checks.py\" -v"
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "existing_module_03",
+      "category": "quality",
+      "prompt": "Create elephant_coder/quality_checks.py with function score_token_reduction(baseline_tokens:int, elephant_tokens:int)->float and create tests/test_quality_checks.py using unittest for normal and zero-baseline cases.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "realworld_existing_20260209T183119Z",
+      "comparison_track": "strategy",
+      "session_id": "realworld_existing_20260209T183119Z_existing_module_03_elephant_r1",
+      "run_id": "run_f2a094b48d05",
+      "success": true,
+      "ok": true,
+      "input_tokens": 3608,
+      "output_tokens": 442,
+      "total_tokens": 4050,
+      "estimated_cost_usd": 0.0003813084,
+      "latency_ms": 5164,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "elephant_coder/quality_checks.py",
+        "tests/test_quality_checks.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile elephant_coder/quality_checks.py tests/test_quality_checks.py",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_quality_checks.py\" -v"
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "aggregates": {
+    "baseline": {
+      "runs": 3,
+      "success_rate": 66.67,
+      "avg_total_tokens": 18340,
+      "avg_latency_ms": 5975,
+      "total_cost_usd": 0.004083
+    },
+    "elephant": {
+      "runs": 3,
+      "success_rate": 100.0,
+      "avg_total_tokens": 3847,
+      "avg_latency_ms": 6383,
+      "total_cost_usd": 0.003724
+    },
+    "token_reduction_pct": 79.02,
+    "quality_delta_pct_points": 33.33,
+    "latency_delta_ms": 408
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_7d4f54aabb28",
+  "session_id": "realworld_existing_20260209T183119Z_existing_module_03_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\"summary\": \"Created quality_checks.py with score_token_reduction function and corresponding unittest test file covering normal and zero-baseline cases.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"elephant_coder/quality_checks.py\", \"content\": \"\\\"\\\"\\\"Quality metrics for Elephant Coder.\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\n\\ndef score_token_reduction(baseline_tokens: int, elephant_tokens: int) -> float:\\n    \\\"\\\"\\\"Compute token reduction score as percentage saved.\\n\\n    Args:\\n        baseline_tokens: Token count from baseline run.\\n        elephant_tokens: Token count from Elephant Coder run.\\n\\n    Returns:\\n        Percentage reduction (0.0 to 100.0). Returns 0.0 if baseline is zero.\\n    \\\"\\\"\\\"\\n    if baseline_tokens <= 0:\\n        return 0.0\\n    reduction = baseline_tokens - elephant_tokens\\n    return max(0.0, (reduction / baseline_tokens) * 100.0)\\n\"}, {\"path\": \"tests/test_quality_checks.py\", \"content\": \"\\\"\\\"\\\"Tests for quality_checks module.\\\"\\\"\\\"\\n\\nimport unittest\\n\\nfrom elephant_coder.quality_checks import score_token_reduction\\n\\n\\nclass TestScoreTokenReduction(unittest.TestCase):\\n    def test_normal_case(self):\\n        score = score_token_reduction(1000, 500)\\n        self.assertEqual(score, 50.0)\\n\\n    def test_zero_baseline(self):\\n        score = score_token_reduction(0, 0)\\n        self.assertEqual(score, 0.0)\\n\\n    def test_elephant_higher_than_baseline(self):\\n        score = score_token_reduction(100, 200)\\n        self.assertEqual(score, 0.0)\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    unittest.main()\\n\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}, \"python\": [], \"pythonDev\": [], \"rust\": [], \"go\": [], \"cpp\": []}, \"commands\": [\"python -m unittest tests/test_quality_checks.py -v\"]}\n```"
+      }
+    ],
+    "files_touched": [
+      "elephant_coder/quality_checks.py",
+      "tests/test_quality_checks.py"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 18082,
+          "completion_tokens": 466,
+          "total_tokens": 18548
+        },
+        "estimated_cost_usd": 0.0013914846
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "reviewer_local",
+      "selection_reason": "task-heuristic role=reviewer"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create elephant_coder/quality_checks.py with function score_token_reduction(baseline_tokens:int, elephant_tokens:int)->float and create tests/test_quality_checks.py using unittest for normal and zero-baseline cases.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\existing_repo_20260209T183119Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 12,
+      "files_indexed": 1,
+      "files_skipped": 11,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 265,
+      "edges_total": 26,
+      "elapsed_ms": 21
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 32,
+        "semantic_dims": 28,
+        "dim": 512,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "scripts/print_quality_metrics.py",
+            "scripts/realworld_quality_runner.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py"
+          ],
+          "count": 11,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 26,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "scripts/print_quality_metrics.py",
+            "scripts/realworld_quality_runner.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "scripts/print_quality_metrics.py",
+        "scripts/realworld_quality_runner.py",
+        "tests/test_benchmark_runner.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "baseline",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Created quality_checks.py with score_token_reduction function and corresponding unittest test file covering normal and zero-baseline cases.",
+    "apply_report": {
+      "files_written": [
+        "elephant_coder/quality_checks.py",
+        "tests/test_quality_checks.py"
+      ],
+      "files_written_count": 2,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T18:31:53Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\existing_repo_20260209T183119Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 18082,
+    "output_tokens": 466,
+    "total_tokens": 18548,
+    "estimated_cost_usd": 0.0013914846,
+    "latency_ms": 8390
+  },
+  "warnings": [],
+  "errors": []
+}

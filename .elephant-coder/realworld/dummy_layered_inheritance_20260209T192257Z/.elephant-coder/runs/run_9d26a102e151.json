@@ -1,0 +1,261 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_9d26a102e151",
+  "session_id": "dummy_layered_inheritance_20260209T191741Z_layered_invariant_04_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Create docs/quality/invariants.md documenting layered extension contracts and architectural invariants.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"docs/quality/invariants.md\", \"content\": \"# Architectural Invariants\\n\\n## Overview\\n\\nThe layered engine enforces a strict contract-based architecture to ensure safe, extensible, and testable processing of work items. This document describes the core contracts and invariants that must be preserved across all extensions.\\n\\n---\\n\\n## 1. Policy Contract (`PolicyRule`)\\n\\n**Contract file**: `src/layered_engine/contracts/policy_rule.py`\\n\\n### Invariants\\n- Every policy must implement `name: str` (immutable identifier).\\n- Every policy must implement `allows(item: WorkItem) -> bool` (deterministic evaluation).\\n- Policies are stateless unless explicitly designed otherwise (e.g., `RequiredPayloadKeysRule`).\\n- Policy evaluation must be side-effect free.\\n\\n### Extension Rules\\n- New policies must subclass `PolicyRule` and implement both abstract members.\\n- Do not mutate `WorkItem` inside `allows()`.\\n\\n---\\n\\n## 2. Processor Hierarchy\\n\\n### Base Contract (`Processor`)\\n**Contract file**: `src/layered_engine/contracts/processor.py`\\n\\n**Invariants**:\\n- `name: str` uniquely identifies the processor.\\n- `supports(item: WorkItem) -> bool` must be deterministic and side-effect free.\\n- `process(item: WorkItem) -> RunResult` must always return a `RunResult`.\\n\\n### GuardedProcessor\\n**File**: `src/layered_engine/processors/guarded_processor.py`\\n\\n**Invariants**:\\n- Wraps a `PolicyRule` instance.\\n- `process()` first evaluates `policy.allows(item)`; if `False`, returns a failure `RunResult`.\\n- Subclasses must implement `deliver(item: WorkItem) -> RunResult` (core logic).\\n\\n### PrioritizedProcessor\\n**File**: `src/layered_engine/processors/prioritized_processor.py`\\n\\n**Invariants**:\\n- Extends `GuardedProcessor` and `AuditableMixin`.\\n- Audit prefix is built via `build_audit_prefix()` before processing.\\n- `process()` logs audit info before delegating to `deliver()`.\\n\\n### PushProcessor\\n**File**: `src/layered_engine/processors/push_processor.py`\\n\\n**Invariants**:\\n- Extends `GuardedProcessor` and `AuditableMixin`.\\n- Uses `RequiredPayloadKeysRule` by default (configurable).\\n- `supports()` checks `item.channel == \\\"push\\\"`.\\n- `deliver()` returns success/failure based on payload validation.\\n\\n### Extension Rules\\n- All processors must subclass `Processor` (directly or via `GuardedProcessor`).\\n- Do not override `process()` unless absolutely necessary (prefer `deliver()`).\\n- Audit and policy guards must not be bypassed.\\n\\n---\\n\\n## 3. Registry Contract (`get_processors`)\\n\\n**File**: `src/layered_engine/runtime/registry.py`\\n\\n**Invariants**:\\n- Returns a list of `Processor` instances.\\n- Order reflects priority (higher priority first).\\n- No side effects during registration (pure factory function).\\n\\n### Extension Rules\\n- New processors must be added to `get_processors()` to be discoverable.\\n- Do not mutate returned list.\\n\\n---\\n\\n## 4. Repository Contract (`WorkItemRepository`)\\n\\n**Contract file**: `src/layered_engine/contracts/repository.py`\\n\\n**Invariants**:\\n- `save(item)` must persist without side effects on the item.\\n- `get(identifier)` must return `None` if not found.\\n- `list_by_channel(channel)` and `list_all()` must return fresh lists.\\n- Repository must not mutate `WorkItem` instances.\\n\\n### Extension Rules\\n- Implementations must preserve immutability semantics.\\n- Do not leak internal state (e.g., avoid returning internal lists).\\n\\n---\\n\\n## Runtime Behavior Preservation\\n\\nAll invariants above are designed to ensure:\\n- Deterministic dispatch via `runtime.dispatch(ticket)`.\\n- Audit trails are always populated in `RunResult`.\\n- Policy failures are exposed in `RunResult.details`.\\n- No changes to runtime behavior are introduced by new extensions.\\n\\n---\\n\\n## Summary\\n\\n| Layer | Contract | Key Invariant |\\n|-------|----------|---------------|\\n| Policy | `PolicyRule` | Deterministic, side-effect free `allows()` |\\n| Processor | `Processor` | `supports()` + `process()` contract |\\n| Registry | `get_processors()` | Pure, ordered factory |\\n| Repository | `WorkItemRepository` | Immutable persistence boundary |\\n\\nExtensions violating these invariants risk breaking dispatch, audit, or policy enforcement.\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}, \"python\": [], \"pythonDev\": [], \"rust\": [], \"go\": [], \"cpp\": []}, \"commands\": []}"
+      }
+    ],
+    "files_touched": [
+      "docs/quality/invariants.md"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 5083,
+          "completion_tokens": 1111,
+          "total_tokens": 6194
+        },
+        "estimated_cost_usd": 0.0006822189
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create docs/quality/invariants.md describing layered extension contracts and architectural invariants (policy contract, processor hierarchy, registry contract, repository contract). Keep runtime behavior unchanged.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_layered_inheritance_20260209T192257Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 35,
+      "files_indexed": 22,
+      "files_skipped": 13,
+      "files_deleted": 0,
+      "parse_errors": 22,
+      "symbols_total": 42,
+      "edges_total": 16,
+      "elapsed_ms": 37
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 72,
+        "semantic_dims": 28,
+        "dim": 1152,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "run_dispatch_demo.py",
+            "src/layered_engine/__init__.py",
+            "src/layered_engine/contracts/__init__.py",
+            "src/layered_engine/contracts/policy_rule.py",
+            "src/layered_engine/contracts/processor.py",
+            "src/layered_engine/contracts/repository.py",
+            "src/layered_engine/contracts/work_item.py",
+            "src/layered_engine/models/__init__.py",
+            "src/layered_engine/models/run_result.py",
+            "src/layered_engine/models/ticket.py",
+            "src/layered_engine/policies/__init__.py",
+            "src/layered_engine/policies/basic_rules.py"
+          ],
+          "count": 12,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 42,
+          "edge_count": 16,
+          "files_considered": [
+            "run_dispatch_demo.py",
+            "src/layered_engine/__init__.py",
+            "src/layered_engine/contracts/__init__.py",
+            "src/layered_engine/contracts/policy_rule.py",
+            "src/layered_engine/contracts/processor.py",
+            "src/layered_engine/contracts/repository.py",
+            "src/layered_engine/contracts/work_item.py",
+            "src/layered_engine/models/__init__.py",
+            "src/layered_engine/models/run_result.py",
+            "src/layered_engine/models/ticket.py",
+            "src/layered_engine/policies/__init__.py",
+            "src/layered_engine/policies/basic_rules.py",
+            "src/layered_engine/processors/__init__.py",
+            "src/layered_engine/processors/auditable_mixin.py",
+            "src/layered_engine/processors/base_processor.py",
+            "src/layered_engine/processors/email_processor.py",
+            "src/layered_engine/processors/guarded_processor.py",
+            "src/layered_engine/processors/prioritized_processor.py",
+            "src/layered_engine/processors/push_processor.py",
+            "src/layered_engine/processors/sms_processor.py",
+            "src/layered_engine/processors/webhook_processor.py",
+            "src/layered_engine/repositories/__init__.py",
+            "src/layered_engine/repositories/in_memory_repository.py",
+            "src/layered_engine/runtime/__init__.py",
+            "src/layered_engine/runtime/bootstrap.py",
+            "src/layered_engine/runtime/registry.py",
+            "src/layered_engine/services/__init__.py",
+            "src/layered_engine/services/dispatcher.py",
+            "src/layered_engine/services/reporting.py",
+            "src/layered_engine/utils/__init__.py",
+            "src/layered_engine/utils/ids.py",
+            "tests/test_dispatcher.py",
+            "tests/test_layering.py",
+            "tests/test_push_processor.py",
+            "tests/test_registry.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "run_dispatch_demo.py",
+        "src/layered_engine/__init__.py",
+        "src/layered_engine/contracts/__init__.py",
+        "src/layered_engine/contracts/policy_rule.py",
+        "src/layered_engine/contracts/processor.py",
+        "src/layered_engine/contracts/repository.py",
+        "src/layered_engine/contracts/work_item.py",
+        "src/layered_engine/models/__init__.py",
+        "src/layered_engine/models/run_result.py",
+        "src/layered_engine/models/ticket.py",
+        "src/layered_engine/policies/__init__.py",
+        "src/layered_engine/policies/basic_rules.py",
+        "src/layered_engine/processors/__init__.py",
+        "src/layered_engine/processors/auditable_mixin.py",
+        "src/layered_engine/processors/base_processor.py",
+        "src/layered_engine/processors/email_processor.py",
+        "src/layered_engine/processors/guarded_processor.py",
+        "src/layered_engine/processors/prioritized_processor.py",
+        "src/layered_engine/processors/push_processor.py",
+        "src/layered_engine/processors/sms_processor.py",
+        "src/layered_engine/processors/webhook_processor.py",
+        "src/layered_engine/repositories/__init__.py",
+        "src/layered_engine/repositories/in_memory_repository.py",
+        "src/layered_engine/runtime/__init__.py",
+        "src/layered_engine/runtime/bootstrap.py",
+        "src/layered_engine/runtime/registry.py",
+        "src/layered_engine/services/__init__.py",
+        "src/layered_engine/services/dispatcher.py",
+        "src/layered_engine/services/reporting.py",
+        "src/layered_engine/utils/__init__.py",
+        "src/layered_engine/utils/ids.py",
+        "tests/test_dispatcher.py",
+        "tests/test_layering.py",
+        "tests/test_push_processor.py",
+        "tests/test_registry.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "baseline",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Create docs/quality/invariants.md documenting layered extension contracts and architectural invariants.",
+    "apply_report": {
+      "files_written": [
+        "docs/quality/invariants.md"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T19:25:46Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_layered_inheritance_20260209T192257Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 5083,
+    "output_tokens": 1111,
+    "total_tokens": 6194,
+    "estimated_cost_usd": 0.0006822189,
+    "latency_ms": 46462
+  },
+  "warnings": [],
+  "errors": []
+}

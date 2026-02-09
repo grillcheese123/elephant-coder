@@ -119,12 +119,14 @@ Relevant modules:
 - `nn/capsule_embedding.py`
 - `experimental/cognitive/world.py` (capsule-aware fact storage and coherence)
 
-Important current detail:
-- Elephant's index world model is currently instantiated with `capsule_dim=0` in `index_engine.py`, so capsule similarity is not active in the current benchmark path.
+Current implementation detail:
+- Elephant now instantiates the index world model with configurable capsule parameters in `private/models/elephant-coder/elephant_coder/index_engine.py`.
+- The defaults are capsule-enabled (`world_model_enabled=true`, `world_model_dim=512`, `world_model_capsule_dim=32`, `world_model_semantic_dims=28`), configurable via `private/models/elephant-coder/config.md`.
+- Runtime summaries expose `capsule_enabled`, `capsule_active`, `capsule_dim`, `semantic_dims`, and fact truncation/limit counters so benchmark runs can be audited.
 
 Implication:
-- The benchmark gains reported here are mostly from VSA + impact graph + session/context strategy.
-- Capsule-enabled world reasoning is available in framework code and is a clear extension path.
+- The benchmark gains reported here remain strongly driven by VSA + impact graph + session/context strategy.
+- Capsule-enabled world reasoning is active and tunable in the current code path.
 
 ## 7. Unified Mechanistic View
 
@@ -168,3 +170,26 @@ Comparison artifact:
 Elephant's benchmark advantage is real under product conditions and largely attributable to structured context strategy, not baseline model variance. The ablation result (72.19% vs 0.23%) is strong evidence that memory-aware context engineering is the dominant factor.
 
 VSA gives fast structure-aware ranking and compression, hippocampal-style mechanisms provide recall and consequence continuity, and capsules provide a pathway for richer semantic memory state. Together, they form a coherent architecture for high-quality, lower-token coding assistance.
+
+## 11. Real-World Quality Validation (Existing Repo vs New Repo)
+
+To validate end-to-end quality impact after enabling capsule-aware world reasoning, two scenario benchmarks were executed with `--apply --run-checks`:
+- existing repo workflow (larger established codebase), dimensions: `world_dim=512`, `capsule_dim=32`
+- new repo from scratch (small bootstrap project), dimensions: `world_dim=1024`, `capsule_dim=64`
+
+Artifacts:
+- `private/models/elephant-coder/.elephant-coder/runs/realworld_quality_report.md`
+- `private/models/elephant-coder/.elephant-coder/runs/benchmark_results_realworld_existing.json`
+- `private/models/elephant-coder/.elephant-coder/runs/benchmark_results_realworld_scratch.json`
+
+Observed outcomes:
+| metric | existing_repo | scratch_repo |
+|---|---:|---:|
+| token_reduction_pct | 79.02 | -33.19 |
+| baseline_success_rate | 66.67 | 100.00 |
+| elephant_success_rate | 100.00 | 100.00 |
+| quality_delta_pct_points | +33.33 | 0.00 |
+
+Interpretation:
+- On the existing repo scenario, Elephant reduced tokens substantially and improved pass-rate on checked tasks.
+- On the scratch scenario, quality stayed equal while Elephant used more tokens; this is expected in tiny bootstrap tasks where context overhead can dominate.

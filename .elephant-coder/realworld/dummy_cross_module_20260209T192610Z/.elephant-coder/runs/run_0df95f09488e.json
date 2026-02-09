@@ -1,0 +1,228 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_0df95f09488e",
+  "session_id": "dummy_cross_module_20260209T191741Z_cross_feature_03_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\"summary\": \"Created run_dispatch_demo.py per spec: uses build_default_runtime, dispatches one email ticket, attempts one push ticket with LookupError handling, prints per-channel summary, and includes an interface-related detail.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"run_dispatch_demo.py\", \"content\": \"\\\"\\\"\\\"Demo script to dispatch email and push tickets.\\\"\\\"\\\"\\n\\nfrom cross_module_engine.runtime.registry import build_default_runtime\\n\\n\\ndef main():\\n    runtime = build_default_runtime()\\n    email_item = runtime.repository.get(\\\"ticket-email-001\\\")\\n    push_item = runtime.repository.get(\\\"ticket-push-001\\\")\\n\\n    results = {}\\n\\n    # Email dispatch\\n    if email_item:\\n        for proc in runtime.processors:\\n            if proc.supports(email_item):\\n                res = proc.process(email_item)\\n                results[\\\"email\\\"] = f\\\"{res.processor} -> {res.details}\\\"\\n                break\\n        else:\\n            results[\\\"email\\\"] = \\\"No processor found\\\"\\n    else:\\n        results[\\\"email\\\"] = \\\"No item found\\\"\\n\\n    # Push dispatch (with LookupError handling)\\n    try:\\n        if push_item:\\n            for proc in runtime.processors:\\n                if proc.supports(push_item):\\n                    res = proc.process(push_item)\\n                    results[\\\"push\\\"] = f\\\"{res.processor} -> {res.details}\\\"\\n                    break\\n            else:\\n                results[\\\"push\\\"] = \\\"No processor found\\\"\\n        else:\\n            results[\\\"push\\\"] = \\\"No item found\\\"\\n    except LookupError:\\n        results[\\\"push\\\"] = \\\"Unavailable (LookupError)\\\"\\n\\n    # Summary output\\n    print(\\\"Per-channel summary:\\\")\\n    for ch, msg in results.items():\\n        print(f\\\"  {ch}: {msg}\\\")\\n    print(\\\"Interface detail: DeliveryInterface.emit() returns rendered channel-prefixed message.\\\")\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    main()\\n\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}, \"python\": [], \"pythonDev\": [], \"rust\": [], \"go\": [], \"cpp\": []}, \"commands\": [\"python run_dispatch_demo.py\"]}\n```"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 3553,
+          "completion_tokens": 504,
+          "total_tokens": 4057
+        },
+        "estimated_cost_usd": 0.0009267885
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "No file writes applied from agent output.",
+    "task": "Create run_dispatch_demo.py that uses build_default_runtime, dispatches one email ticket, then attempts one push ticket. If push is not available, catch LookupError and continue. Print concise per-channel summary and include one interface-related detail in output text.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_cross_module_20260209T192610Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 36,
+      "files_indexed": 24,
+      "files_skipped": 12,
+      "files_deleted": 0,
+      "parse_errors": 23,
+      "symbols_total": 33,
+      "edges_total": 16,
+      "elapsed_ms": 35
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 80,
+        "semantic_dims": 28,
+        "dim": 1280,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "full",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "run_dispatch_demo.py",
+            "src/cross_module_engine/__init__.py",
+            "src/cross_module_engine/channels/__init__.py",
+            "src/cross_module_engine/channels/delivery_adapter.py",
+            "src/cross_module_engine/channels/message_template.py",
+            "src/cross_module_engine/contracts/__init__.py",
+            "src/cross_module_engine/contracts/processor.py",
+            "src/cross_module_engine/contracts/repository.py"
+          ],
+          "count": 8,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 22,
+          "edge_count": 16,
+          "files_considered": [
+            "run_dispatch_demo.py",
+            "src/cross_module_engine/__init__.py",
+            "src/cross_module_engine/channels/__init__.py",
+            "src/cross_module_engine/channels/delivery_adapter.py",
+            "src/cross_module_engine/channels/message_template.py",
+            "src/cross_module_engine/contracts/__init__.py",
+            "src/cross_module_engine/contracts/processor.py",
+            "src/cross_module_engine/contracts/repository.py",
+            "src/cross_module_engine/contracts/work_item.py",
+            "src/cross_module_engine/interfaces/__init__.py",
+            "src/cross_module_engine/interfaces/delivery_interface.py",
+            "src/cross_module_engine/models/__init__.py",
+            "src/cross_module_engine/models/run_result.py",
+            "src/cross_module_engine/models/ticket.py",
+            "src/cross_module_engine/processors/__init__.py",
+            "src/cross_module_engine/processors/base_processor.py",
+            "src/cross_module_engine/processors/channel_bound_processor.py",
+            "src/cross_module_engine/processors/email_processor.py",
+            "src/cross_module_engine/processors/push_processor.py",
+            "src/cross_module_engine/processors/reliable_processor.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 5,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "run_dispatch_demo.py",
+        "src/cross_module_engine/__init__.py",
+        "src/cross_module_engine/channels/__init__.py",
+        "src/cross_module_engine/channels/delivery_adapter.py",
+        "src/cross_module_engine/channels/message_template.py",
+        "src/cross_module_engine/contracts/__init__.py",
+        "src/cross_module_engine/contracts/processor.py",
+        "src/cross_module_engine/contracts/repository.py",
+        "src/cross_module_engine/contracts/work_item.py",
+        "src/cross_module_engine/interfaces/__init__.py",
+        "src/cross_module_engine/interfaces/delivery_interface.py",
+        "src/cross_module_engine/models/__init__.py",
+        "src/cross_module_engine/models/run_result.py",
+        "src/cross_module_engine/models/ticket.py",
+        "src/cross_module_engine/processors/__init__.py",
+        "src/cross_module_engine/processors/base_processor.py",
+        "src/cross_module_engine/processors/channel_bound_processor.py",
+        "src/cross_module_engine/processors/email_processor.py",
+        "src/cross_module_engine/processors/push_processor.py",
+        "src/cross_module_engine/processors/reliable_processor.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Created run_dispatch_demo.py per spec: uses build_default_runtime, dispatches one email ticket, attempts one push ticket with LookupError handling, prints per-channel summary, and includes an interface-related detail.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T19:28:13Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_cross_module_20260209T192610Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 3553,
+    "output_tokens": 504,
+    "total_tokens": 4057,
+    "estimated_cost_usd": 0.0009267885,
+    "latency_ms": 6383
+  },
+  "warnings": [],
+  "errors": []
+}

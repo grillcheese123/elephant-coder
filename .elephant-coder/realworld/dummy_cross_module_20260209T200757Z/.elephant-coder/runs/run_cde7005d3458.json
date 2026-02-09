@@ -1,0 +1,276 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_cde7005d3458",
+  "session_id": "dummy_cross_module_20260209T195922Z_cross_summary_01_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\":\"Project architecture summary for cross_module_engine: a layered message dispatch system with abstract contracts, interface-based adapters, and processor inheritance.\",\"project\":{\"language\":\"python\"},\"files\":[{\"path\":\"docs/summary/project_architecture.md\",\"content\":\"# Project Architecture\\n\\n## File Map\\n- `src/cross_module_engine/` \u2014 core engine package\\n  - `contracts/` \u2014 abstract contracts: `Processor`, `WorkItem`, `WorkItemRepository`\\n  - `interfaces/` \u2014 delivery contracts: `DeliveryInterface`\\n  - `channels/` \u2014 concrete adapters: `DeliveryAdapter`, `MessageTemplate`\\n  - `processors/` \u2014 processing hierarchy: `ChannelBoundProcessor`, `ReliableProcessor`\\n  - `models/` \u2014 domain models: `RunResult`\\n  - `__init__.py` \u2014 package entry points\\n- `tests/test_cross_module.py` \u2014 integration tests\\n\\n## Abstract Contracts\\n- `Processor`: `name`, `supports(item)`, `process(item)`\\n- `WorkItem`: `identifier`, `channel`, `payload`\\n- `WorkItemRepository`: `save`, `get`, `list_by_channel`, `list_all`\\n- `DeliveryInterface`: `channel` property, `emit(message)`\\n\\n## Cross-Module Interfaces\\n- `DeliveryInterface` implemented by `DeliveryAdapter`\\n- `MessageTemplate` used by `DeliveryAdapter` to format messages as `{channel}:{content}`\\n\\n## Layered Inheritance Chain\\n1. `Processor` (abstract)\\n2. `ChannelBoundProcessor` (abstract, uses `DeliveryInterface`)\\n3. `ReliableProcessor` (concrete, implements `process`)\\n\\n## Dispatch Flow\\n1. `ReliableProcessor.process(item)` \u2192 `render_message(item)` \u2192 `adapter.emit(...)` \u2192 `MessageTemplate.render(...)`\\n2. `DeliveryAdapter` binds channel + template; `emit` returns formatted result\\n3. Tests verify channel prefix and retry metadata in result\"}],\"dependencies\":{\"dependencies\":{},\"devDependencies\":{},\"python\":[],\"pythonDev\":[],\"rust\":[],\"go\":[],\"cpp\":[]},\"commands\":[]}"
+      }
+    ],
+    "files_touched": [
+      "docs/summary/project_architecture.md"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 3115,
+          "completion_tokens": 455,
+          "total_tokens": 3570
+        },
+        "estimated_cost_usd": 0.0003510045
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "planner_local",
+      "selection_reason": "task-heuristic role=planner"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create docs/summary/project_architecture.md. Summarize the repository with a file map, abstract contracts, cross-module interfaces, layered inheritance chain, and dispatch flow. Follow source-code rules and naming. Ensure the file is at least 220 characters.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_cross_module_20260209T200757Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 33,
+      "files_indexed": 33,
+      "files_skipped": 0,
+      "files_deleted": 0,
+      "parse_errors": 24,
+      "symbols_total": 20,
+      "edges_total": 4,
+      "elapsed_ms": 35
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 80,
+        "semantic_dims": 28,
+        "dim": 1280,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "src/cross_module_engine/__init__.py",
+            "src/cross_module_engine/channels/__init__.py",
+            "src/cross_module_engine/channels/delivery_adapter.py",
+            "src/cross_module_engine/channels/message_template.py",
+            "src/cross_module_engine/contracts/__init__.py",
+            "src/cross_module_engine/contracts/processor.py",
+            "src/cross_module_engine/contracts/repository.py",
+            "src/cross_module_engine/contracts/work_item.py",
+            "src/cross_module_engine/interfaces/__init__.py",
+            "src/cross_module_engine/interfaces/delivery_interface.py",
+            "src/cross_module_engine/models/__init__.py",
+            "src/cross_module_engine/models/run_result.py"
+          ],
+          "count": 12,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 20,
+          "edge_count": 4,
+          "files_considered": [
+            "src/cross_module_engine/__init__.py",
+            "src/cross_module_engine/channels/__init__.py",
+            "src/cross_module_engine/channels/delivery_adapter.py",
+            "src/cross_module_engine/channels/message_template.py",
+            "src/cross_module_engine/contracts/__init__.py",
+            "src/cross_module_engine/contracts/processor.py",
+            "src/cross_module_engine/contracts/repository.py",
+            "src/cross_module_engine/contracts/work_item.py",
+            "src/cross_module_engine/interfaces/__init__.py",
+            "src/cross_module_engine/interfaces/delivery_interface.py",
+            "src/cross_module_engine/models/__init__.py",
+            "src/cross_module_engine/models/run_result.py",
+            "src/cross_module_engine/models/ticket.py",
+            "src/cross_module_engine/processors/__init__.py",
+            "src/cross_module_engine/processors/base_processor.py",
+            "src/cross_module_engine/processors/channel_bound_processor.py",
+            "src/cross_module_engine/processors/email_processor.py",
+            "src/cross_module_engine/processors/reliable_processor.py",
+            "src/cross_module_engine/processors/sms_processor.py",
+            "src/cross_module_engine/processors/webhook_processor.py",
+            "src/cross_module_engine/repositories/__init__.py",
+            "src/cross_module_engine/repositories/in_memory_repository.py",
+            "src/cross_module_engine/runtime/__init__.py",
+            "src/cross_module_engine/runtime/bootstrap.py",
+            "src/cross_module_engine/runtime/registry.py",
+            "src/cross_module_engine/services/__init__.py",
+            "src/cross_module_engine/services/dispatcher.py",
+            "src/cross_module_engine/services/reporting.py",
+            "src/cross_module_engine/utils/__init__.py",
+            "src/cross_module_engine/utils/ids.py",
+            "tests/test_cross_module.py",
+            "tests/test_dispatcher.py",
+            "tests/test_registry.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        },
+        "capsule_transport": {
+          "enabled": false,
+          "mode": "hybrid",
+          "error": null,
+          "packet": null
+        }
+      },
+      "impacted_files_used": [
+        "src/cross_module_engine/__init__.py",
+        "src/cross_module_engine/channels/__init__.py",
+        "src/cross_module_engine/channels/delivery_adapter.py",
+        "src/cross_module_engine/channels/message_template.py",
+        "src/cross_module_engine/contracts/__init__.py",
+        "src/cross_module_engine/contracts/processor.py",
+        "src/cross_module_engine/contracts/repository.py",
+        "src/cross_module_engine/contracts/work_item.py",
+        "src/cross_module_engine/interfaces/__init__.py",
+        "src/cross_module_engine/interfaces/delivery_interface.py",
+        "src/cross_module_engine/models/__init__.py",
+        "src/cross_module_engine/models/run_result.py",
+        "src/cross_module_engine/models/ticket.py",
+        "src/cross_module_engine/processors/__init__.py",
+        "src/cross_module_engine/processors/base_processor.py",
+        "src/cross_module_engine/processors/channel_bound_processor.py",
+        "src/cross_module_engine/processors/email_processor.py",
+        "src/cross_module_engine/processors/reliable_processor.py",
+        "src/cross_module_engine/processors/sms_processor.py",
+        "src/cross_module_engine/processors/webhook_processor.py",
+        "src/cross_module_engine/repositories/__init__.py",
+        "src/cross_module_engine/repositories/in_memory_repository.py",
+        "src/cross_module_engine/runtime/__init__.py",
+        "src/cross_module_engine/runtime/bootstrap.py",
+        "src/cross_module_engine/runtime/registry.py",
+        "src/cross_module_engine/services/__init__.py",
+        "src/cross_module_engine/services/dispatcher.py",
+        "src/cross_module_engine/services/reporting.py",
+        "src/cross_module_engine/utils/__init__.py",
+        "src/cross_module_engine/utils/ids.py",
+        "tests/test_cross_module.py",
+        "tests/test_dispatcher.py",
+        "tests/test_registry.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "capsule_transport": {
+        "enabled": false,
+        "mode": "hybrid",
+        "error": null,
+        "packet": null
+      },
+      "capsule_transport_config": {
+        "enabled": false,
+        "mode": "hybrid",
+        "dim": 768,
+        "max_items": 48,
+        "fingerprint_bits": 96
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "baseline",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Project architecture summary for cross_module_engine: a layered message dispatch system with abstract contracts, interface-based adapters, and processor inheritance.",
+    "apply_report": {
+      "files_written": [
+        "docs/summary/project_architecture.md"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T20:08:10Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_cross_module_20260209T200757Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 3115,
+    "output_tokens": 455,
+    "total_tokens": 3570,
+    "estimated_cost_usd": 0.0003510045,
+    "latency_ms": 12468
+  },
+  "warnings": [],
+  "errors": []
+}

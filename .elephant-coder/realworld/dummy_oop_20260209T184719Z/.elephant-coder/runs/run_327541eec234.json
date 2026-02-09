@@ -1,0 +1,241 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_327541eec234",
+  "session_id": "dummy_oop_20260209T184719Z_dummy_summary_01_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"A minimal workflow engine with abstract contracts for WorkItem, Processor, and WorkItemRepository, and concrete implementations for email, SMS, and webhook processing. Dispatching is handled by a DispatcherService that selects processors by channel and persists results via a repository.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"docs/summary/project_architecture.md\", \"content\": \"# Project Architecture\\n\\n## File-level Map\\n\\n```\\nsrc/workflow_engine/\\n\u251c\u2500\u2500 __init__.py\\n\u251c\u2500\u2500 contracts/\\n\u2502   \u251c\u2500\u2500 __init__.py\\n\u2502   \u251c\u2500\u2500 processor.py          # Processor (ABC)\\n\u2502   \u251c\u2500\u2500 repository.py         # WorkItemRepository (ABC)\\n\u2502   \u2514\u2500\u2500 work_item.py          # WorkItem (ABC)\\n\u251c\u2500\u2500 models/\\n\u2502   \u251c\u2500\u2500 __init__.py\\n\u2502   \u251c\u2500\u2500 run_result.py         # RunResult (dataclass)\\n\u2502   \u2514\u2500\u2500 ticket.py             # Ticket (concrete WorkItem)\\n\u251c\u2500\u2500 processors/\\n\u2502   \u251c\u2500\u2500 __init__.py\\n\u2502   \u251c\u2500\u2500 base_processor.py     # BaseProcessor (abstract)\\n\u2502   \u251c\u2500\u2500 email_processor.py    # EmailProcessor\\n\u2502   \u251c\u2500\u2500 sms_processor.py      # SmsProcessor\\n\u2502   \u2514\u2500\u2500 webhook_processor.py  # WebhookProcessor\\n\u251c\u2500\u2500 repositories/\\n\u2502   \u2514\u2500\u2500 in_memory_repository.py  # InMemoryWorkItemRepository\\n\u251c\u2500\u2500 runtime/\\n\u2502   \u251c\u2500\u2500 bootstrap.py          # build_default_runtime\\n\u2502   \u2514\u2500\u2500 registry.py           # default_processors\\n\u251c\u2500\u2500 services/\\n\u2502   \u251c\u2500\u2500 dispatcher.py         # DispatcherService\\n\u2502   \u2514\u2500\u2500 reporting.py          # summarize_channels\\n\u2514\u2500\u2500 utils/\\n    \u2514\u2500\u2500 ids.py                # make_ticket_id\\n```\\n\\n## Abstract Contracts\\n\\n- **WorkItem** (`contracts/work_item.py`)\\n  - `identifier: str`\\n  - `channel: str`\\n  - `payload: dict[str, str]`\\n\\n- **Processor** (`contracts/processor.py`)\\n  - `name: str`\\n  - `supports(item: WorkItem) -> bool`\\n  - `process(item: WorkItem) -> RunResult`\\n\\n- **WorkItemRepository** (`contracts/repository.py`)\\n  - `save(item: WorkItem) -> None`\\n  - `get(identifier: str) -> WorkItem | None`\\n  - `list_by_channel(channel: str) -> list[WorkItem]`\\n  - `list_all() -> list[WorkItem]`\\n\\n## Concrete Subclasses\\n\\n- **WorkItem**: `Ticket` (`models/ticket.py`)\\n- **Processor**: `BaseProcessor` (`processors/base_processor.py`) \u2192 `EmailProcessor`, `SmsProcessor`, `WebhookProcessor`\\n- **WorkItemRepository**: `InMemoryWorkItemRepository` (`repositories/in_memory_repository.py`)\\n\\n## Dispatch Flow\\n\\n1. `build_default_runtime()` in `runtime/bootstrap.py` instantiates:\\n   - `InMemoryWorkItemRepository`\\n   - `default_processors()` from `runtime/registry.py` \u2192 `[EmailProcessor, SmsProcessor, WebhookProcessor]`\\n   - `DispatcherService(repository, processors)`\\n\\n2. `DispatcherService.dispatch(item: Ticket)`:\\n   - Iterates processors, calls `processor.supports(item)`\\n   - Invokes `processor.process(item)` on first match\\n   - `BaseProcessor.process()` calls `_deliver(item)` (implemented per subclass)\\n   - Returns `RunResult(processor, item_id, success, details)`\\n\\n3. `Ticket` is created via `make_ticket_id(channel)` and carries `ticket_id`, `target_channel`, `data`.\\n\\n## Reporting\\n\\n- `summarize_channels(repository)` counts items per channel via `list_all()`.\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}, \"python\": [], \"pythonDev\": [], \"rust\": [], \"go\": [], \"cpp\": []}, \"commands\": []}"
+      }
+    ],
+    "files_touched": [
+      "docs/summary/project_architecture.md"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 5081,
+          "completion_tokens": 854,
+          "total_tokens": 5935
+        },
+        "estimated_cost_usd": 0.0006057513
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "planner_local",
+      "selection_reason": "task-heuristic role=planner"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Summarize this repository into docs/summary/project_architecture.md. Include a file-level map, abstract contracts, concrete subclasses, and the dispatch flow. Follow the rules from the source code.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T184719Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 25,
+      "files_indexed": 25,
+      "files_skipped": 0,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 49,
+      "edges_total": 30,
+      "elapsed_ms": 34
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 48,
+        "semantic_dims": 28,
+        "dim": 768,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "src/workflow_engine/__init__.py",
+            "src/workflow_engine/contracts/__init__.py",
+            "src/workflow_engine/contracts/processor.py",
+            "src/workflow_engine/contracts/repository.py",
+            "src/workflow_engine/contracts/work_item.py",
+            "src/workflow_engine/models/__init__.py",
+            "src/workflow_engine/models/run_result.py",
+            "src/workflow_engine/models/ticket.py",
+            "src/workflow_engine/processors/__init__.py",
+            "src/workflow_engine/processors/base_processor.py",
+            "src/workflow_engine/processors/email_processor.py",
+            "src/workflow_engine/processors/sms_processor.py"
+          ],
+          "count": 12,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 49,
+          "edge_count": 30,
+          "files_considered": [
+            "src/workflow_engine/__init__.py",
+            "src/workflow_engine/contracts/__init__.py",
+            "src/workflow_engine/contracts/processor.py",
+            "src/workflow_engine/contracts/repository.py",
+            "src/workflow_engine/contracts/work_item.py",
+            "src/workflow_engine/models/__init__.py",
+            "src/workflow_engine/models/run_result.py",
+            "src/workflow_engine/models/ticket.py",
+            "src/workflow_engine/processors/__init__.py",
+            "src/workflow_engine/processors/base_processor.py",
+            "src/workflow_engine/processors/email_processor.py",
+            "src/workflow_engine/processors/sms_processor.py",
+            "src/workflow_engine/processors/webhook_processor.py",
+            "src/workflow_engine/repositories/__init__.py",
+            "src/workflow_engine/repositories/in_memory_repository.py",
+            "src/workflow_engine/runtime/__init__.py",
+            "src/workflow_engine/runtime/bootstrap.py",
+            "src/workflow_engine/runtime/registry.py",
+            "src/workflow_engine/services/__init__.py",
+            "src/workflow_engine/services/dispatcher.py",
+            "src/workflow_engine/services/reporting.py",
+            "src/workflow_engine/utils/__init__.py",
+            "src/workflow_engine/utils/ids.py",
+            "tests/test_dispatcher.py",
+            "tests/test_registry.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "src/workflow_engine/__init__.py",
+        "src/workflow_engine/contracts/__init__.py",
+        "src/workflow_engine/contracts/processor.py",
+        "src/workflow_engine/contracts/repository.py",
+        "src/workflow_engine/contracts/work_item.py",
+        "src/workflow_engine/models/__init__.py",
+        "src/workflow_engine/models/run_result.py",
+        "src/workflow_engine/models/ticket.py",
+        "src/workflow_engine/processors/__init__.py",
+        "src/workflow_engine/processors/base_processor.py",
+        "src/workflow_engine/processors/email_processor.py",
+        "src/workflow_engine/processors/sms_processor.py",
+        "src/workflow_engine/processors/webhook_processor.py",
+        "src/workflow_engine/repositories/__init__.py",
+        "src/workflow_engine/repositories/in_memory_repository.py",
+        "src/workflow_engine/runtime/__init__.py",
+        "src/workflow_engine/runtime/bootstrap.py",
+        "src/workflow_engine/runtime/registry.py",
+        "src/workflow_engine/services/__init__.py",
+        "src/workflow_engine/services/dispatcher.py",
+        "src/workflow_engine/services/reporting.py",
+        "src/workflow_engine/utils/__init__.py",
+        "src/workflow_engine/utils/ids.py",
+        "tests/test_dispatcher.py",
+        "tests/test_registry.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "baseline",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "A minimal workflow engine with abstract contracts for WorkItem, Processor, and WorkItemRepository, and concrete implementations for email, SMS, and webhook processing. Dispatching is handled by a DispatcherService that selects processors by channel and persists results via a repository.",
+    "apply_report": {
+      "files_written": [
+        "docs/summary/project_architecture.md"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T18:47:32Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T184719Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 5081,
+    "output_tokens": 854,
+    "total_tokens": 5935,
+    "estimated_cost_usd": 0.0006057513,
+    "latency_ms": 13181
+  },
+  "warnings": [],
+  "errors": []
+}

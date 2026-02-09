@@ -1,0 +1,15 @@
+.env
+.venv
+__pycache__/
+*.pyc
+.idea/
+.vscode/
+.DS_Store
+*.log
+*.sqlite3
+*.db
+*.bak
+INSTRUCTIONS.md
+dist/
+build/
+elephant_coder.egg-info/

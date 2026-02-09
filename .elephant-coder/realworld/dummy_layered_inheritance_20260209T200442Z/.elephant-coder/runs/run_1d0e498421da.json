@@ -1,0 +1,21 @@
+{
+  "ok": false,
+  "command": "/code",
+  "run_id": "run_1d0e498421da",
+  "session_id": "dummy_layered_inheritance_20260209T195922Z_layered_feature_03_baseline_r1",
+  "data": {},
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 3226
+  },
+  "warnings": [],
+  "errors": [
+    {
+      "code": "E_STORAGE",
+      "message": "Remote end closed connection without response"
+    }
+  ]
+}

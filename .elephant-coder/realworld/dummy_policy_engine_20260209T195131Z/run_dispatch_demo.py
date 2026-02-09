@@ -1,0 +1,44 @@
+from policy_engine.models.ticket import Ticket
+from policy_engine.runtime import build_default_runtime
+
+
+def main():
+    runtime = build_default_runtime()
+
+    email_ticket = Ticket(
+        ticket_id="email-001",
+        target_channel="email",
+        data={"to": "user@example.com", "subject": "Demo"}
+    )
+    push_ticket = Ticket(
+        ticket_id="push-001",
+        target_channel="push",
+        data={"message": "Demo push"}
+    )
+
+    results = {}
+
+    # Dispatch email ticket
+    email_result = runtime.dispatch(email_ticket)
+    results["email"] = email_result
+
+    # Attempt push ticket, handle missing support
+    try:
+        push_result = runtime.dispatch(push_ticket)
+        results["push"] = push_result
+    except LookupError:
+        results["push"] = None
+
+    # Print per-channel summary
+    for channel in ["email", "push"]:
+        result = results[channel]
+        if result is None:
+            print(f"{channel}: not available")
+        elif result.success:
+            print(f"{channel}: success - {result.details}")
+        else:
+            print(f"{channel}: failed - {result.details}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,99 @@
+{
+  "protocol_version": "v1",
+  "generated_at_utc": "2026-02-09T20:22:14Z",
+  "benchmark_id": "dummy_cross_module_20260209T202042Z",
+  "comparison_track": "strategy",
+  "framework_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+  "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_cross_module_20260209T202201Z",
+  "tasks_source": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.benchmarks\\tasks_dummy_cross_module_v1.json",
+  "tasks_total": 1,
+  "runs_total": 2,
+  "dry_run": false,
+  "apply_to_disk": true,
+  "no_apply": false,
+  "run_checks": true,
+  "budget_overrides": {
+    "max_input_tokens": 24000,
+    "max_output_tokens": 3000,
+    "max_cost_usd": 2.0
+  },
+  "results": [
+    {
+      "task_id": "cross_summary_01",
+      "category": "analysis",
+      "prompt": "Create docs/summary/project_architecture.md. Summarize the repository with a file map, abstract contracts, cross-module interfaces, layered inheritance chain, and dispatch flow. Follow source-code rules and naming. Ensure the file is at least 220 characters.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "dummy_cross_module_20260209T202042Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_cross_module_20260209T202042Z_cross_summary_01_baseline_r1",
+      "run_id": "run_be7099a55c45",
+      "success": false,
+      "ok": true,
+      "input_tokens": 3115,
+      "output_tokens": 401,
+      "total_tokens": 3516,
+      "estimated_cost_usd": 0.0003349665,
+      "latency_ms": 6995,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "docs/summary/project_architecture.md"
+      ],
+      "checks_passed": [],
+      "checks_failed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/summary/project_architecture.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; low=text.lower(); keys=['deliveryinterface','channelboundprocessor','reliableprocessor','baseprocessor','dispatcher']; hits=sum(1 for k in keys if k in low); sys.exit(0 if p.exists() and len(text)>=200 and hits>=4 else 1)\" (code=1; Creating virtual environment at: .venv)"
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "cross_summary_01",
+      "category": "analysis",
+      "prompt": "Create docs/summary/project_architecture.md. Summarize the repository with a file map, abstract contracts, cross-module interfaces, layered inheritance chain, and dispatch flow. Follow source-code rules and naming. Ensure the file is at least 220 characters.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "dummy_cross_module_20260209T202042Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_cross_module_20260209T202042Z_cross_summary_01_elephant_r1",
+      "run_id": "run_0f2e004f67eb",
+      "success": false,
+      "ok": true,
+      "input_tokens": 2599,
+      "output_tokens": 426,
+      "total_tokens": 3025,
+      "estimated_cost_usd": 0.0007233435,
+      "latency_ms": 5396,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "docs/summary/project_architecture.md"
+      ],
+      "checks_passed": [],
+      "checks_failed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/summary/project_architecture.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; low=text.lower(); keys=['deliveryinterface','channelboundprocessor','reliableprocessor','baseprocessor','dispatcher']; hits=sum(1 for k in keys if k in low); sys.exit(0 if p.exists() and len(text)>=200 and hits>=4 else 1)\" (code=1; warning: `VIRTUAL_ENV=C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.venv` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead)"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "aggregates": {
+    "baseline": {
+      "runs": 1,
+      "success_rate": 0.0,
+      "avg_total_tokens": 3516,
+      "avg_latency_ms": 6995,
+      "total_cost_usd": 0.000335
+    },
+    "elephant": {
+      "runs": 1,
+      "success_rate": 0.0,
+      "avg_total_tokens": 3025,
+      "avg_latency_ms": 5396,
+      "total_cost_usd": 0.000723
+    },
+    "token_reduction_pct": 13.96,
+    "quality_delta_pct_points": 0.0,
+    "latency_delta_ms": -1599
+  }
+}

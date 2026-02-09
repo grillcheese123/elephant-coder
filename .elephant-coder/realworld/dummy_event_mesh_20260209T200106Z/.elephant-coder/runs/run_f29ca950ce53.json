@@ -1,0 +1,266 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_f29ca950ce53",
+  "session_id": "dummy_event_mesh_20260209T195922Z_event_invariant_04_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Create docs/quality/invariants.md documenting extension contracts and architectural invariants: registry contract, processor inheritance rules, and repository contract. Runtime behavior remains unchanged.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"docs/quality/invariants.md\", \"content\": \"# Architectural Invariants\\n\\nThis document describes extension contracts and architectural invariants that must be preserved to maintain system correctness and extensibility.\\n\\n---\\n\\n## Registry Contract\\n\\nThe runtime must provide a mechanism to register and discover processors by channel. While no explicit `Registry` interface exists yet, the following behavior is expected:\\n\\n- Processors are registered at runtime via `build_default_runtime()`.\\n- Each processor must be uniquely associated with a single channel name.\\n- The runtime must support querying available processors by channel.\\n- Adding a new processor must not require changes to existing dispatch logic.\\n\\n---\\n\\n## Processor Inheritance Rules\\n\\nAll channel-specific processors must adhere to the following contract:\\n\\n### Abstract Contract (`Processor`)\\n\\n- `name: str`: Human-readable identifier (e.g., `\\\"EmailProcessor\\\"`).\\n- `supports(item: WorkItem) -> bool`: Must return `True` only if the processor can handle the item\u2019s channel.\\n- `process(item: WorkItem) -> RunResult`: Must return a result indicating success/failure and details.\\n\\n### Base Implementation (`BaseProcessor`)\\n\\n- Subclasses **must** set `supported_channel: str`.\\n- `supports()` is implemented to compare `item.channel == supported_channel`.\\n- `process()` enforces support check before delegating to `_deliver()`.\\n- Subclasses **must** implement `_deliver(item: WorkItem) -> str`.\\n\\n### Extension Guidelines\\n\\n- Do **not** override `supports()` or `process()` unless necessary.\\n- Do **not** change the semantics of `RunResult` fields.\\n- New processors must inherit from `BaseProcessor` to preserve invariants.\\n\\n---\\n\\n## Repository Contract (`WorkItemRepository`)\\n\\nThe repository abstraction enforces persistence boundaries:\\n\\n- `save(item: WorkItem) -> None`: Persist item; must not mutate the item.\\n- `get(identifier: str) -> WorkItem | None`: Retrieve by stable ID.\\n- `list_by_channel(channel: str) -> list[WorkItem]`: Filter by channel.\\n- `list_all() -> list[WorkItem]`: Return all stored items.\\n\\n### Invariants\\n\\n- Repositories must preserve immutability of `WorkItem` instances.\\n- `get()` must return `None` if no item exists for the given ID.\\n- `list_by_channel()` must not include items for other channels.\\n\\n---\\n\\n## WorkItem Contract (`WorkItem`)\\n\\nAll work items must provide:\\n\\n- `identifier: str`: Stable, unique ID for tracing.\\n- `channel: str`: Target delivery channel (e.g., `\\\"email\\\"`, `\\\"push\\\"`).\\n- `payload: dict[str, str]`: Message data.\\n\\nThe `Ticket` concrete class enforces these via dataclass fields.\\n\\n---\\n\\n## Runtime Behavior Preservation\\n\\nChanges must not alter:\\n\\n- Dispatch semantics (e.g., `runtime.dispatch()` behavior).\\n- Result structure (`RunResult` fields and semantics).\\n- Error handling (e.g., `LookupError` for missing processors).\\n\\nAll invariants above ensure backward compatibility and safe extension.\"}]}"
+      }
+    ],
+    "files_touched": [
+      "docs/quality/invariants.md"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 2953,
+          "completion_tokens": 759,
+          "total_tokens": 3712
+        },
+        "estimated_cost_usd": 0.0004300659
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create docs/quality/invariants.md describing extension contracts and architectural invariants (registry contract, processor inheritance rules, and repository contract). Keep runtime behavior unchanged.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_event_mesh_20260209T200106Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 28,
+      "files_indexed": 27,
+      "files_skipped": 1,
+      "files_deleted": 0,
+      "parse_errors": 27,
+      "symbols_total": 1,
+      "edges_total": 0,
+      "elapsed_ms": 35
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 56,
+        "semantic_dims": 28,
+        "dim": 896,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "run_dispatch_demo.py",
+            "src/event_mesh/__init__.py",
+            "src/event_mesh/contracts/__init__.py",
+            "src/event_mesh/contracts/processor.py",
+            "src/event_mesh/contracts/repository.py",
+            "src/event_mesh/contracts/work_item.py",
+            "src/event_mesh/models/__init__.py",
+            "src/event_mesh/models/run_result.py",
+            "src/event_mesh/models/ticket.py",
+            "src/event_mesh/processors/__init__.py",
+            "src/event_mesh/processors/base_processor.py",
+            "src/event_mesh/processors/email_processor.py"
+          ],
+          "count": 12,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 1,
+          "edge_count": 0,
+          "files_considered": [
+            "run_dispatch_demo.py",
+            "src/event_mesh/__init__.py",
+            "src/event_mesh/contracts/__init__.py",
+            "src/event_mesh/contracts/processor.py",
+            "src/event_mesh/contracts/repository.py",
+            "src/event_mesh/contracts/work_item.py",
+            "src/event_mesh/models/__init__.py",
+            "src/event_mesh/models/run_result.py",
+            "src/event_mesh/models/ticket.py",
+            "src/event_mesh/processors/__init__.py",
+            "src/event_mesh/processors/base_processor.py",
+            "src/event_mesh/processors/email_processor.py",
+            "src/event_mesh/processors/push_processor.py",
+            "src/event_mesh/processors/sms_processor.py",
+            "src/event_mesh/processors/webhook_processor.py",
+            "src/event_mesh/repositories/__init__.py",
+            "src/event_mesh/repositories/in_memory_repository.py",
+            "src/event_mesh/runtime/__init__.py",
+            "src/event_mesh/runtime/bootstrap.py",
+            "src/event_mesh/runtime/registry.py",
+            "src/event_mesh/services/__init__.py",
+            "src/event_mesh/services/dispatcher.py",
+            "src/event_mesh/services/reporting.py",
+            "src/event_mesh/utils/__init__.py",
+            "src/event_mesh/utils/ids.py",
+            "tests/test_dispatcher.py",
+            "tests/test_push_processor.py",
+            "tests/test_registry.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        },
+        "capsule_transport": {
+          "enabled": false,
+          "mode": "hybrid",
+          "error": null,
+          "packet": null
+        }
+      },
+      "impacted_files_used": [
+        "run_dispatch_demo.py",
+        "src/event_mesh/__init__.py",
+        "src/event_mesh/contracts/__init__.py",
+        "src/event_mesh/contracts/processor.py",
+        "src/event_mesh/contracts/repository.py",
+        "src/event_mesh/contracts/work_item.py",
+        "src/event_mesh/models/__init__.py",
+        "src/event_mesh/models/run_result.py",
+        "src/event_mesh/models/ticket.py",
+        "src/event_mesh/processors/__init__.py",
+        "src/event_mesh/processors/base_processor.py",
+        "src/event_mesh/processors/email_processor.py",
+        "src/event_mesh/processors/push_processor.py",
+        "src/event_mesh/processors/sms_processor.py",
+        "src/event_mesh/processors/webhook_processor.py",
+        "src/event_mesh/repositories/__init__.py",
+        "src/event_mesh/repositories/in_memory_repository.py",
+        "src/event_mesh/runtime/__init__.py",
+        "src/event_mesh/runtime/bootstrap.py",
+        "src/event_mesh/runtime/registry.py",
+        "src/event_mesh/services/__init__.py",
+        "src/event_mesh/services/dispatcher.py",
+        "src/event_mesh/services/reporting.py",
+        "src/event_mesh/utils/__init__.py",
+        "src/event_mesh/utils/ids.py",
+        "tests/test_dispatcher.py",
+        "tests/test_push_processor.py",
+        "tests/test_registry.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "capsule_transport": {
+        "enabled": false,
+        "mode": "hybrid",
+        "error": null,
+        "packet": null
+      },
+      "capsule_transport_config": {
+        "enabled": false,
+        "mode": "hybrid",
+        "dim": 768,
+        "max_items": 48,
+        "fingerprint_bits": 96
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "baseline",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Create docs/quality/invariants.md documenting extension contracts and architectural invariants: registry contract, processor inheritance rules, and repository contract. Runtime behavior remains unchanged.",
+    "apply_report": {
+      "files_written": [
+        "docs/quality/invariants.md"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T20:02:45Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_event_mesh_20260209T200106Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 2953,
+    "output_tokens": 759,
+    "total_tokens": 3712,
+    "estimated_cost_usd": 0.0004300659,
+    "latency_ms": 17501
+  },
+  "warnings": [],
+  "errors": []
+}

@@ -1,0 +1,299 @@
+{
+  "protocol_version": "v1",
+  "generated_at_utc": "2026-02-09T20:33:08Z",
+  "benchmark_id": "dummy_oop_20260209T203040Z",
+  "comparison_track": "strategy",
+  "framework_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+  "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T203040Z",
+  "tasks_source": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.benchmarks\\tasks_dummy_oop_v1.json",
+  "tasks_total": 4,
+  "runs_total": 8,
+  "dry_run": false,
+  "apply_to_disk": true,
+  "no_apply": false,
+  "run_checks": true,
+  "budget_overrides": {
+    "max_input_tokens": 24000,
+    "max_output_tokens": 3000,
+    "max_cost_usd": 2.0
+  },
+  "results": [
+    {
+      "task_id": "dummy_summary_01",
+      "category": "analysis",
+      "prompt": "Create docs/summary/project_architecture.md. Summarize the repository with a file map, abstract contracts, concrete subclasses, and dispatch flow. Follow source-code rules and naming. Ensure the file is at least 200 characters.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T203040Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T203040Z_dummy_summary_01_baseline_r1",
+      "run_id": "run_bbe7470ee204",
+      "success": true,
+      "ok": true,
+      "input_tokens": 5119,
+      "output_tokens": 630,
+      "total_tokens": 5749,
+      "estimated_cost_usd": 0.0005418567,
+      "latency_ms": 22792,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "docs/summary/project_architecture.md"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/summary/project_architecture.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; low=text.lower(); keys=['workitem','processor','baseprocessor','repository','dispatcher']; hits=sum(1 for k in keys if k in low); sys.exit(0 if p.exists() and len(text)>=180 and hits>=3 else 1)\""
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "dummy_summary_01",
+      "category": "analysis",
+      "prompt": "Create docs/summary/project_architecture.md. Summarize the repository with a file map, abstract contracts, concrete subclasses, and dispatch flow. Follow source-code rules and naming. Ensure the file is at least 200 characters.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T203040Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T203040Z_dummy_summary_01_elephant_r1",
+      "run_id": "run_13346ed3eb63",
+      "success": true,
+      "ok": true,
+      "input_tokens": 3215,
+      "output_tokens": 637,
+      "total_tokens": 3852,
+      "estimated_cost_usd": 0.0004119885,
+      "latency_ms": 25234,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "docs/summary/project_architecture.md"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/summary/project_architecture.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; low=text.lower(); keys=['workitem','processor','baseprocessor','repository','dispatcher']; hits=sum(1 for k in keys if k in low); sys.exit(0 if p.exists() and len(text)>=180 and hits>=3 else 1)\""
+      ],
+      "checks_failed": [],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "dummy_feature_02",
+      "category": "feature",
+      "prompt": "Add push notification support by following existing source-code rules and extension patterns. Create src/workflow_engine/processors/push_processor.py with class PushProcessor, update src/workflow_engine/processors/__init__.py and src/workflow_engine/runtime/registry.py to register it, and add tests/test_push_processor.py using unittest for a successful push dispatch via build_default_runtime.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T203040Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T203040Z_dummy_feature_02_baseline_r1",
+      "run_id": "run_4d1256dfaf37",
+      "success": false,
+      "ok": true,
+      "input_tokens": 5169,
+      "output_tokens": 724,
+      "total_tokens": 5893,
+      "estimated_cost_usd": 0.0005732397,
+      "latency_ms": 26036,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "src/workflow_engine/processors/__init__.py",
+        "src/workflow_engine/processors/push_processor.py",
+        "src/workflow_engine/runtime/registry.py",
+        "tests/test_push_processor.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile src/workflow_engine/processors/push_processor.py src/workflow_engine/runtime/registry.py tests/test_push_processor.py",
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; text=Path('src/workflow_engine/runtime/registry.py').read_text(encoding='utf-8', errors='replace'); sys.exit(0 if 'PushProcessor' in text else 1)\""
+      ],
+      "checks_failed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import re, sys; p=Path('src/workflow_engine/processors/push_processor.py'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; ok=bool(re.search(r'class\\\\s+PushProcessor\\\\s*\\\\(\\\\s*BaseProcessor\\\\s*\\\\)', text)); sys.exit(0 if ok else 1)\" (code=1; warning: `VIRTUAL_ENV=C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.venv` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead)",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_push_processor.py\" -v (code=1; FAILED (errors=1))"
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "dummy_feature_02",
+      "category": "feature",
+      "prompt": "Add push notification support by following existing source-code rules and extension patterns. Create src/workflow_engine/processors/push_processor.py with class PushProcessor, update src/workflow_engine/processors/__init__.py and src/workflow_engine/runtime/registry.py to register it, and add tests/test_push_processor.py using unittest for a successful push dispatch via build_default_runtime.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T203040Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T203040Z_dummy_feature_02_elephant_r1",
+      "run_id": "run_81f5c051fc81",
+      "success": false,
+      "ok": true,
+      "input_tokens": 3619,
+      "output_tokens": 668,
+      "total_tokens": 4287,
+      "estimated_cost_usd": 0.0010664775,
+      "latency_ms": 6145,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "src/workflow_engine/processors/__init__.py",
+        "src/workflow_engine/processors/push_processor.py",
+        "src/workflow_engine/runtime/registry.py",
+        "tests/test_push_processor.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile src/workflow_engine/processors/push_processor.py src/workflow_engine/runtime/registry.py tests/test_push_processor.py",
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; text=Path('src/workflow_engine/runtime/registry.py').read_text(encoding='utf-8', errors='replace'); sys.exit(0 if 'PushProcessor' in text else 1)\""
+      ],
+      "checks_failed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import re, sys; p=Path('src/workflow_engine/processors/push_processor.py'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; ok=bool(re.search(r'class\\\\s+PushProcessor\\\\s*\\\\(\\\\s*BaseProcessor\\\\s*\\\\)', text)); sys.exit(0 if ok else 1)\" (code=1; warning: `VIRTUAL_ENV=C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.venv` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead)",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_push_processor.py\" -v (code=1; FAILED (errors=1))"
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "dummy_feature_03",
+      "category": "feature",
+      "prompt": "Create run_dispatch_demo.py that uses build_default_runtime, dispatches one email ticket, then attempts one push ticket. If push is not available, catch LookupError and continue. Print a concise per-channel summary.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T203040Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T203040Z_dummy_feature_03_baseline_r1",
+      "run_id": "run_087389b54b93",
+      "success": false,
+      "ok": true,
+      "input_tokens": 5390,
+      "output_tokens": 385,
+      "total_tokens": 5775,
+      "estimated_cost_usd": 0.000487872,
+      "latency_ms": 15462,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "run_dispatch_demo.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile run_dispatch_demo.py",
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('run_dispatch_demo.py'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; req=['build_default_runtime','LookupError','email']; sys.exit(0 if p.exists() and all(x in text for x in req) else 1)\""
+      ],
+      "checks_failed": [
+        "uv run --python 3.12 python -c \"import runpy, sys; sys.path.insert(0, 'src'); runpy.run_path('run_dispatch_demo.py', run_name='__main__')\" (code=1; ImportError: cannot import name 'default_processors' from 'workflow_engine.runtime.registry' (C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T203040Z\\src\\workflow_engine\\runtime\\registry.py))"
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "dummy_feature_03",
+      "category": "feature",
+      "prompt": "Create run_dispatch_demo.py that uses build_default_runtime, dispatches one email ticket, then attempts one push ticket. If push is not available, catch LookupError and continue. Print a concise per-channel summary.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T203040Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T203040Z_dummy_feature_03_elephant_r1",
+      "run_id": "run_6f56b094cd29",
+      "success": false,
+      "ok": true,
+      "input_tokens": 3785,
+      "output_tokens": 377,
+      "total_tokens": 4162,
+      "estimated_cost_usd": 0.0003742695,
+      "latency_ms": 16073,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "run_dispatch_demo.py"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -m py_compile run_dispatch_demo.py",
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('run_dispatch_demo.py'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; req=['build_default_runtime','LookupError','email']; sys.exit(0 if p.exists() and all(x in text for x in req) else 1)\""
+      ],
+      "checks_failed": [
+        "uv run --python 3.12 python -c \"import runpy, sys; sys.path.insert(0, 'src'); runpy.run_path('run_dispatch_demo.py', run_name='__main__')\" (code=1; ImportError: cannot import name 'default_processors' from 'workflow_engine.runtime.registry' (C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T203040Z\\src\\workflow_engine\\runtime\\registry.py))"
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "dummy_invariant_04",
+      "category": "quality",
+      "prompt": "Create docs/quality/invariants.md describing extension contracts and architectural invariants (registry contract, processor inheritance rules, and repository contract). Keep runtime behavior unchanged.",
+      "mode": "baseline",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T203040Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T203040Z_dummy_invariant_04_baseline_r1",
+      "run_id": "run_3c73def0d7ed",
+      "success": false,
+      "ok": true,
+      "input_tokens": 5744,
+      "output_tokens": 677,
+      "total_tokens": 6421,
+      "estimated_cost_usd": 0.001389168,
+      "latency_ms": 5935,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "docs/quality/invariants.md"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/quality/invariants.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; sys.exit(0 if p.exists() and len(text) >= 120 else 1)\""
+      ],
+      "checks_failed": [
+        "uv run --python 3.12 python -c \"import sys; sys.path.insert(0, 'src'); from workflow_engine.runtime.registry import default_processors; from workflow_engine.processors.base_processor import BaseProcessor; ps=default_processors(); sys.exit(0 if isinstance(ps, list) and len(ps) >= 3 and all(isinstance(p, BaseProcessor) for p in ps) else 1)\" (code=1; ImportError: cannot import name 'default_processors' from 'workflow_engine.runtime.registry' (C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T203040Z\\src\\workflow_engine\\runtime\\registry.py))",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_registry.py\" -v (code=1; FAILED (errors=1))"
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "task_id": "dummy_invariant_04",
+      "category": "quality",
+      "prompt": "Create docs/quality/invariants.md describing extension contracts and architectural invariants (registry contract, processor inheritance rules, and repository contract). Keep runtime behavior unchanged.",
+      "mode": "elephant",
+      "repeat": 1,
+      "benchmark_id": "dummy_oop_20260209T203040Z",
+      "comparison_track": "strategy",
+      "session_id": "dummy_oop_20260209T203040Z_dummy_invariant_04_elephant_r1",
+      "run_id": "run_30132e4b73ad",
+      "success": false,
+      "ok": true,
+      "input_tokens": 3856,
+      "output_tokens": 654,
+      "total_tokens": 4510,
+      "estimated_cost_usd": 0.0004614588,
+      "latency_ms": 26467,
+      "retries": 0,
+      "selected_model": "qwen/qwen3-coder-next",
+      "files_touched": [
+        "docs/quality/invariants.md"
+      ],
+      "checks_passed": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/quality/invariants.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; sys.exit(0 if p.exists() and len(text) >= 120 else 1)\""
+      ],
+      "checks_failed": [
+        "uv run --python 3.12 python -c \"import sys; sys.path.insert(0, 'src'); from workflow_engine.runtime.registry import default_processors; from workflow_engine.processors.base_processor import BaseProcessor; ps=default_processors(); sys.exit(0 if isinstance(ps, list) and len(ps) >= 3 and all(isinstance(p, BaseProcessor) for p in ps) else 1)\" (code=1; ImportError: cannot import name 'default_processors' from 'workflow_engine.runtime.registry' (C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T203040Z\\src\\workflow_engine\\runtime\\registry.py))",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_registry.py\" -v (code=1; FAILED (errors=1))"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "aggregates": {
+    "baseline": {
+      "runs": 4,
+      "success_rate": 25.0,
+      "avg_total_tokens": 5959,
+      "avg_latency_ms": 17556,
+      "total_cost_usd": 0.002992
+    },
+    "elephant": {
+      "runs": 4,
+      "success_rate": 25.0,
+      "avg_total_tokens": 4202,
+      "avg_latency_ms": 18479,
+      "total_cost_usd": 0.002314
+    },
+    "token_reduction_pct": 29.48,
+    "quality_delta_pct_points": 0.0,
+    "latency_delta_ms": 923
+  }
+}

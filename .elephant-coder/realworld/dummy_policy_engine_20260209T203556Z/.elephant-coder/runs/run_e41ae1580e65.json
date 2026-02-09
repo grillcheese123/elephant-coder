@@ -1,0 +1,271 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_e41ae1580e65",
+  "session_id": "dummy_policy_engine_20260209T203040Z_policy_invariant_04_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\n  \"summary\": \"Created docs/quality/invariants.md documenting extension contracts and architectural invariants: registry contract (not yet implemented), processor inheritance rules (Processor abstract base class), and repository contract (WorkItemRepository abstract base class). Runtime behavior unchanged.\",\n  \"project\": {\n    \"language\": \"python\"\n  },\n  \"files\": [\n    {\n      \"path\": \"docs/quality/invariants.md\",\n      \"content\": \"# Architectural Invariants\\n\\nThis document describes the extension contracts and architectural invariants enforced in the Policy Engine.\\n\\n## Extension Contracts\\n\\n### Registry Contract (Planned)\\n\\nA registry contract is planned to manage available processors. It will:\\n- Register processors by channel\\n- Provide lookup by channel or item\\n- Enforce uniqueness of registered processor names\\n\\n*Note: This contract is not yet implemented.*\\n\\n### Processor Contract\\n\\nAll channel processors must inherit from `Processor` (defined in `policy_engine.contracts.processor`).\\n\\n**Invariants:**\\n- Must implement `name: str` property (human-readable identifier)\\n- Must implement `supports(item: WorkItem) -> bool` method\\n- Must implement `process(item: WorkItem) -> RunResult` method\\n- Processors must be stateless or safely thread-safe\\n- `supports()` must be idempotent and deterministic\\n\\n**Example:**\\n```python\\nfrom policy_engine.contracts.processor import Processor\\n\\nclass EmailProcessor(Processor):\\n    @property\\n    def name(self) -> str:\\n        return \\\"email\\\"\\n\\n    def supports(self, item: WorkItem) -> bool:\\n        return item.channel == \\\"email\\\"\\n\\n    def process(self, item: WorkItem) -> RunResult:\\n        # Implementation\\n```\\n\\n### Repository Contract\\n\\nAll persistence layers must implement `WorkItemRepository` (defined in `policy_engine.contracts.repository`).\\n\\n**Invariants:**\\n- `save(item: WorkItem) -> None`: Persist item; must be idempotent\\n- `get(identifier: str) -> WorkItem | None`: Retrieve by stable ID\\n- `list_by_channel(channel: str) -> list[WorkItem]`: Filter by channel\\n- `list_all() -> list[WorkItem]`: Return all stored items\\n- All methods must be thread-safe or documented as non-thread-safe\\n\\n## Architectural Invariants\\n\\n1. **Separation of Concerns:**\\n   - Contracts define *what* must be done\\n   - Models define *data structures*\\n   - Runtime/processors define *how* work is done\\n\\n2. **Extensibility via Inheritance:**\\n   - New channels require new `Processor` subclasses\\n   - New storage backends require new `WorkItemRepository` subclasses\\n\\n3. **Runtime Behavior Preservation:**\\n   - Adding new contracts or implementations must not alter existing runtime behavior\\n   - All abstract methods must be fully implemented before use\\n\\n4. **Traceability:**\\n   - `WorkItem.identifier` must be stable and globally unique\\n   - `RunResult` must include `item_id` and `processor` for audit trails\\n\"\n    }\n  ],\n  \"dependencies\": {\n    \"dependencies\": {},\n    \"devDependencies\": {},\n    \"python\": [],\n    \"pythonDev\": [],\n    \"rust\": [],\n    \"go\": [],\n    \"cpp\": []\n  },\n  \"commands\": []\n}\n```"
+      }
+    ],
+    "files_touched": [
+      "docs/quality/invariants.md"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 2362,
+          "completion_tokens": 729,
+          "total_tokens": 3091
+        },
+        "estimated_cost_usd": 0.000928125
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create docs/quality/invariants.md describing extension contracts and architectural invariants (registry contract, processor inheritance rules, and repository contract). Keep runtime behavior unchanged.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_policy_engine_20260209T203556Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 28,
+      "files_indexed": 27,
+      "files_skipped": 1,
+      "files_deleted": 0,
+      "parse_errors": 27,
+      "symbols_total": 1,
+      "edges_total": 0,
+      "elapsed_ms": 27
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 64,
+        "semantic_dims": 28,
+        "dim": 1024,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "full",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "run_dispatch_demo.py",
+            "src/policy_engine/__init__.py",
+            "src/policy_engine/contracts/__init__.py",
+            "src/policy_engine/contracts/processor.py",
+            "src/policy_engine/contracts/repository.py",
+            "src/policy_engine/contracts/work_item.py",
+            "src/policy_engine/models/__init__.py",
+            "src/policy_engine/models/run_result.py"
+          ],
+          "count": 8,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 1,
+          "edge_count": 0,
+          "files_considered": [
+            "run_dispatch_demo.py",
+            "src/policy_engine/__init__.py",
+            "src/policy_engine/contracts/__init__.py",
+            "src/policy_engine/contracts/processor.py",
+            "src/policy_engine/contracts/repository.py",
+            "src/policy_engine/contracts/work_item.py",
+            "src/policy_engine/models/__init__.py",
+            "src/policy_engine/models/run_result.py",
+            "src/policy_engine/models/ticket.py",
+            "src/policy_engine/processors/__init__.py",
+            "src/policy_engine/processors/base_processor.py",
+            "src/policy_engine/processors/email_processor.py",
+            "src/policy_engine/processors/push_processor.py",
+            "src/policy_engine/processors/sms_processor.py",
+            "src/policy_engine/processors/webhook_processor.py",
+            "src/policy_engine/repositories/__init__.py",
+            "src/policy_engine/repositories/in_memory_repository.py",
+            "src/policy_engine/runtime/__init__.py",
+            "src/policy_engine/runtime/bootstrap.py",
+            "src/policy_engine/runtime/registry.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 7,
+          "commands": [
+            "/code"
+          ]
+        },
+        "capsule_transport": {
+          "enabled": false,
+          "mode": "hybrid",
+          "configured_mode": "hybrid",
+          "routing": {
+            "strategy": "static",
+            "configured_mode": "hybrid",
+            "effective_mode": "hybrid",
+            "structure_score": 0,
+            "ambiguous_score": 0,
+            "structure_hits": [],
+            "ambiguous_hits": []
+          },
+          "error": null,
+          "packet": null
+        }
+      },
+      "impacted_files_used": [
+        "run_dispatch_demo.py",
+        "src/policy_engine/__init__.py",
+        "src/policy_engine/contracts/__init__.py",
+        "src/policy_engine/contracts/processor.py",
+        "src/policy_engine/contracts/repository.py",
+        "src/policy_engine/contracts/work_item.py",
+        "src/policy_engine/models/__init__.py",
+        "src/policy_engine/models/run_result.py",
+        "src/policy_engine/models/ticket.py",
+        "src/policy_engine/processors/__init__.py",
+        "src/policy_engine/processors/base_processor.py",
+        "src/policy_engine/processors/email_processor.py",
+        "src/policy_engine/processors/push_processor.py",
+        "src/policy_engine/processors/sms_processor.py",
+        "src/policy_engine/processors/webhook_processor.py",
+        "src/policy_engine/repositories/__init__.py",
+        "src/policy_engine/repositories/in_memory_repository.py",
+        "src/policy_engine/runtime/__init__.py",
+        "src/policy_engine/runtime/bootstrap.py",
+        "src/policy_engine/runtime/registry.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "capsule_transport": {
+        "enabled": false,
+        "mode": "hybrid",
+        "configured_mode": "hybrid",
+        "routing": {
+          "strategy": "static",
+          "configured_mode": "hybrid",
+          "effective_mode": "hybrid",
+          "structure_score": 0,
+          "ambiguous_score": 0,
+          "structure_hits": [],
+          "ambiguous_hits": []
+        },
+        "error": null,
+        "packet": null
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "capsule_transport_config": {
+        "enabled": false,
+        "mode": "hybrid",
+        "dim": 768,
+        "max_items": 48,
+        "fingerprint_bits": 96
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Created docs/quality/invariants.md documenting extension contracts and architectural invariants: registry contract (not yet implemented), processor inheritance rules (Processor abstract base class), and repository contract (WorkItemRepository abstract base class). Runtime behavior unchanged.",
+    "apply_report": {
+      "files_written": [
+        "docs/quality/invariants.md"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T20:37:56Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_policy_engine_20260209T203556Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 2362,
+    "output_tokens": 729,
+    "total_tokens": 3091,
+    "estimated_cost_usd": 0.000928125,
+    "latency_ms": 9304
+  },
+  "warnings": [],
+  "errors": []
+}

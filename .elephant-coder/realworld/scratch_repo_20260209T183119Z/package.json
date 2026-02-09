@@ -1,0 +1,17 @@
+{
+  "name": "scratch_repo_20260209t183119z",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/main.ts",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "tsx": "^4.19.2",
+    "@types/node": "^22.10.1",
+    "unittest-xml-reporting": ">=3.2.0"
+  }
+}

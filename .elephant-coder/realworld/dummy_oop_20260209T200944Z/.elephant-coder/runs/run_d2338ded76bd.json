@@ -1,0 +1,241 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_d2338ded76bd",
+  "session_id": "dummy_oop_20260209T200944Z_dummy_invariant_04_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\n  \"summary\": \"Created docs/quality/invariants.md documenting extension contracts and architectural invariants for the workflow engine, covering registry contract, processor inheritance rules, and repository contract.\",\n  \"project\": {\n    \"language\": \"python\"\n  },\n  \"files\": [\n    {\n      \"path\": \"docs/quality/invariants.md\",\n      \"content\": \"# Architectural Invariants\\n\\nThis document describes the extension contracts and architectural invariants that ensure consistency and correctness across the workflow engine.\\n\\n## Registry Contract\\n\\nThe registry serves as the central contract for processor discovery and management. It must:\\n\\n- Support registration of processor instances by channel name\\n- Provide deterministic lookup of processors by channel\\n- Raise `LookupError` when no processor is registered for a requested channel\\n- Maintain immutability of registered processors after initialization\\n\\nThe registry is implemented in `src/workflow_engine/runtime/registry.py` and used by the dispatcher to resolve processors.\\n\\n## Processor Inheritance Rules\\n\\nAll processors must adhere to the following inheritance and implementation rules:\\n\\n1. **Base Contract**: All processors implement the `Processor` interface defined in `src/workflow_engine/contracts/processor.py`\\n\\n2. **Abstract Methods**:\\n   - `name: str` - Human-readable processor name\\n   - `supports(item: WorkItem) -> bool` - Determine if the processor can handle the item\\n   - `process(item: WorkItem) -> RunResult` - Execute processing logic\\n\\n3. **Inheritance Hierarchy**:\\n   - `BaseProcessor` (in `src/workflow_engine/processors/base_processor.py`) provides default implementation of `supports()` and `process()`\\n   - Concrete processors (`EmailProcessor`, `SmsProcessor`, `PushProcessor`, `WebhookProcessor`) extend `BaseProcessor`\\n   - Concrete processors must implement `_deliver(item: WorkItem) -> str` for channel-specific delivery logic\\n\\n4. **Extension Guidelines**:\\n   - New processors must extend `BaseProcessor`\\n   - New processors must implement `_deliver()` with channel-specific behavior\\n   - Processor name must match the target channel name for correct routing\\n\\n## Repository Contract\\n\\nThe repository contract defines the persistence boundary for work items:\\n\\n1. **Abstract Interface**: Defined in `src/workflow_engine/contracts/repository.py`\\n\\n2. **Required Methods**:\\n   - `save(item: WorkItem) -> None` - Persist a work item\\n   - `get(identifier: str) -> WorkItem | None` - Retrieve by identifier\\n   - `list_by_channel(channel: str) -> list[WorkItem]` - List items for a channel\\n   - `list_all() -> list[WorkItem]` - List all stored items\\n\\n3. **Implementation Requirements**:\\n   - Repository implementations must be thread-safe for concurrent access\\n   - `save()` must assign stable identifiers to new items\\n   - `get()` must return `None` for non-existent identifiers\\n   - List operations must return fresh copies to prevent external mutation\\n\\n4. **Current Implementation**: `InMemoryRepository` in `src/workflow_engine/repositories/in_memory_repository.py` provides in-memory storage for testing and development.\\n\\n## Work Item Contract\\n\\nWork items are the fundamental units of work in the system:\\n\\n1. **Abstract Interface**: Defined in `src/workflow_engine/contracts/work_item.py`\\n\\n2. **Required Properties**:\\n   - `identifier: str` - Stable identifier for traceability\\n   - `channel: str` - Target delivery channel\\n   - `payload: dict[str, str]` - Message payload\\n\\n3. **Implementation**: `Ticket` in `src/workflow_engine/models/ticket.py` provides concrete implementation with immutable fields.\\n\\n## Runtime Behavior Preservation\\n\\nAll architectural invariants are designed to preserve existing runtime behavior:\\n\\n- Processor resolution follows the same dispatch logic\\n- Repository persistence semantics remain unchanged\\n- Work item immutability is maintained\\n- Error handling (e.g., `LookupError` for missing processors) is preserved\\n\\nExtensions must not alter the observable behavior of existing components.\"\n    }\n  ],\n  \"dependencies\": {\n    \"dependencies\": {},\n    \"devDependencies\": {},\n    \"python\": [],\n    \"pythonDev\": [],\n    \"rust\": [],\n    \"go\": [],\n    \"cpp\": []\n  },\n  \"commands\": []\n}\n```"
+      }
+    ],
+    "files_touched": [
+      "docs/quality/invariants.md"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 3926,
+          "completion_tokens": 929,
+          "total_tokens": 4855
+        },
+        "estimated_cost_usd": 0.0005479848
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "Create docs/quality/invariants.md describing extension contracts and architectural invariants (registry contract, processor inheritance rules, and repository contract). Keep runtime behavior unchanged.",
+    "dry_run": false,
+    "no_apply": false,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T200944Z",
+    "active_persona": "default.md",
+    "index_stats": {
+      "files_scanned": 28,
+      "files_indexed": 0,
+      "files_skipped": 28,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 55,
+      "edges_total": 45,
+      "elapsed_ms": 35
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": false,
+        "error": "cognitive import failed: No module named 'grilly'",
+        "facts": 0,
+        "expectations": 0,
+        "edge_facts": 0,
+        "symbol_facts": 0,
+        "symbol_facts_truncated": 0,
+        "capsule_enabled": true,
+        "capsule_dim": 48,
+        "semantic_dims": 28,
+        "dim": 768,
+        "max_edge_facts": 20000,
+        "max_symbol_facts": 5000,
+        "capsule_active": false
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "balanced",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": false,
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+        },
+        "code_chunks": {
+          "files": [
+            "run_dispatch_demo.py",
+            "src/workflow_engine/__init__.py",
+            "src/workflow_engine/contracts/__init__.py",
+            "src/workflow_engine/contracts/processor.py",
+            "src/workflow_engine/contracts/repository.py",
+            "src/workflow_engine/contracts/work_item.py"
+          ],
+          "count": 6,
+          "truncated": false
+        },
+        "ast_graph_features": {
+          "symbol_count": 33,
+          "edge_count": 35,
+          "files_considered": [
+            "run_dispatch_demo.py",
+            "src/workflow_engine/__init__.py",
+            "src/workflow_engine/contracts/__init__.py",
+            "src/workflow_engine/contracts/processor.py",
+            "src/workflow_engine/contracts/repository.py",
+            "src/workflow_engine/contracts/work_item.py",
+            "src/workflow_engine/models/__init__.py",
+            "src/workflow_engine/models/run_result.py",
+            "src/workflow_engine/models/ticket.py",
+            "src/workflow_engine/processors/__init__.py",
+            "src/workflow_engine/processors/base_processor.py",
+            "src/workflow_engine/processors/email_processor.py",
+            "src/workflow_engine/processors/push_processor.py",
+            "src/workflow_engine/processors/sms_processor.py",
+            "src/workflow_engine/processors/webhook_processor.py",
+            "src/workflow_engine/repositories/__init__.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 7,
+          "commands": [
+            "/code"
+          ]
+        },
+        "capsule_transport": {
+          "enabled": false,
+          "mode": "capsule_only",
+          "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'",
+          "packet": null
+        }
+      },
+      "impacted_files_used": [
+        "run_dispatch_demo.py",
+        "src/workflow_engine/__init__.py",
+        "src/workflow_engine/contracts/__init__.py",
+        "src/workflow_engine/contracts/processor.py",
+        "src/workflow_engine/contracts/repository.py",
+        "src/workflow_engine/contracts/work_item.py",
+        "src/workflow_engine/models/__init__.py",
+        "src/workflow_engine/models/run_result.py",
+        "src/workflow_engine/models/ticket.py",
+        "src/workflow_engine/processors/__init__.py",
+        "src/workflow_engine/processors/base_processor.py",
+        "src/workflow_engine/processors/email_processor.py",
+        "src/workflow_engine/processors/push_processor.py",
+        "src/workflow_engine/processors/sms_processor.py",
+        "src/workflow_engine/processors/webhook_processor.py",
+        "src/workflow_engine/repositories/__init__.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": false,
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'"
+      },
+      "capsule_transport": {
+        "enabled": false,
+        "mode": "capsule_only",
+        "error": "vsa unavailable: ModuleNotFoundError: No module named 'experimental'",
+        "packet": null
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "capsule_transport_config": {
+        "enabled": true,
+        "mode": "capsule_only",
+        "dim": 768,
+        "max_items": 48,
+        "fingerprint_bits": 96
+      },
+      "persona": {
+        "active_persona": "default.md",
+        "available_personas": [
+          "default.md"
+        ],
+        "truncated": false,
+        "chars": 155
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Created docs/quality/invariants.md documenting extension contracts and architectural invariants for the workflow engine, covering registry contract, processor inheritance rules, and repository contract.",
+    "apply_report": {
+      "files_written": [
+        "docs/quality/invariants.md"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T20:12:44Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder\\realworld\\dummy_oop_20260209T200944Z"
+    }
+  },
+  "metrics": {
+    "input_tokens": 3926,
+    "output_tokens": 929,
+    "total_tokens": 4855,
+    "estimated_cost_usd": 0.0005479848,
+    "latency_ms": 13363
+  },
+  "warnings": [],
+  "errors": []
+}

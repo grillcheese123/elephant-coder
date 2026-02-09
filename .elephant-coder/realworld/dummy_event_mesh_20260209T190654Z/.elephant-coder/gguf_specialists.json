@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "specialists": [
+    {
+      "id": "planner_local",
+      "role": "planner",
+      "enabled": false,
+      "backend": "llama_cpp_cli",
+      "binary": "llama-cli",
+      "model_path": "",
+      "args": []
+    },
+    {
+      "id": "patcher_local",
+      "role": "patcher",
+      "enabled": false,
+      "backend": "llama_cpp_cli",
+      "binary": "llama-cli",
+      "model_path": "",
+      "args": []
+    },
+    {
+      "id": "reviewer_local",
+      "role": "reviewer",
+      "enabled": false,
+      "backend": "llama_cpp_cli",
+      "binary": "llama-cli",
+      "model_path": "",
+      "args": []
+    }
+  ]
+}

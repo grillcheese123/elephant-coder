@@ -117,6 +117,11 @@ def _default_config_map() -> dict[str, Any]:
         "cognition.world_model.semantic_dims": 28,
         "cognition.world_model.max_edge_facts": 20000,
         "cognition.world_model.max_symbol_facts": 5000,
+        "cognition.capsule_transport.enabled": False,
+        "cognition.capsule_transport.mode": "hybrid",
+        "cognition.capsule_transport.dim": 768,
+        "cognition.capsule_transport.max_items": 48,
+        "cognition.capsule_transport.fingerprint_bits": 96,
     }
 
 
@@ -467,6 +472,11 @@ def ensure_project_layout(project_root: Path) -> Path:
                     "cognition.world_model.semantic_dims: 28",
                     "cognition.world_model.max_edge_facts: 20000",
                     "cognition.world_model.max_symbol_facts: 5000",
+                    "cognition.capsule_transport.enabled: false",
+                    "cognition.capsule_transport.mode: hybrid",
+                    "cognition.capsule_transport.dim: 768",
+                    "cognition.capsule_transport.max_items: 48",
+                    "cognition.capsule_transport.fingerprint_bits: 96",
                     "plugins.allowed_permissions: read_fs",
                     "",
                 ]
@@ -1346,6 +1356,7 @@ def _build_code_messages(
     system = (
         "You are a coding worker agent. Optimize for minimal-token, high-precision output.\n"
         "Use all provided context modalities (code chunks, AST/graph features, git diff, runtime traces).\n"
+        "Context may be encoded as a Capsule Transport Packet JSON. Decode it using its legend and scores.\n"
         "Return STRICT JSON only (no markdown fences) with this shape:\n"
         "{"
         "\"summary\": str, "
@@ -2459,6 +2470,327 @@ def _vector_fingerprint(vec: Any, bits: int = 64) -> str:
     return "".join(hex_chars)
 
 
+def _normalize_capsule_transport_mode(raw: Any) -> str:
+    """Normalize capsule transport mode to known values."""
+    mode = str(raw or "hybrid").strip().lower()
+    if mode in {"auto", "adaptive", "route"}:
+        return "auto"
+    if mode in {"capsule_only", "capsule", "direct"}:
+        return "capsule_only"
+    if mode in {"hybrid", "mixed"}:
+        return "hybrid"
+    return "hybrid"
+
+
+def _capsule_transport_settings(config: dict[str, Any]) -> dict[str, Any]:
+    """Resolve capsule transport settings from config map."""
+    return {
+        "enabled": bool(config.get("cognition.capsule_transport.enabled", False)),
+        "mode": _normalize_capsule_transport_mode(
+            config.get("cognition.capsule_transport.mode", "hybrid")
+        ),
+        "dim": max(128, int(config.get("cognition.capsule_transport.dim", 768) or 768)),
+        "max_items": max(8, int(config.get("cognition.capsule_transport.max_items", 48) or 48)),
+        "fingerprint_bits": max(
+            32,
+            int(config.get("cognition.capsule_transport.fingerprint_bits", 96) or 96),
+        ),
+    }
+
+
+def _resolve_capsule_transport_mode_for_task(
+    *,
+    configured_mode: str,
+    task: str,
+    impact: dict[str, Any],
+    pack_manifest: dict[str, Any],
+) -> dict[str, Any]:
+    """Resolve effective capsule mode for the current task/profile."""
+    mode = _normalize_capsule_transport_mode(configured_mode)
+    if mode != "auto":
+        return {
+            "strategy": "static",
+            "configured_mode": mode,
+            "effective_mode": mode,
+            "structure_score": 0,
+            "ambiguous_score": 0,
+            "structure_hits": [],
+            "ambiguous_hits": [],
+        }
+
+    task_low = str(task or "").lower()
+    structure_terms = [
+        "abstract",
+        "interface",
+        "inherit",
+        "extends",
+        "override",
+        "class",
+        "subclass",
+        "registry",
+        "plugin",
+        "adapter",
+        "router",
+        "pipeline",
+        "workflow",
+        "policy",
+        "service",
+        "module",
+        "package",
+        "refactor",
+        "ast",
+        "graph",
+        "diff",
+        "trace",
+        "test",
+    ]
+    ambiguous_terms = [
+        "idea",
+        "brainstorm",
+        "maybe",
+        "perhaps",
+        "roughly",
+        "explore",
+        "unclear",
+        "vague",
+        "thoughts",
+        "options",
+        "pros and cons",
+        "direction",
+    ]
+    structure_hits = [term for term in structure_terms if term in task_low]
+    ambiguous_hits = [term for term in ambiguous_terms if term in task_low]
+
+    structure_score = len(structure_hits)
+    ambiguous_score = len(ambiguous_hits)
+    if "?" in task_low:
+        ambiguous_score += 1
+
+    impacted = impact.get("impacted", [])
+    impacted_count = (
+        len([row for row in impacted if isinstance(row, dict)])
+        if isinstance(impacted, list)
+        else 0
+    )
+    predicted = impact.get("world_predicted_files", [])
+    predicted_count = (
+        len([item for item in predicted if isinstance(item, str)])
+        if isinstance(predicted, list)
+        else 0
+    )
+    modalities = pack_manifest.get("modalities", {})
+    modalities_map = modalities if isinstance(modalities, dict) else {}
+    ast_meta = modalities_map.get("ast_graph_features", {})
+    ast_map = ast_meta if isinstance(ast_meta, dict) else {}
+    chunk_meta = modalities_map.get("code_chunks", {})
+    chunk_map = chunk_meta if isinstance(chunk_meta, dict) else {}
+    symbol_count = int(ast_map.get("symbol_count", 0) or 0)
+    edge_count = int(ast_map.get("edge_count", 0) or 0)
+    chunk_count = int(chunk_map.get("count", 0) or 0)
+
+    if impacted_count >= 8:
+        structure_score += 1
+    if predicted_count >= 5:
+        structure_score += 1
+    if symbol_count >= 80:
+        structure_score += 1
+    if edge_count >= 80:
+        structure_score += 1
+    if chunk_count >= 6:
+        structure_score += 1
+
+    effective_mode = "hybrid"
+    if structure_score >= max(2, ambiguous_score + 1):
+        effective_mode = "capsule_only"
+
+    return {
+        "strategy": "auto",
+        "configured_mode": "auto",
+        "effective_mode": effective_mode,
+        "structure_score": int(structure_score),
+        "ambiguous_score": int(ambiguous_score),
+        "structure_hits": structure_hits,
+        "ambiguous_hits": ambiguous_hits,
+        "impacted_count": int(impacted_count),
+        "predicted_count": int(predicted_count),
+        "symbol_count": int(symbol_count),
+        "edge_count": int(edge_count),
+        "chunk_count": int(chunk_count),
+    }
+
+
+def _build_capsule_packet(
+    *,
+    task: str,
+    impact: dict[str, Any],
+    index_stats: dict[str, Any],
+    pack_manifest: dict[str, Any],
+    profile_name: str,
+    dim: int,
+    max_items: int,
+    fingerprint_bits: int,
+) -> dict[str, Any]:
+    """Build compact capsule packet for low-language transport."""
+    out: dict[str, Any] = {
+        "enabled": False,
+        "error": None,
+        "packet": None,
+    }
+    binary_ops, err = _load_vsa_binary_ops()
+    if binary_ops is None:
+        out["error"] = f"vsa unavailable: {err}"
+        return out
+
+    task_vec = binary_ops.hash_to_bipolar(f"task:{task[:2048]}", dim)
+    task_fp = _vector_fingerprint(task_vec, bits=fingerprint_bits)
+    items: list[dict[str, Any]] = []
+    vectors: list[Any] = []
+
+    def _append_item(
+        *,
+        code: str,
+        key: str,
+        score: float,
+        distance: int | None = None,
+        source: str = "",
+    ) -> None:
+        if len(items) >= max_items:
+            return
+        clean_key = str(key).replace("\\", "/").strip()
+        if not clean_key:
+            return
+        seed = f"{code}:{clean_key}|s={score:.4f}|d={distance}|r={source}"
+        vec = binary_ops.hash_to_bipolar(seed[:2048], dim)
+        sim = float(binary_ops.similarity(task_vec, vec))
+        vectors.append(vec)
+        row = {
+            "t": code,
+            "k": clean_key[:180],
+            "f": _vector_fingerprint(vec, bits=fingerprint_bits),
+            "s": round(float(score), 4),
+            "q": round(sim, 4),
+        }
+        if distance is not None:
+            row["d"] = int(distance)
+        if source:
+            row["r"] = str(source)[:40]
+        items.append(row)
+
+    for item in impact.get("impacted", [])[: max_items]:
+        if not isinstance(item, dict):
+            continue
+        _append_item(
+            code="fi",
+            key=str(item.get("file_path", "")),
+            score=float(item.get("confidence", 0.0) or 0.0),
+            distance=int(item.get("distance", 0) or 0),
+            source=str(item.get("impact_source", "")),
+        )
+
+    for file_path in impact.get("world_predicted_files", [])[: max_items]:
+        if len(items) >= max_items:
+            break
+        _append_item(code="wp", key=str(file_path), score=0.55, distance=1, source="world_model")
+
+    ranking = pack_manifest.get("vsa_file_ranking", {})
+    top = ranking.get("top_similarities", []) if isinstance(ranking, dict) else []
+    for item in top[: max_items]:
+        if len(items) >= max_items:
+            break
+        if not isinstance(item, dict):
+            continue
+        _append_item(
+            code="vf",
+            key=str(item.get("file_path", "")),
+            score=float(item.get("similarity", 0.0) or 0.0),
+            distance=None,
+            source="vsa_rank",
+        )
+
+    bundle_fp = ""
+    bundle_sim = 0.0
+    if vectors:
+        bundle_vec = binary_ops.bundle(vectors)
+        bundle_fp = _vector_fingerprint(bundle_vec, bits=fingerprint_bits)
+        bundle_sim = float(binary_ops.similarity(bundle_vec, task_vec))
+
+    modalities = pack_manifest.get("modalities", {})
+    code_chunks_meta = modalities.get("code_chunks", {}) if isinstance(modalities, dict) else {}
+    ast_graph_meta = (
+        modalities.get("ast_graph_features", {}) if isinstance(modalities, dict) else {}
+    )
+    git_meta = modalities.get("git_diff", {}) if isinstance(modalities, dict) else {}
+    traces_meta = (
+        modalities.get("test_runtime_traces", {}) if isinstance(modalities, dict) else {}
+    )
+    world_meta = impact.get("world_model", {}) if isinstance(impact.get("world_model", {}), dict) else {}
+
+    packet = {
+        "v": 1,
+        "profile": profile_name,
+        "dim": int(dim),
+        "bits": int(fingerprint_bits),
+        "task_fp": task_fp,
+        "bundle_fp": bundle_fp,
+        "bundle_q": round(bundle_sim, 4),
+        "n": len(items),
+        "items": items,
+        "meta": {
+            "idx_files": int(index_stats.get("files_scanned", 0) or 0),
+            "idx_edges": int(index_stats.get("edges_total", 0) or 0),
+            "chunks": int(code_chunks_meta.get("count", 0) or 0),
+            "symbols": int(ast_graph_meta.get("symbol_count", 0) or 0),
+            "edges": int(ast_graph_meta.get("edge_count", 0) or 0),
+            "diff_lines": int(git_meta.get("line_count", 0) or 0),
+            "trace_runs": int(traces_meta.get("count", 0) or 0),
+            "wm_en": bool(world_meta.get("enabled", False)),
+            "wm_cap": bool(world_meta.get("capsule_active", False)),
+            "wm_facts": int(world_meta.get("facts", 0) or 0),
+            "wm_exp": int(world_meta.get("expectations", 0) or 0),
+        },
+    }
+    out["enabled"] = True
+    out["packet"] = packet
+    return out
+
+
+def _render_capsule_transport_context(
+    *,
+    packet: dict[str, Any],
+    mode: str,
+    impact: dict[str, Any],
+) -> str:
+    """Render context payload for capsule transport modes."""
+    payload = json.dumps(packet, separators=(",", ":"), ensure_ascii=True)
+    impacted_rows = impact.get("impacted", [])
+    top_rows = impacted_rows[:6] if isinstance(impacted_rows, list) else []
+    impacted_text = "\n".join(
+        f"- {row.get('file_path', '')} d={row.get('distance', 0)} c={row.get('confidence', 0)}"
+        for row in top_rows
+        if isinstance(row, dict)
+    )
+    if not impacted_text:
+        impacted_text = "- (none)"
+
+    base = (
+        "## Capsule Transport Packet\n"
+        f"```json\n{payload}\n```\n\n"
+        "## Capsule Decoder Contract\n"
+        "- Treat this packet as canonical context.\n"
+        "- Item type legend: fi=file impact, wp=world-model prediction, vf=vsa-ranked file.\n"
+        "- Prioritize higher q (task similarity), then lower d (graph distance), then higher s (source score).\n"
+        "- Preserve source-code invariants and extension patterns before creating new classes/files.\n"
+    )
+    if mode == "capsule_only":
+        return base
+
+    return (
+        f"{base}\n"
+        "## Minimal Fallback Summary\n"
+        f"{impacted_text}\n"
+    )
+
+
 def _vsa_rank_candidate_files(
     task: str,
     candidate_files: list[str],
@@ -2844,6 +3176,8 @@ def _command_code(args: argparse.Namespace, project_root: Path) -> dict[str, Any
     no_apply = bool(getattr(args, "no_apply", False))
     session_id = str(getattr(args, "_session_id", "") or "")
     requested_persona = str(getattr(args, "persona", "") or "").strip() or None
+    config = load_config(project_root)
+    capsule_transport = _capsule_transport_settings(config)
     session_context_text, session_context_meta = _load_session_context(
         project_root,
         session_id,
@@ -2997,10 +3331,69 @@ def _command_code(args: argparse.Namespace, project_root: Path) -> dict[str, Any
                 task=task,
                 profile=profile,
             )
-            if mode == "elephant" and session_context_text and not benchmark_parity:
-                combined_context = pack_text + "\n\n## Session Context\n" + session_context_text
+            context_for_prompt = pack_text
+            capsule_mode_decision = _resolve_capsule_transport_mode_for_task(
+                configured_mode=str(capsule_transport["mode"]),
+                task=task,
+                impact=impact,
+                pack_manifest=pack_manifest,
+            )
+            effective_capsule_mode = str(
+                capsule_mode_decision.get("effective_mode", "hybrid")
+            )
+            capsule_manifest: dict[str, Any] = {
+                "enabled": False,
+                "mode": effective_capsule_mode,
+                "configured_mode": capsule_transport["mode"],
+                "routing": capsule_mode_decision,
+                "error": None,
+                "packet": None,
+            }
+            if capsule_transport["enabled"] and not benchmark_parity:
+                built = _build_capsule_packet(
+                    task=task,
+                    impact=impact,
+                    index_stats=index_stats,
+                    pack_manifest=pack_manifest,
+                    profile_name=str(profile["name"]),
+                    dim=int(capsule_transport["dim"]),
+                    max_items=int(capsule_transport["max_items"]),
+                    fingerprint_bits=int(capsule_transport["fingerprint_bits"]),
+                )
+                capsule_manifest = {
+                    "enabled": bool(built.get("enabled", False)),
+                    "mode": effective_capsule_mode,
+                    "configured_mode": capsule_transport["mode"],
+                    "routing": capsule_mode_decision,
+                    "error": built.get("error"),
+                    "packet": built.get("packet"),
+                }
+                if built.get("enabled") and isinstance(built.get("packet"), dict):
+                    context_for_prompt = _render_capsule_transport_context(
+                        packet=built["packet"],
+                        mode=effective_capsule_mode,
+                        impact=impact,
+                    )
+            pack_manifest["capsule_transport"] = capsule_manifest
+            modalities = pack_manifest.get("modalities", {})
+            if isinstance(modalities, dict):
+                modalities["capsule_transport"] = capsule_manifest
             else:
-                combined_context = pack_text
+                pack_manifest["modalities"] = {"capsule_transport": capsule_manifest}
+
+            if mode == "elephant" and session_context_text and not benchmark_parity:
+                if capsule_manifest.get("enabled") and str(capsule_manifest.get("mode")) == "capsule_only":
+                    combined_context = (
+                        context_for_prompt
+                        + "\n\n## Session Capsule Stub\n"
+                        + f"- session_id={session_context_meta.get('session_id', '')}\n"
+                        + f"- events={int(session_context_meta.get('events', 0) or 0)}\n"
+                        + f"- chars={int(session_context_meta.get('chars', 0) or 0)}\n"
+                    )
+                else:
+                    combined_context = context_for_prompt + "\n\n## Session Context\n" + session_context_text
+            else:
+                combined_context = context_for_prompt
             candidate_messages = _build_code_messages(
                 task=task,
                 context_text=combined_context,
@@ -3040,6 +3433,7 @@ def _command_code(args: argparse.Namespace, project_root: Path) -> dict[str, Any
             profile_name, context_text, context_manifest, messages, estimated_input_tokens = selected
             if mode == "elephant" and not benchmark_parity:
                 context_manifest["session_context"] = session_context_meta
+            context_manifest["capsule_transport_config"] = capsule_transport
             context_manifest["persona"] = persona_meta
             context_manifest["mode"] = mode
             context_manifest["benchmark_parity"] = benchmark_parity

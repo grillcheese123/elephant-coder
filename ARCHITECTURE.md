@@ -215,3 +215,27 @@ Routing signals:
 
 Fallback rule:
 - if local specialist confidence is below threshold, escalate to OpenRouter.
+
+## 14. Synthetic Benchmark Fixtures
+To evaluate structure-aware reasoning, the benchmark suite includes synthetic projects with 20+ files and explicit inheritance contracts.
+
+Fixture paths:
+- `private/models/elephant-coder/.benchmarks/fixtures/dummy_oop_project`
+- `private/models/elephant-coder/.benchmarks/fixtures/dummy_event_mesh_project`
+- `private/models/elephant-coder/.benchmarks/fixtures/dummy_policy_engine_project`
+- `private/models/elephant-coder/.benchmarks/fixtures/dummy_layered_inheritance_project`
+- `private/models/elephant-coder/.benchmarks/fixtures/dummy_cross_module_project`
+- `private/models/elephant-coder/.benchmarks/tasks_dummy_oop_v1.json`
+- `private/models/elephant-coder/.benchmarks/tasks_dummy_event_mesh_v1.json`
+- `private/models/elephant-coder/.benchmarks/tasks_dummy_policy_engine_v1.json`
+- `private/models/elephant-coder/.benchmarks/tasks_dummy_layered_inheritance_v1.json`
+- `private/models/elephant-coder/.benchmarks/tasks_dummy_cross_module_v1.json`
+- `private/models/elephant-coder/scripts/dummy_oop_benchmark_runner.py`
+- `private/models/elephant-coder/scripts/multi_fixture_benchmark_runner.py`
+
+Design intent:
+- Force the model to infer architectural constraints from source code.
+- Validate summarization quality on non-trivial class hierarchies.
+- Validate coding quality when prompts say "extend classes where needed" without naming the exact base class.
+
+This fixture complements repository-native benchmarks by giving a repeatable, controlled inheritance stress test.

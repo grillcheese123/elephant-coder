@@ -1,0 +1,60 @@
+{
+  "protocol_version": "v1-dummy-oop",
+  "description": "Synthetic inheritance-heavy benchmark tasks on a 20+ file dummy project.",
+  "tasks": [
+    {
+      "task_id": "dummy_summary_01",
+      "category": "analysis",
+      "prompt": "Create docs/summary/project_architecture.md. Summarize the repository with a file map, abstract contracts, concrete subclasses, and dispatch flow. Follow source-code rules and naming. Ensure the file is at least 200 characters.",
+      "checks": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/summary/project_architecture.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; low=text.lower(); keys=['workitem','processor','baseprocessor','repository','dispatcher']; hits=sum(1 for k in keys if k in low); sys.exit(0 if p.exists() and len(text)>=180 and hits>=3 else 1)\""
+      ],
+      "expected_files": [
+        "docs/summary/project_architecture.md"
+      ]
+    },
+    {
+      "task_id": "dummy_feature_02",
+      "category": "feature",
+      "prompt": "Add push notification support by following existing source-code rules and extension patterns. Create src/workflow_engine/processors/push_processor.py with class PushProcessor, update src/workflow_engine/processors/__init__.py and src/workflow_engine/runtime/registry.py to register it, and add tests/test_push_processor.py using unittest for a successful push dispatch via build_default_runtime.",
+      "checks": [
+        "uv run --python 3.12 python -m py_compile src/workflow_engine/processors/push_processor.py src/workflow_engine/runtime/registry.py tests/test_push_processor.py",
+        "uv run --python 3.12 python -c \"from pathlib import Path; import re, sys; p=Path('src/workflow_engine/processors/push_processor.py'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; ok=bool(re.search(r'class\\\\s+PushProcessor\\\\s*\\\\(\\\\s*BaseProcessor\\\\s*\\\\)', text)); sys.exit(0 if ok else 1)\"",
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; text=Path('src/workflow_engine/runtime/registry.py').read_text(encoding='utf-8', errors='replace'); sys.exit(0 if 'PushProcessor' in text else 1)\"",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_push_processor.py\" -v"
+      ],
+      "expected_files": [
+        "src/workflow_engine/processors/push_processor.py",
+        "src/workflow_engine/processors/__init__.py",
+        "src/workflow_engine/runtime/registry.py",
+        "tests/test_push_processor.py"
+      ]
+    },
+    {
+      "task_id": "dummy_feature_03",
+      "category": "feature",
+      "prompt": "Create run_dispatch_demo.py that uses build_default_runtime, dispatches one email ticket, then attempts one push ticket. If push is not available, catch LookupError and continue. Print a concise per-channel summary.",
+      "checks": [
+        "uv run --python 3.12 python -m py_compile run_dispatch_demo.py",
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('run_dispatch_demo.py'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; req=['build_default_runtime','LookupError','email']; sys.exit(0 if p.exists() and all(x in text for x in req) else 1)\"",
+        "uv run --python 3.12 python -c \"import runpy, sys; sys.path.insert(0, 'src'); runpy.run_path('run_dispatch_demo.py', run_name='__main__')\""
+      ],
+      "expected_files": [
+        "run_dispatch_demo.py"
+      ]
+    },
+    {
+      "task_id": "dummy_invariant_04",
+      "category": "quality",
+      "prompt": "Create docs/quality/invariants.md describing extension contracts and architectural invariants (registry contract, processor inheritance rules, and repository contract). Keep runtime behavior unchanged.",
+      "checks": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/quality/invariants.md'); text=p.read_text(encoding='utf-8', errors='replace') if p.exists() else ''; sys.exit(0 if p.exists() and len(text) >= 120 else 1)\"",
+        "uv run --python 3.12 python -c \"import sys; sys.path.insert(0, 'src'); from workflow_engine.runtime.registry import default_processors; from workflow_engine.processors.base_processor import BaseProcessor; ps=default_processors(); sys.exit(0 if isinstance(ps, list) and len(ps) >= 3 and all(isinstance(p, BaseProcessor) for p in ps) else 1)\"",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_registry.py\" -v"
+      ],
+      "expected_files": [
+        "docs/quality/invariants.md"
+      ]
+    }
+  ]
+}
