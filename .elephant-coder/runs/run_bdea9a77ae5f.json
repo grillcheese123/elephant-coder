@@ -1,0 +1,84 @@
+{
+  "ok": true,
+  "command": "/persona",
+  "run_id": "run_bdea9a77ae5f",
+  "session_id": "sess_175cd2f4ad59",
+  "data": {
+    "active_persona": "ai-minion-team.md",
+    "available_personas": [
+      "ai-minion-team.md",
+      "art-art-historian.md",
+      "art-textile-historian.md",
+      "culinary-chocolate-sommelier.md",
+      "culinary-food-pairing-assistant.md",
+      "culinary-master-wine-sommelier.md",
+      "culinary-meal-planner.md",
+      "culinary-tea-sommelier.md",
+      "default.md",
+      "education-chess-instructor.md",
+      "education-curriculum-designer.md",
+      "education-doctoral-advisor.md",
+      "education-high-school-math-tutor.md",
+      "education-python-programming-tutor.md",
+      "lifestyle-thought-partner.md",
+      "lifestyle-travel-planner.md",
+      "lifestyle-wedding-planner.md",
+      "professional-applied-mathematician.md",
+      "professional-astrophysicist.md",
+      "professional-career-coach.md",
+      "professional-copy-editor.md",
+      "professional-corporate-communications-specialist.md",
+      "professional-creative-director-media-agency.md",
+      "professional-ecommerce-copywriter.md",
+      "professional-editor-in-chief.md",
+      "professional-executive-assistant.md",
+      "professional-executive-coach.md",
+      "professional-executive-mba.md",
+      "professional-fact-checker.md",
+      "professional-forensic-linguist.md",
+      "professional-frontend-developer.md",
+      "professional-generative-ai-consultant.md",
+      "professional-ghostwriter.md",
+      "professional-global-cio.md",
+      "professional-market-research-analyst.md",
+      "professional-phenomenological-research.md"
+    ],
+    "prompt_library": {
+      "count": 35,
+      "index_path": "C:/Users/grill/Documents/GitHub/grilly/private/models/elephant-coder/.elephant-coder/cache/prompt_library.json"
+    },
+    "validation": {
+      "status": "ok",
+      "note": "Prompt ingestion completed and persona asset stored."
+    },
+    "ingest": {
+      "persona_file": "professional-phenomenological-research.md",
+      "meta_file": "professional-phenomenological-research.meta.json",
+      "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/phenomenological-research.md",
+      "source_sha256": "8db4341355459c09ee1f930366b2ea2e79b628a521128bb57a706b7e336fdb4c",
+      "sections_total": 21,
+      "safe_sections": 6,
+      "flagged_lines_count": 0,
+      "activate_applied": false
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T22:43:42Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 5
+  },
+  "warnings": [
+    "Persona guidance is applied in /code prompts; full schema validation is still basic."
+  ],
+  "errors": []
+}

@@ -1,0 +1,2 @@
+{"ts": "2026-02-08T22:30:52Z", "session_id": "sess_dc6738ad789e", "role": "user", "command": "/code", "run_id": "run_979490f4d42c", "content": "show vsa context wiring"}
+{"ts": "2026-02-08T22:30:52Z", "session_id": "sess_dc6738ad789e", "role": "assistant", "command": "/code", "run_id": "run_979490f4d42c", "content": "No checks executed in dry-run mode."}

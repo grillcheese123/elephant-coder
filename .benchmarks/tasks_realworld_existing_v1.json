@@ -1,0 +1,42 @@
+{
+  "protocol_version": "v1-realworld-existing",
+  "description": "Real-world quality tasks against an existing repository snapshot.",
+  "tasks": [
+    {
+      "task_id": "existing_docs_01",
+      "category": "quality",
+      "prompt": "Create docs/quality/benchmark_fairness.md with a concise explanation of benchmark fairness risks and mitigations.",
+      "checks": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('docs/quality/benchmark_fairness.md'); sys.exit(0 if p.exists() and len(p.read_text(encoding='utf-8', errors='replace').strip()) >= 40 else 1)\""
+      ],
+      "expected_files": [
+        "docs/quality/benchmark_fairness.md"
+      ]
+    },
+    {
+      "task_id": "existing_script_02",
+      "category": "quality",
+      "prompt": "Create scripts/print_quality_metrics.py that reads .elephant-coder/runs/benchmark_results.json when available and prints token reduction information; if missing, print a clear fallback message and exit 0.",
+      "checks": [
+        "uv run --python 3.12 python -m py_compile scripts/print_quality_metrics.py",
+        "uv run --python 3.12 python scripts/print_quality_metrics.py"
+      ],
+      "expected_files": [
+        "scripts/print_quality_metrics.py"
+      ]
+    },
+    {
+      "task_id": "existing_module_03",
+      "category": "quality",
+      "prompt": "Create elephant_coder/quality_checks.py with function score_token_reduction(baseline_tokens:int, elephant_tokens:int)->float and create tests/test_quality_checks.py using unittest for normal and zero-baseline cases.",
+      "checks": [
+        "uv run --python 3.12 python -m py_compile elephant_coder/quality_checks.py tests/test_quality_checks.py",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_quality_checks.py\" -v"
+      ],
+      "expected_files": [
+        "elephant_coder/quality_checks.py",
+        "tests/test_quality_checks.py"
+      ]
+    }
+  ]
+}

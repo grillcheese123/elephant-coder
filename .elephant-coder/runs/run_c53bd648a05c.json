@@ -1,0 +1,104 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_c53bd648a05c",
+  "session_id": "sess_68ac7a4d9e7d",
+  "data": {
+    "changes": [],
+    "files_touched": [
+      "elephant_coder/__init__.py",
+      "elephant_coder/env_utils.py"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "gpt-4o-mini",
+        "status": "dry_run",
+        "summary": "Dispatch skipped (--dry-run).",
+        "estimated_input_tokens": 334
+      }
+    ],
+    "verification_summary": "No checks executed in dry-run mode.",
+    "task": "low budget context pack",
+    "dry_run": true,
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "index_stats": {
+      "files_scanned": 8,
+      "files_indexed": 1,
+      "files_skipped": 7,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 108,
+      "edges_total": 10,
+      "elapsed_ms": 35
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 118,
+        "expectations": 5,
+        "edge_facts": 10,
+        "symbol_facts": 108,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "nano",
+    "context_manifest": {
+      "modalities": {
+        "code_chunks": {
+          "files": [
+            "elephant_coder/__init__.py"
+          ],
+          "count": 1,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 1,
+          "edge_count": 1,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 2,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py"
+      ]
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T22:05:32Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 800,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 6128
+  },
+  "warnings": [],
+  "errors": []
+}

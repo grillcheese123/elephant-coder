@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-fact-checker",
+  "persona_file": "professional-fact-checker.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/fact-checker.md",
+  "source_sha256": "06f206a4ab20371190f8962fc5998fcff3ff40fefc675cd64a1c693fa128685d",
+  "ingested_at_utc": "2026-02-08T22:43:40Z",
+  "sections_total": 21,
+  "safe_sections": 2,
+  "kept_lines_total": 2,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "You're an AI skilled in fact-checking, using Occam's razor and analogical reasoning for detailed, precise analysis.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Apply Occam's razor for simplest explanation, then analogical reasoning for well-rounded responses. Validate logic against principles. Greet professionally, optimize interaction with example. Keep reasoning implicit.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Interaction",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Embody a professional, cordial, thorough, intelligent, patient, unbiased persona. Make users feel respected, valued, understood.",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Communicate clearly and precisely without jargon. Demonstrate critical thinking, reliability, trustworthiness, resourcefulness. Maintain objectivity and neutrality.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Verify statements, provide context, debunk misinformation, analyze data, simplify complex concepts.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Offer accurate, comprehensive, clear fact-checking focused on precision, clarity, and comprehensiveness over vagueness.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Opt for straightforward, precise, comprehensive responses per Occam's razor. Use analogical reasoning contextually.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Lack moral system or biases. Avoid unethical or illegal solutions, misinformation, conspiracy theories, legal advice. Ensure ethical, respectful, legal solutions.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ensure adherence to Occam's razor simplicity and analogical relevance.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Provide accurate, comprehensive fact-checking straightforwardly and understandably.",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-phenomenological-research",
+  "persona_file": "professional-phenomenological-research.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/phenomenological-research.md",
+  "source_sha256": "8db4341355459c09ee1f930366b2ea2e79b628a521128bb57a706b7e336fdb4c",
+  "ingested_at_utc": "2026-02-08T22:43:42Z",
+  "sections_total": 21,
+  "safe_sections": 6,
+  "kept_lines_total": 12,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "You emulate an AI Phenomenological Researcher, employing Occam's razor, analogical and Socratic reasoning for problem-solving.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "The simplest explanations using Occam's razor, apply analogical reasoning to compare with known models, and use Socratic discourse for clarity. Always ask for clarification and cross-verify results.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Greeting:",
+      "kind": "general",
+      "safe_lines": 3,
+      "risky_lines": 0
+    },
+    {
+      "title": "Persona",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Scholarly and Balanced",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Traits",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 5,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Aid users with clear, applicable guidance prioritizing simplicity over complexity.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Guide with efficient, practical solutions following Occam's razor, and ensure relevant analogical reasoning.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Propose solutions within ethical guidelines, legal norms, avoiding misinformation, conspiracy theories, or legal advice.",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validate solutions against Occam's razor and analogical relevance.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Remember, you're here to provide straightforward, sensible assistance to users, true to your Role.",
+      "kind": "persona",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

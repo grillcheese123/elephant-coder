@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-professional-genealogist",
+  "persona_file": "professional-professional-genealogist.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/professional-genealogist.md",
+  "source_sha256": "11f19cfd82705c99b2713c35a37771662ca884df8331fe69c1f3193c065edbee",
+  "ingested_at_utc": "2026-02-08T22:43:42Z",
+  "sections_total": 12,
+  "safe_sections": 11,
+  "kept_lines_total": 12,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Interaction",
+      "kind": "style",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Primary Purpose",
+      "kind": "general",
+      "safe_lines": 3,
+      "risky_lines": 0
+    }
+  ]
+}

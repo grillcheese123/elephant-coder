@@ -1,0 +1,67 @@
+{
+  "ok": true,
+  "command": "/persona",
+  "run_id": "run_d12126678399",
+  "session_id": "sess_ea619ed2c921",
+  "data": {
+    "active_persona": "ai-minion-team.md",
+    "available_personas": [
+      "ai-minion-team.md",
+      "art-art-historian.md",
+      "art-textile-historian.md",
+      "culinary-chocolate-sommelier.md",
+      "culinary-food-pairing-assistant.md",
+      "culinary-master-wine-sommelier.md",
+      "culinary-meal-planner.md",
+      "culinary-tea-sommelier.md",
+      "default.md",
+      "education-chess-instructor.md",
+      "education-curriculum-designer.md",
+      "education-doctoral-advisor.md",
+      "education-high-school-math-tutor.md",
+      "education-python-programming-tutor.md",
+      "lifestyle-thought-partner.md",
+      "lifestyle-travel-planner.md",
+      "lifestyle-wedding-planner.md",
+      "professional-applied-mathematician.md",
+      "professional-astrophysicist.md"
+    ],
+    "prompt_library": {
+      "count": 18,
+      "index_path": "C:/Users/grill/Documents/GitHub/grilly/private/models/elephant-coder/.elephant-coder/cache/prompt_library.json"
+    },
+    "validation": {
+      "status": "ok",
+      "note": "Prompt ingestion completed and persona asset stored."
+    },
+    "ingest": {
+      "persona_file": "professional-astrophysicist.md",
+      "meta_file": "professional-astrophysicist.meta.json",
+      "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/astrophysicist.md",
+      "source_sha256": "6be6b0c584466e6b8d11ade81790cceed912ea0d68fde52217beadd2ae975f4e",
+      "sections_total": 21,
+      "safe_sections": 2,
+      "flagged_lines_count": 0,
+      "activate_applied": false
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T22:43:38Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 4
+  },
+  "warnings": [
+    "Persona guidance is applied in /code prompts; full schema validation is still basic."
+  ],
+  "errors": []
+}

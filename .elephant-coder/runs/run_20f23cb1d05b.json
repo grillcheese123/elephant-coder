@@ -1,0 +1,307 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_20f23cb1d05b",
+  "session_id": "full_prompt_parity_20260209a_bugfix_02_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\n  \"summary\": \"Fix stats aggregation to handle malformed run records without crashing.\",\n  \"project\": {\n    \"language\": \"python\"\n  },\n  \"files\": [\n    {\n      \"path\": \"scripts/elephant_cli.py\",\n      \"content\": \"def _collect_reliability_metrics(run_payloads: list[dict[str, Any]]) -> dict[str, Any]:\\n    if not run_payloads:\\n        return {\\n            \\\"runs_total\\\": 0,\\n            \\\"success_rate\\\": 0.0,\\n            \\\"avg_total_tokens\\\": 0,\\n            \\\"avg_latency_ms\\\": 0,\\n            \\\"total_cost_usd\\\": 0.0,\\n        }\\n\\n    valid_runs = []\\n    for run in run_payloads:\\n        try:\\n            if not isinstance(run, dict):\\n                continue\\n            metrics = run.get(\\\"metrics\\\", {})\\n            if not isinstance(metrics, dict):\\n                continue\\n            if \\\"latency_ms\\\" not in metrics or \\\"total_tokens\\\" not in metrics:\\n                continue\\n            latency = metrics.get(\\\"latency_ms\\\")\\n            tokens = metrics.get(\\\"total_tokens\\\")\\n            cost = metrics.get(\\\"cost_usd\\\", 0.0)\\n            if not isinstance(latency, (int, float)) or not isinstance(tokens, (int, float)):\\n                continue\\n            if not isinstance(cost, (int, float)):\\n                cost = 0.0\\n            valid_runs.append({\\\"latency_ms\\\": float(latency), \\\"total_tokens\\\": float(tokens), \\\"cost_usd\\\": float(cost)})\\n        except Exception:\\n            continue\\n\\n    if not valid_runs:\\n        return {\\n            \\\"runs_total\\\": 0,\\n            \\\"success_rate\\\": 0.0,\\n            \\\"avg_total_tokens\\\": 0,\\n            \\\"avg_latency_ms\\\": 0,\\n            \\\"total_cost_usd\\\": 0.0,\\n        }\\n\\n    runs_total = len(valid_runs)\\n    success_rate = 100.0\\n    avg_total_tokens = mean(r[\\\"total_tokens\\\"] for r in valid_runs)\\n    avg_latency_ms = mean(r[\\\"latency_ms\\\"] for r in valid_runs)\\n    total_cost_usd = sum(r[\\\"cost_usd\\\"] for r in valid_runs)\\n\\n    return {\\n        \\\"runs_total\\\": runs_total,\\n        \\\"success_rate\\\": success_rate,\\n        \\\"avg_total_tokens\\\": round(avg_total_tokens, 2),\\n        \\\"avg_latency_ms\\\": round(avg_latency_ms, 2),\\n        \\\"total_cost_usd\\\": round(total_cost_usd, 6),\\n    }\"\n    }\n  ],\n  \"dependencies\": {\n    \"dependencies\": {},\n    \"devDependencies\": {}\n  },\n  \"commands\": []\n}\n```"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17916,
+          "completion_tokens": 612,
+          "total_tokens": 18528
+        },
+        "estimated_cost_usd": 0.00314523
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": true,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Fix stats aggregation to handle malformed run records without crashing.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 10,
+      "files_indexed": 0,
+      "files_skipped": 10,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 245,
+      "edges_total": 15,
+      "elapsed_ms": 25
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 260,
+        "expectations": 7,
+        "edge_facts": 15,
+        "symbol_facts": 245,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "35aa86513897d025",
+          "bundle_fingerprint": "a8a6639dd12380fd",
+          "section_fingerprints": {
+            "impacted_files": "f806eb95d316",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "0da55305e163",
+            "runtime_traces": "05a227ddd550"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0352,
+            "ast_graph": -0.0117,
+            "git_diff": 0.0215,
+            "code_chunks": 0.0059,
+            "runtime_traces": 0.0039
+          },
+          "bundle_similarity_to_task": -0.0059
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/index_engine.py",
+            "elephant_coder/__init__.py",
+            "scripts/benchmark_runner.py",
+            "elephant_coder/openrouter_client.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_benchmark_runner.py",
+            "elephant_coder/state_store.py",
+            "tests/test_index_engine.py",
+            "elephant_coder/env_utils.py",
+            "scripts/elephant_cli.py"
+          ],
+          "count": 10,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 15,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_benchmark_runner.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": 0.0254
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0234
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": 0.0078
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": -0.002
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": -0.002
+          },
+          {
+            "file_path": "tests/test_benchmark_runner.py",
+            "similarity": -0.0039
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": -0.0059
+          },
+          {
+            "file_path": "tests/test_index_engine.py",
+            "similarity": -0.0098
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": -0.0293
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": -0.0293
+          }
+        ]
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "elephant",
+      "benchmark_parity": true
+    },
+    "agent_plan_summary": "Fix stats aggregation to handle malformed run records without crashing.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:28:40Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17916,
+    "output_tokens": 612,
+    "total_tokens": 18528,
+    "estimated_cost_usd": 0.00314523,
+    "latency_ms": 7793
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply).",
+    "Benchmark parity mode enabled; elephant-only session context compression is disabled."
+  ],
+  "errors": []
+}

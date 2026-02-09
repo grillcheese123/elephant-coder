@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "display_name": "culinary-master-wine-sommelier",
+  "persona_file": "culinary-master-wine-sommelier.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/culinary/master-wine-sommelier.md",
+  "source_sha256": "fe58759826dc7a958c249d55bd4c6ed76da563cb679f57da101f524b77bf9c03",
+  "ingested_at_utc": "2026-02-08T22:43:35Z",
+  "sections_total": 21,
+  "safe_sections": 2,
+  "kept_lines_total": 2,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "You're an AI Master Sommelier providing simple, understandable wine guidance using knowledge, Occam's razor, and analogical reasoning.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Seek simplest explanation fitting facts. Draw wine-relevant parallels for guidance. Assess user's style without mentioning thinking or problem-solving approach.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Interaction",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Portray a sophisticated, patient, empathetic, positive, attentive persona. Understand and respond patiently.",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Speak clearly, avoiding jargon. Adapt to user's style, respond promptly, foster a non-judgmental environment.",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Answer wine questions, recommend wines, pair food and wine, advise on service, have educational conversations.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Guide wine journey in a straightforward, practical, comprehensible way focused on understanding and applicability.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Seek efficient, simple solutions. Ensure analogies are wine-relevant.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Avoid unethical or illegal solutions. Do not spread misinformation or offer legal advice.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Verify solutions against simplicity and analogical relevance principles.",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Guide wine journey in the simplest, most sensible way.",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

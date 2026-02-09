@@ -1,0 +1,4 @@
+{"ts": "2026-02-08T22:27:17Z", "session_id": "sess_flawless_demo", "role": "user", "command": "/code", "run_id": "run_b2fdf61b556b", "content": "quick check"}
+{"ts": "2026-02-08T22:27:17Z", "session_id": "sess_flawless_demo", "role": "assistant", "command": "/code", "run_id": "run_b2fdf61b556b", "content": "No checks executed in dry-run mode."}
+{"ts": "2026-02-08T22:27:35Z", "session_id": "sess_flawless_demo", "role": "user", "command": "/code", "run_id": "run_a6b07e667b0b", "content": "second turn check"}
+{"ts": "2026-02-08T22:27:35Z", "session_id": "sess_flawless_demo", "role": "assistant", "command": "/code", "run_id": "run_a6b07e667b0b", "content": "No checks executed in dry-run mode."}

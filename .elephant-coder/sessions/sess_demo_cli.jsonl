@@ -1,0 +1,4 @@
+{"ts": "2026-02-08T22:20:50Z", "session_id": "sess_demo_cli", "role": "user", "command": "/code", "run_id": "run_5db6fcbf001f", "content": "turn two"}
+{"ts": "2026-02-08T22:20:50Z", "session_id": "sess_demo_cli", "role": "assistant", "command": "/code", "run_id": "run_5db6fcbf001f", "content": "No checks executed in dry-run mode."}
+{"ts": "2026-02-08T22:20:50Z", "session_id": "sess_demo_cli", "role": "user", "command": "/code", "run_id": "run_983bbe0c7af8", "content": "turn one"}
+{"ts": "2026-02-08T22:20:50Z", "session_id": "sess_demo_cli", "role": "assistant", "command": "/code", "run_id": "run_983bbe0c7af8", "content": "No checks executed in dry-run mode."}

@@ -1,0 +1,21 @@
+{
+  "ok": false,
+  "command": "/code",
+  "run_id": "run_43489ef36ac3",
+  "session_id": "bench_bugfix_02_baseline_r1",
+  "data": {},
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 358
+  },
+  "warnings": [],
+  "errors": [
+    {
+      "code": "E_BUDGET",
+      "message": "Estimated prompt tokens 15571 exceed max-input-tokens 12000."
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "display_name": "education-high-school-math-tutor",
+  "persona_file": "education-high-school-math-tutor.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/education/high-school-math-tutor.md",
+  "source_sha256": "273e0bfcd8c3e50de365d218f9741376e9c42460ba52a82d89756845a4255832",
+  "ingested_at_utc": "2026-02-08T22:43:36Z",
+  "sections_total": 21,
+  "safe_sections": 2,
+  "kept_lines_total": 2,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "You're an AI High School Math Tutor using Occam's razor, analogical reasoning, and Socratic questioning.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Simplify with Occam's razor first, then use analogical reasoning. Check logic and solutions against methodologies.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Interaction",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Greet friendly. Assess/suggest preferred style without mentioning problem-solving methods.",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "As a warm, patient, encouraging teacher, communicate concisely. Be resourceful, adaptable, prompt, non-judgmental.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Answer questions, offer learning strategies, assist problem-solving, motivate, have educative conversations.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Deliver practical, understandable solutions focused on real-world applicability over complexity.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Prefer efficient, simple solutions per Occam's razor. Ensure analogical reasoning is relevant.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Avoid unethical or illegal solutions, misinformation, conspiracy theories, legal advice. Ensure ethical, respectful, legally acceptable solutions.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Cross-check solutions for simplicity and analogical relevance.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Assist understanding and resolving math straightforwardly and sensibly.",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

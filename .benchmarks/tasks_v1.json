@@ -1,0 +1,146 @@
+{
+  "protocol_version": "v1",
+  "description": "Elephant Coder benchmark task suite (20 tasks, balanced by category).",
+  "tasks": [
+    {
+      "task_id": "bugfix_01",
+      "category": "bugfix",
+      "prompt": "Fix session slash-command parsing edge cases where shorthand arguments are misinterpreted.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py", "tests/test_elephant_cli.py"]
+    },
+    {
+      "task_id": "bugfix_02",
+      "category": "bugfix",
+      "prompt": "Fix stats aggregation to handle malformed run records without crashing.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py"]
+    },
+    {
+      "task_id": "bugfix_03",
+      "category": "bugfix",
+      "prompt": "Fix persona ingestion so fenced markdown prompts preserve headings and content.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py", "tests/test_elephant_cli.py"]
+    },
+    {
+      "task_id": "bugfix_04",
+      "category": "bugfix",
+      "prompt": "Fix OpenRouter retry logic so fatal auth errors do not retry and transient errors do.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py", "tests/test_elephant_cli.py"]
+    },
+    {
+      "task_id": "bugfix_05",
+      "category": "bugfix",
+      "prompt": "Fix plan file persistence so PLAN.md is always updated after a /plan run.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py", "PLAN.md"]
+    },
+    {
+      "task_id": "feature_01",
+      "category": "feature",
+      "prompt": "Add benchmark mode support that compares baseline and elephant context strategies.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py", "scripts/benchmark_runner.py"]
+    },
+    {
+      "task_id": "feature_02",
+      "category": "feature",
+      "prompt": "Add per-model reliability telemetry in stats including retries and fallback usage.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py"]
+    },
+    {
+      "task_id": "feature_03",
+      "category": "feature",
+      "prompt": "Add benchmark report generation with aggregate token reduction and quality deltas.",
+      "checks": [],
+      "expected_files": ["scripts/benchmark_runner.py"]
+    },
+    {
+      "task_id": "feature_04",
+      "category": "feature",
+      "prompt": "Add session mode option to run code in baseline mode for benchmark comparisons.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py"]
+    },
+    {
+      "task_id": "feature_05",
+      "category": "feature",
+      "prompt": "Add benchmark summary loading to /stats when benchmark artifacts exist.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py"]
+    },
+    {
+      "task_id": "refactor_01",
+      "category": "refactor",
+      "prompt": "Refactor command dispatch internals to reduce duplication in warnings and runtime metadata.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py"]
+    },
+    {
+      "task_id": "refactor_02",
+      "category": "refactor",
+      "prompt": "Refactor context-profile selection into cleaner strategy functions for maintainability.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py"]
+    },
+    {
+      "task_id": "refactor_03",
+      "category": "refactor",
+      "prompt": "Refactor benchmark runner output schema to keep machine and human reports aligned.",
+      "checks": [],
+      "expected_files": ["scripts/benchmark_runner.py"]
+    },
+    {
+      "task_id": "refactor_04",
+      "category": "refactor",
+      "prompt": "Refactor persona parsing helpers to simplify classification and sanitization rules.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py"]
+    },
+    {
+      "task_id": "refactor_05",
+      "category": "refactor",
+      "prompt": "Refactor stats metrics calculation into focused helpers with stable return shapes.",
+      "checks": [],
+      "expected_files": ["scripts/elephant_cli.py"]
+    },
+    {
+      "task_id": "test_01",
+      "category": "test",
+      "prompt": "Write regression tests for interactive shorthand parsing in session mode.",
+      "checks": [],
+      "expected_files": ["tests/test_elephant_cli.py"]
+    },
+    {
+      "task_id": "test_02",
+      "category": "test",
+      "prompt": "Write tests for model retry and fallback telemetry in /code responses.",
+      "checks": [],
+      "expected_files": ["tests/test_elephant_cli.py"]
+    },
+    {
+      "task_id": "test_03",
+      "category": "test",
+      "prompt": "Write tests for benchmark summary loading in /stats when result artifacts exist.",
+      "checks": [],
+      "expected_files": ["tests/test_elephant_cli.py"]
+    },
+    {
+      "task_id": "test_04",
+      "category": "test",
+      "prompt": "Write tests for baseline mode markers and context manifest fields.",
+      "checks": [],
+      "expected_files": ["tests/test_elephant_cli.py"]
+    },
+    {
+      "task_id": "test_05",
+      "category": "test",
+      "prompt": "Write tests for PLAN.md generation that includes chain-of-thought and execution steps.",
+      "checks": [],
+      "expected_files": ["tests/test_elephant_cli.py", "PLAN.md"]
+    }
+  ]
+}

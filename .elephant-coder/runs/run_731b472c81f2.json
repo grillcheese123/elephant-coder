@@ -1,0 +1,307 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_731b472c81f2",
+  "session_id": "full_prompt_parity_20260209a_bugfix_04_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\n  \"summary\": \"The OpenRouter retry logic in elephant_coder/openrouter_client.py lacks explicit handling to distinguish between fatal authentication errors (e.g., HTTP 401/403) and transient errors (e.g., 5xx, timeouts). The current implementation raises OpenRouterError for all HTTP errors without retry discrimination. The fix should add retry policy logic in the client and integrate with the CLI's retry helpers (_is_retryable_model_error, _is_fatal_model_error) to prevent retrying auth failures.\",\n  \"project\": {\n    \"language\": \"python\"\n  },\n  \"files\": [\n    {\n      \"path\": \"elephant_coder/openrouter_client.py\",\n      \"content\": \"\\\"\\\"\\\"Minimal OpenRouter client for Elephant Coder.\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport json\\nimport time\\nfrom dataclasses import dataclass\\nfrom typing import Any\\nfrom urllib import error, request\\n\\n\\n@dataclass\\nclass OpenRouterResult:\\n    \\\"\\\"\\\"Normalized OpenRouter response.\\\"\\\"\\\"\\n\\n    content: str\\n    usage: dict[str, int]\\n    estimated_cost_usd: float\\n    raw: dict[str, Any]\\n\\n\\nclass OpenRouterError(RuntimeError):\\n    \\\"\\\"\\\"OpenRouter request error.\\\"\\\"\\\"\\n\\n\\nclass OpenRouterClient:\\n    \\\"\\\"\\\"HTTP client for OpenRouter chat completions.\\\"\\\"\\\"\\n\\n    def __init__(\\n        self,\\n        api_key: str,\\n        *,\\n        base_url: str = \\\"https://openrouter.ai/api/v1\\\",\\n        app_name: str = \\\"elephant-coder\\\",\\n    ):\\n        if not api_key.strip():\\n            raise OpenRouterError(\\\"OPENROUTER_API_KEY is empty.\\\")\\n        self.api_key = api_key.strip()\\n        self.base_url = base_url.rstrip(\\\"/\\\")\\n        self.app_name = app_name\\n\\n    def chat_completion(\\n        self,\\n        *,\\n        model: str,\\n        messages: list[dict[str, str]],\\n        max_tokens: int,\\n        temperature: float = 0.2,\\n        timeout_sec: int = 60,\\n        max_retries: int = 2,\\n        retry_backoff_sec: float = 1.0,\\n    ) -> OpenRouterResult:\\n        \\\"\\\"\\\"Send chat completion request with retry logic.\\\"\\\"\\\"\\n        last_error: Exception | None = None\\n\\n        for attempt in range(max_retries + 1):\\n            payload = {\\n                \\\"model\\\": model,\\n                \\\"messages\\\": messages,\\n                \\\"max_tokens\\\": max_tokens,\\n                \\\"temperature\\\": temperature,\\n            }\\n            body = json.dumps(payload).encode(\\\"utf-8\\\")\\n            req = request.Request(\\n                f\\\"{self.base_url}/chat/completions\\\",\\n                method=\\\"POST\\\",\\n                data=body,\\n                headers={\\n                    \\\"Authorization\\\": f\\\"Bearer {self.api_key}\\\",\\n                    \\\"Content-Type\\\": \\\"application/json\\\",\\n                    \\\"HTTP-Referer\\\": \\\"https://github.com/grillcheese-ai/grilly\\\",\\n                    \\\"X-Title\\\": self.app_name,\\n                },\\n            )\\n            try:\\n                with request.urlopen(req, timeout=timeout_sec) as resp:\\n                    data = json.loads(resp.read().decode(\\\"utf-8\\\", errors=\\\"replace\\\"))\\n            except error.HTTPError as exc:\\n                last_error = exc\\n                raw = exc.read().decode(\\\"utf-8\\\", errors=\\\"replace\\\") if exc.fp else \\\"\\\"\\n                error_msg = f\\\"HTTP {exc.code}: {raw or exc.reason}\\\"\\n\\n                # Fatal auth errors: 401/403 should not be retried\\n                if exc.code in (401, 403):\\n                    raise OpenRouterError(error_msg) from exc\\n\\n                # Transient errors: 5xx or other server errors should be retried\\n                if exc.code >= 500:\\n                    if attempt < max_retries:\\n                        time.sleep(retry_backoff_sec * (2**attempt))\\n                        continue\\n                    raise OpenRouterError(error_msg) from exc\\n\\n                # Other client errors (4xx except auth) - do not retry\\n                raise OpenRouterError(error_msg) from exc\\n\\n            except error.URLError as exc:\\n                last_error = exc\\n                if attempt < max_retries:\\n                    time.sleep(retry_backoff_sec * (2**attempt))\\n                    continue\\n                raise OpenRouterError(f\\\"Network error: {exc.reason}\\\") from exc\\n\\n            except TimeoutError as exc:\\n                last_error = exc\\n                if attempt < max_retries:\\n                    time.sleep(retry_backoff_sec * (2**attempt))\\n                    continue\\n                raise OpenRouterError(\\\"OpenRouter request timed out.\\\") from exc\\n\\n            choices = data.get(\\\"choices\\\") or []\\n            if not choices:\\n                raise OpenRouterError(\\\"No choices returned from OpenRouter.\\\")\\n\\n            message = choices[0].get(\\\"message\\\") or {}\\n            content = str(message.get(\\\"content\\\") or \\\"\\\").strip()\\n\\n            usage_raw = data.get(\\\"usage\\\") or {}\\n            usage = {\\n                \\\"prompt_tokens\\\": int(usage_raw.get(\\\"prompt_tokens\\\", 0) or 0),\\n                \\\"completion_tokens\\\": int(usage_raw.get(\\\"completion_tokens\\\", 0) or 0),\\n                \\\"total_tokens\\\": int(usage_raw.get(\\\"total_tokens\\\", 0) or 0),\\n            }\\n            if usage[\\\"total_tokens\\\"] == 0:\\n                usage[\\\"total_tokens\\\"] = usage[\\\"prompt_tokens\\\"] + usage[\\\"completion_tokens\\\"]\\n\\n            estimated_cost_usd = 0.0\\n            for key in (\\\"cost\\\", \\\"total_cost\\\", \\\"estimated_cost\\\"):\\n                val = usage_raw.get(key)\\n                if val is not None:\\n                    try:\\n                        estimated_cost_usd = float(val)\\n                    except (TypeError, ValueError):\\n                        pass\\n                    break\\n\\n            return OpenRouterResult(\\n                content=content,\\n                usage=usage,\\n                estimated_cost_usd=estimated_cost_usd,\\n                raw=data,\\n            )\\n\\n        raise OpenRouterError(f\\\"Max retries exceeded. Last error: {last_error}\\\")\\n\"\n    }\n  ],\n  \"dependencies\": {\n    \"dependencies\": {},\n    \"devDependencies\": {}\n  },\n  \"commands\": []\n}\n```"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17946,
+          "completion_tokens": 1434,
+          "total_tokens": 19380
+        },
+        "estimated_cost_usd": 0.003800709
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": true,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Fix OpenRouter retry logic so fatal auth errors do not retry and transient errors do.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 10,
+      "files_indexed": 0,
+      "files_skipped": 10,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 245,
+      "edges_total": 15,
+      "elapsed_ms": 22
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 260,
+        "expectations": 7,
+        "edge_facts": 15,
+        "symbol_facts": 245,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "b18ede987ceac588",
+          "bundle_fingerprint": "b8062f9fd101a0d5",
+          "section_fingerprints": {
+            "impacted_files": "f806eb95d316",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "9d172e322509",
+            "runtime_traces": "05a227ddd550"
+          },
+          "similarity_to_task": {
+            "impacted_files": 0.0254,
+            "ast_graph": 0.0254,
+            "git_diff": -0.0352,
+            "code_chunks": 0.0156,
+            "runtime_traces": 0.0098
+          },
+          "bundle_similarity_to_task": 0.0117
+        },
+        "code_chunks": {
+          "files": [
+            "tests/test_benchmark_runner.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/state_store.py",
+            "tests/test_elephant_cli.py",
+            "scripts/benchmark_runner.py",
+            "elephant_coder/openrouter_client.py",
+            "scripts/elephant_cli.py",
+            "elephant_coder/__init__.py",
+            "tests/test_index_engine.py",
+            "elephant_coder/index_engine.py"
+          ],
+          "count": 10,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 15,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_benchmark_runner.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "tests/test_benchmark_runner.py",
+            "similarity": 0.0488
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0352
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": 0.0234
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": 0.0039
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": 0.002
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": 0.0
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": -0.0234
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": -0.0293
+          },
+          {
+            "file_path": "tests/test_index_engine.py",
+            "similarity": -0.0352
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0391
+          }
+        ]
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "baseline",
+      "benchmark_parity": true
+    },
+    "agent_plan_summary": "The OpenRouter retry logic in elephant_coder/openrouter_client.py lacks explicit handling to distinguish between fatal authentication errors (e.g., HTTP 401/403) and transient errors (e.g., 5xx, timeouts). The current implementation raises OpenRouterError for all HTTP errors without retry discrimination. The fix should add retry policy logic in the client and integrate with the CLI's retry helpers (_is_retryable_model_error, _is_fatal_model_error) to prevent retrying auth failures.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:29:35Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17946,
+    "output_tokens": 1434,
+    "total_tokens": 19380,
+    "estimated_cost_usd": 0.003800709,
+    "latency_ms": 13782
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply).",
+    "Benchmark parity mode enabled; elephant-only session context compression is disabled."
+  ],
+  "errors": []
+}

@@ -1,0 +1,297 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_b24dffcf676c",
+  "session_id": "bench_20260209T000043Z_10900_refactor_05_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Refactor index_stats and related metrics helpers into focused, stable-return helpers to improve maintainability and testability.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"elephant_coder/index_engine.py\", \"content\": \"def _stats_files_indexed(index: IndexService) -> int:\\n    meta = index._store.get_indexed_file_meta()\\n    return len(meta)\\n\\n\\ndef _stats_symbols_total(index: IndexService) -> int:\\n    symbols = index._store.list_symbols()\\n    return len(symbols)\\n\\n\\ndef _stats_edges_total(index: IndexService) -> int:\\n    edges = index._store.list_edges()\\n    return len(edges)\\n\\n\\ndef _stats_impact_depth(index: IndexService, max_depth: int = 3) -> dict[str, int]:\\n    \\\"\\\"\\\"Return impact propagation statistics up to max_depth.\\\"\\\"\\\"\\n    meta = index._store.get_indexed_file_meta()\\n    if not meta:\\n        return {\\\"max_depth\\\": 0, \\\"files_at_depth\\\": {}}\\n    first_file = next(iter(meta.keys()))\\n    impact = index.impact_for_files([first_file], max_depth=max_depth)\\n    files_at_depth: dict[str, int] = {}\\n    for item in impact.get(\\\"impacted\\\", []):\\n        depth = item.get(\\\"depth\\\", 0)\\n        key = str(depth)\\n        files_at_depth[key] = files_at_depth.get(key, 0) + 1\\n    return {\\\"max_depth\\\": max_depth, \\\"files_at_depth\\\": files_at_depth}\\n\\n\\ndef _stats_metrics(index: IndexService) -> dict[str, Any]:\\n    \\\"\\\"\\\"Stable metrics shape for stats command.\\\"\\\"\\\"\\n    return {\\n        \\\"files_indexed\\\": _stats_files_indexed(index),\\n        \\\"symbols_total\\\": _stats_symbols_total(index),\\n        \\\"edges_total\\\": _stats_edges_total(index),\\n        \\\"impact_depth\\\": _stats_impact_depth(index),\\n    }\\n\\n\\ndef index_stats(self) -> dict[str, int]:\\n    \\\"\\\"\\\"Return basic index counts.\\\"\\\"\\\"\\n    metrics = _stats_metrics(self)\\n    return {\\n        \\\"files_scanned\\\": metrics[\\\"files_indexed\\\"],\\n        \\\"symbols_total\\\": metrics[\\\"symbols_total\\\"],\\n        \\\"edges_total\\\": metrics[\\\"edges_total\\\"],\\n    }\"}, {\"path\": \"scripts/elephant_cli.py\", \"content\": \"def _command_stats(project_root: Path) -> dict[str, Any]:\\n    \\\"\\\"\\\"Stats command handler with stable metrics shape.\\\"\\\"\\\"\\n    svc = _new_index_service(project_root)\\n    try:\\n        metrics = _stats_metrics(svc)\\n        return {\\n            \\\"ok\\\": True,\\n            \\\"command\\\": \\\"stats\\\",\\n            \\\"data\\\": metrics,\\n            \\\"metrics\\\": {\\\"latency_ms\\\": int((time.time() - _start) * 1000)},\\n        }\\n    finally:\\n        svc.close()\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}}, \"commands\": [\"python -m scripts.elephant_cli stats\"]}"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17316,
+          "completion_tokens": 700,
+          "total_tokens": 18016
+        },
+        "estimated_cost_usd": 0.0014078988
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Refactor stats metrics calculation into focused helpers with stable return shapes.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 9,
+      "files_indexed": 0,
+      "files_skipped": 9,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 240,
+      "edges_total": 14,
+      "elapsed_ms": 19
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 254,
+        "expectations": 6,
+        "edge_facts": 14,
+        "symbol_facts": 240,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "9c8afa4227f9ee61",
+          "bundle_fingerprint": "202d678d9821a7e7",
+          "section_fingerprints": {
+            "impacted_files": "783dc745b251",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "6515e8a98824",
+            "runtime_traces": "05a227ddd550"
+          },
+          "similarity_to_task": {
+            "impacted_files": 0.0449,
+            "ast_graph": -0.0137,
+            "git_diff": 0.0,
+            "code_chunks": -0.0039,
+            "runtime_traces": -0.0254
+          },
+          "bundle_similarity_to_task": 0.0078
+        },
+        "code_chunks": {
+          "files": [
+            "scripts/benchmark_runner.py",
+            "tests/test_elephant_cli.py",
+            "elephant_coder/__init__.py",
+            "elephant_coder/openrouter_client.py",
+            "scripts/elephant_cli.py",
+            "elephant_coder/env_utils.py",
+            "tests/test_index_engine.py",
+            "elephant_coder/state_store.py",
+            "elephant_coder/index_engine.py"
+          ],
+          "count": 9,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 14,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": 0.0684
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": 0.0312
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0293
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": 0.0078
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": 0.0078
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0
+          },
+          {
+            "file_path": "tests/test_index_engine.py",
+            "similarity": -0.0117
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": -0.0195
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0352
+          }
+        ]
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "baseline"
+    },
+    "agent_plan_summary": "Refactor index_stats and related metrics helpers into focused, stable-return helpers to improve maintainability and testability.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:07:57Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17316,
+    "output_tokens": 700,
+    "total_tokens": 18016,
+    "estimated_cost_usd": 0.0014078988,
+    "latency_ms": 6552
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

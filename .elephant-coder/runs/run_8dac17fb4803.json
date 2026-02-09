@@ -1,0 +1,21 @@
+{
+  "ok": false,
+  "command": "/persona",
+  "run_id": "run_8dac17fb4803",
+  "session_id": "sess_81707fbbf3ae",
+  "data": {},
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 1
+  },
+  "warnings": [],
+  "errors": [
+    {
+      "code": "E_STORAGE",
+      "message": "Prompt source file not found: personas_prompts/prompt.md"
+    }
+  ]
+}

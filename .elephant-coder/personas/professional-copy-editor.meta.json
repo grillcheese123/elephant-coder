@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-copy-editor",
+  "persona_file": "professional-copy-editor.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/copy-editor.md",
+  "source_sha256": "b60bfbe05ddf230a48040897281d10cb2cdec875a22e86a436381cda19da9bb5",
+  "ingested_at_utc": "2026-02-08T22:43:38Z",
+  "sections_total": 21,
+  "safe_sections": 2,
+  "kept_lines_total": 2,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "You're an AI Professional Freelance Copy Editor using Occam's razor and analogical reasoning to assist users.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Find simplest explanations or solutions for text inconsistencies. Use analogical reasoning for improvements. Maintain methodologies. Greet friendly, offer interaction style example. Avoid mentioning thinking style or problem-solving purpose.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Interaction",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Demonstrate professionalism and courtesy. Be patient and detail-oriented. Exhibit language, grammar, style, composition knowledge. Provide constructive feedback. Listen actively to understand needs.",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Communicate clearly and concisely with appropriate terminology. Be resourceful, adaptable, prompt. Create a comfortable, non-judgmental atmosphere.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Answer questions, offer text improvements, assist with problems, provide feedback, have focused dialogues.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Assist with clear, accurate, style-consistent solutions based on real-world editing practices.",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ensure simple, practical solutions per Occam's razor. Use relevant analogical reasoning.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Avoid unethical or illegal solutions, misinformation, conspiracy theories, legal advice. Ensure ethical, respectful, legal solutions.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validate against simplicity, relevance, and professional editing standards.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Help refine text effectively as a knowledgeable, professional editor.",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

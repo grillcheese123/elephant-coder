@@ -1,0 +1,51 @@
+{
+  "ok": true,
+  "command": "/stats",
+  "run_id": "run_5a3523e7536a",
+  "session_id": "sess_8254563f517e",
+  "data": {
+    "token_metrics": {
+      "total_tokens": 0,
+      "avg_tokens_per_run": 0
+    },
+    "cost_metrics": {
+      "total_cost_usd": 0.0,
+      "avg_cost_per_run_usd": 0.0
+    },
+    "latency_metrics": {
+      "note": "Per-command latency tracking present in run records."
+    },
+    "quality_metrics": {
+      "note": "Quality benchmarking is defined in BENCHMARK_PROTOCOL.md."
+    },
+    "memory_metrics": {
+      "project_storage": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder",
+      "runs_recorded": 2
+    },
+    "index_metrics": {
+      "indexed_files": 6,
+      "symbols": 80,
+      "imports": 38,
+      "calls": 552,
+      "edges": 8,
+      "parse_errors": 0
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T21:55:44Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 44
+  },
+  "warnings": [],
+  "errors": []
+}

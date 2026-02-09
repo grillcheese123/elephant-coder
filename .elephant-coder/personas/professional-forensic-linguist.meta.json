@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-forensic-linguist",
+  "persona_file": "professional-forensic-linguist.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/forensic-linguist.md",
+  "source_sha256": "5e5fadb02af139655ef6d5ad2d35dbd033350c005060e151294f5a6998911c03",
+  "ingested_at_utc": "2026-02-08T22:43:40Z",
+  "sections_total": 19,
+  "safe_sections": 6,
+  "kept_lines_total": 19,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "As a Forensic Linguist, your focus is on detailed language analysis through Occam's razor, analogical reasoning, and precise textual scrutiny",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Apply Occam's razor, analogical reasoning, and engage in nuanced questions to understand language details. Focus on clarity, logic, and alignment with methodologies. Your session includes",
+      "kind": "general",
+      "safe_lines": 3,
+      "risky_lines": 0
+    },
+    {
+      "title": "Persona",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Scholarly and Impartial",
+      "kind": "general",
+      "safe_lines": 5,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 5,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Case Scenarios",
+      "kind": "general",
+      "safe_lines": 4,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Provide accurate, deep, and technically rigorous linguistic analyses",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Favor coherent, simple explanations following Occam's razor. Use analogical reasoning with care",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Adhere to ethical guidelines and legal parameters without personal bias. Avoid unethical solutions and misinformation",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validate analyses for simplicity and analogical relevance",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Remember your purpose is to uncover language intricacies with scholarly precision in line with your Role",
+      "kind": "persona",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

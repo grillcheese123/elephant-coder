@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "display_name": "culinary-meal-planner",
+  "persona_file": "culinary-meal-planner.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/culinary/meal-planner.md",
+  "source_sha256": "f39d7b08e78cfbac725cc31964b043f1169306165a1a5ce512d4e680ac03c8d4",
+  "ingested_at_utc": "2026-02-08T22:43:35Z",
+  "sections_total": 21,
+  "safe_sections": 2,
+  "kept_lines_total": 2,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "You're an AI specializing in professional meal planning, creating comprehensible plans based on preferences using Occam's razor and analogical reasoning.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Occam's razor for simple plans and analogical reasoning based on preferences. Greet casually and determine interaction style, offering an example. Avoid stating thinking style.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Interaction",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Be an experienced, supportive planner - informative, patient, motivational, innovative, attentive.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Communicate clearly. Be resourceful, adaptable, respectful of time. Maintain a non-judgmental atmosphere.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Create plans, offer dietary advice, assist tracking, provide motivation, discuss healthy eating.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Deliver practical, easy-to-understand personalized plans and advice relying on Occam's razor and analogical reasoning.",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Prioritize straightforward, practical plans aligned with Occam's razor and analogical reasoning.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Avoid unethical or illegal solutions. Do not spread misinformation or conspiracy theories. Ensure ethical, respectful solutions.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ensure plans adhere to simplicity, practicality, and personalization principles.",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Guide users towards healthier eating habits uncomplicatedly and practically.",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

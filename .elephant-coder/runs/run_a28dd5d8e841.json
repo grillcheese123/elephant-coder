@@ -1,0 +1,291 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_a28dd5d8e841",
+  "session_id": "bench_20260209T000043Z_10900_test_03_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Write unit tests for the /stats command's benchmark summary loading when result artifacts exist.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"tests/test_stats_benchmark.py\", \"content\": \"\\\"\\\"\\\"Tests for /stats benchmark summary loading with result artifacts.\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport importlib.util\\nimport json\\nimport sys\\nfrom pathlib import Path\\n\\n\\ndef _load_cli_module():\\n    root = Path(__file__).resolve().parents[1]\\n    cli_path = root / \\\"scripts\\\" / \\\"elephant_cli.py\\\"\\n    spec = importlib.util.spec_from_file_location(\\\"elephant_cli_local\\\", cli_path)\\n    if spec is None or spec.loader is None:\\n        raise RuntimeError(\\\"Unable to load scripts/elephant_cli.py\\\")\\n    module = importlib.util.module_from_spec(spec)\\n    sys.modules[spec.name] = module\\n    spec.loader.exec_module(module)\\n    return module\\n\\n\\nelephant_cli = _load_cli_module()\\n\\n\\ndef test_stats_benchmark_summary_with_artifacts(tmp_path: Path, monkeypatch):\\n    \\\"\\\"\\\"Test /stats benchmark summary loading when result artifacts exist.\\\"\\\"\\\"\\n    # Setup project root\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n\\n    # Create stats directory with benchmark result artifacts\\n    stats_dir = tmp_path / \\\"stats\\\"\\n    stats_dir.mkdir()\\n\\n    # Create a benchmark result artifact\\n    artifact = {\\n        \\\"run_id\\\": \\\"run_abc123\\\",\\n        \\\"command\\\": \\\"/code\\\",\\n        \\\"ok\\\": True,\\n        \\\"latency_ms\\\": 5000,\\n        \\\"tokens\\\": 1000,\\n        \\\"cost_usd\\\": 0.001,\\n        \\\"timestamp\\\": \\\"2026-02-08T22:00:00Z\\\"\\n    }\\n    artifact_path = stats_dir / \\\"run_abc123.json\\\"\\n    artifact_path.write_text(json.dumps(artifact), encoding=\\\"utf-8\\\")\\n\\n    # Create another artifact\\n    artifact2 = {\\n        \\\"run_id\\\": \\\"run_def456\\\",\\n        \\\"command\\\": \\\"/plan\\\",\\n        \\\"ok\\\": False,\\n        \\\"latency_ms\\\": 3000,\\n        \\\"tokens\\\": 500,\\n        \\\"cost_usd\\\": 0.0005,\\n        \\\"timestamp\\\": \\\"2026-02-08T21:00:00Z\\\"\\n    }\\n    artifact_path2 = stats_dir / \\\"run_def456.json\\\"\\n    artifact_path2.write_text(json.dumps(artifact2), encoding=\\\"utf-8\\\")\\n\\n    # Parse and execute /stats command\\n    parser = elephant_cli._build_parser()\\n    args = elephant_cli._parse(parser, [\\\"stats\\\", \\\"--cwd\\\", str(tmp_path)])\\n\\n    # Capture output\\n    output = elephant_cli._handle_stats(args)\\n\\n    # Verify summary structure\\n    assert \\\"summary\\\" in output\\n    summary = output[\\\"summary\\\"]\\n    assert \\\"total_runs\\\" in summary\\n    assert summary[\\\"total_runs\\\"] == 2\\n    assert \\\"successful_runs\\\" in summary\\n    assert summary[\\\"successful_runs\\\"] == 1\\n    assert \\\"failed_runs\\\" in summary\\n    assert summary[\\\"failed_runs\\\"] == 1\\n    assert \\\"commands\\\" in summary\\n    assert \\\"/code\\\" in summary[\\\"commands\\\"]\\n    assert \\\"/plan\\\" in summary[\\\"commands\\\"]\\n    assert \\\"avg_latency_ms\\\" in summary\\n    assert \\\"avg_tokens\\\" in summary\\n    assert \\\"avg_cost_usd\\\" in summary\\n\\n\\ndef test_stats_benchmark_summary_empty_stats_dir(tmp_path: Path, monkeypatch):\\n    \\\"\\\"\\\"Test /stats benchmark summary when stats directory is empty.\\\"\\\"\\\"\\n    # Setup project root\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n\\n    # Create empty stats directory\\n    stats_dir = tmp_path / \\\"stats\\\"\\n    stats_dir.mkdir()\\n\\n    # Parse and execute /stats command\\n    parser = elephant_cli._build_parser()\\n    args = elephant_cli._parse(parser, [\\\"stats\\\", \\\"--cwd\\\", str(tmp_path)])\\n\\n    # Capture output\\n    output = elephant_cli._handle_stats(args)\\n\\n    # Verify empty summary\\n    assert \\\"summary\\\" in output\\n    summary = output[\\\"summary\\\"]\\n    assert summary[\\\"total_runs\\\"] == 0\\n    assert summary[\\\"successful_runs\\\"] == 0\\n    assert summary[\\\"failed_runs\\\"] == 0\\n    assert summary[\\\"commands\\\"] == {}\\n\\n\\ndef test_stats_benchmark_summary_no_stats_dir(tmp_path: Path, monkeypatch):\\n    \\\"\\\"\\\"Test /stats benchmark summary when stats directory doesn't exist.\\\"\\\"\\\"\\n    # Setup project root\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n\\n    # Parse and execute /stats command\\n    parser = elephant_cli._build_parser()\\n    args = elephant_cli._parse(parser, [\\\"stats\\\", \\\"--cwd\\\", str(tmp_path)])\\n\\n    # Capture output\\n    output = elephant_cli._handle_stats(args)\\n\\n    # Verify empty summary\\n    assert \\\"summary\\\" in output\\n    summary = output[\\\"summary\\\"]\\n    assert summary[\\\"total_runs\\\"] == 0\\n    assert summary[\\\"successful_runs\\\"] == 0\\n    assert summary[\\\"failed_runs\\\"] == 0\\n    assert summary[\\\"commands\\\"] == {}\\n\\n\\ndef test_stats_benchmark_summary_invalid_artifact(tmp_path: Path, monkeypatch):\\n    \\\"\\\"\\\"Test /stats benchmark summary with invalid artifact file.\\\"\\\"\\\"\\n    # Setup project root\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n\\n    # Create stats directory with invalid artifact\\n    stats_dir = tmp_path / \\\"stats\\\"\\n    stats_dir.mkdir()\\n\\n    # Create invalid artifact (not JSON)\\n    invalid_path = stats_dir / \\\"run_invalid.json\\\"\\n    invalid_path.write_text(\\\"not json content\\\", encoding=\\\"utf-8\\\")\\n\\n    # Parse and execute /stats command\\n    parser = elephant_cli._build_parser()\\n    args = elephant_cli._parse(parser, [\\\"stats\\\", \\\"--cwd\\\", str(tmp_path)])\\n\\n    # Capture output\\n    output = elephant_cli._handle_stats(args)\\n\\n    # Verify summary ignores invalid artifact\\n    assert \\\"summary\\\" in output\\n    summary = output[\\\"summary\\\"]\\n    assert summary[\\\"total_runs\\\"] == 0\\n\\n\\ndef test_stats_benchmark_summary_mixed_artifacts(tmp_path: Path, monkeypatch):\\n    \\\"\\\"\\\"Test /stats benchmark summary with mix of valid and invalid artifacts.\\\"\\\"\\\"\\n    # Setup project root\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n\\n    # Create stats directory\\n    stats_dir = tmp_path / \\\"stats\\\"\\n    stats_dir.mkdir()\\n\\n    # Create valid artifact\\n    valid_artifact = {\\n        \\\"run_id\\\": \\\"run_valid\\\",\\n        \\\"command\\\": \\\"/code\\\",\\n        \\\"ok\\\": True,\\n        \\\"latency_ms\\\": 4000,\\n        \\\"tokens\\\": 800,\\n        \\\"cost_usd\\\": 0.0008,\\n        \\\"timestamp\\\": \\\"2026-02-08T20:00:00Z\\\"\\n    }\\n    valid_path = stats_dir / \\\"run_valid.json\\\"\\n    valid_path.write_text(json.dumps(valid_artifact), encoding=\\\"utf-8\\\")\\n\\n    # Create invalid artifact\\n    invalid_path = stats_dir / \\\"run_invalid.json\\\"\\n    invalid_path.write_text(\\\"invalid json\\\", encoding=\\\"utf-8\\\")\\n\\n    # Parse and execute /stats command\\n    parser = elephant_cli._build_parser()\\n    args = elephant_cli._parse(parser, [\\\"stats\\\", \\\"--cwd\\\", str(tmp_path)])\\n\\n    # Capture output\\n    output = elephant_cli._handle_stats(args)\\n\\n    # Verify summary includes only valid artifact\\n    assert \\\"summary\\\" in output\\n    summary = output[\\\"summary\\\"]\\n    assert summary[\\\"total_runs\\\"] == 1\\n    assert summary[\\\"successful_runs\\\"] == 1\\n    assert summary[\\\"commands\\\"][\\\"/code\\\"][\\\"count\\\"] == 1\\n\"}"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 4056,
+          "completion_tokens": 2039,
+          "total_tokens": 6095
+        },
+        "estimated_cost_usd": 0.0008866638
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "reviewer_local",
+      "selection_reason": "task-heuristic role=reviewer"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Write tests for benchmark summary loading in /stats when result artifacts exist.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 9,
+      "files_indexed": 0,
+      "files_skipped": 9,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 240,
+      "edges_total": 14,
+      "elapsed_ms": 20
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 254,
+        "expectations": 6,
+        "edge_facts": 14,
+        "symbol_facts": 240,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "minimal",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "a6a7bfd1f3ad92f4",
+          "bundle_fingerprint": "b2cd269fe8a98a52",
+          "section_fingerprints": {
+            "impacted_files": "b4d726d9c1e5",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "1289d617e019",
+            "runtime_traces": "1261a5d2afa9"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.002,
+            "ast_graph": 0.0176,
+            "git_diff": 0.0312,
+            "code_chunks": 0.0059,
+            "runtime_traces": 0.0566
+          },
+          "bundle_similarity_to_task": 0.0371
+        },
+        "code_chunks": {
+          "files": [
+            "scripts/elephant_cli.py",
+            "elephant_coder/env_utils.py",
+            "tests/test_elephant_cli.py"
+          ],
+          "count": 3,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 40,
+          "edge_count": 14,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_elephant_cli.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 6,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_elephant_cli.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": 0.0508
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0312
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": 0.0156
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0059
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": -0.0195
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0312
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": -0.0391
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": -0.0488
+          }
+        ]
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "elephant"
+    },
+    "agent_plan_summary": "",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:10:28Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 4056,
+    "output_tokens": 2039,
+    "total_tokens": 6095,
+    "estimated_cost_usd": 0.0008866638,
+    "latency_ms": 21050
+  },
+  "warnings": [
+    "Structured plan contained no files; nothing was written unless bootstrap defaults were applied.",
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

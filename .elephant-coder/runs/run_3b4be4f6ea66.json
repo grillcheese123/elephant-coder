@@ -1,0 +1,248 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_3b4be4f6ea66",
+  "session_id": "bench_test_03_elephant_r1",
+  "data": {
+    "changes": [],
+    "files_touched": [
+      "elephant_coder/__init__.py",
+      "elephant_coder/env_utils.py",
+      "elephant_coder/index_engine.py",
+      "elephant_coder/openrouter_client.py",
+      "elephant_coder/state_store.py",
+      "scripts/benchmark_runner.py",
+      "scripts/elephant_cli.py",
+      "tests/test_elephant_cli.py"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "gpt-4o-mini",
+        "status": "dry_run",
+        "summary": "Dispatch skipped (--dry-run).",
+        "estimated_input_tokens": 3355
+      }
+    ],
+    "verification_summary": "No checks executed in dry-run mode.",
+    "task": "Write tests for benchmark summary loading in /stats when result artifacts exist.",
+    "dry_run": true,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "index_stats": {
+      "files_scanned": 9,
+      "files_indexed": 0,
+      "files_skipped": 9,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 215,
+      "edges_total": 14,
+      "elapsed_ms": 18
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 229,
+        "expectations": 6,
+        "edge_facts": 14,
+        "symbol_facts": 215,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "minimal",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "a6a7bfd1f3ad92f4",
+          "bundle_fingerprint": "a6c624dfc8e98e10",
+          "section_fingerprints": {
+            "impacted_files": "b4d726d9c1e5",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "47e2f55140d9",
+            "runtime_traces": "a5c49456c8fa"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.002,
+            "ast_graph": 0.0176,
+            "git_diff": 0.0312,
+            "code_chunks": -0.0254,
+            "runtime_traces": -0.0059
+          },
+          "bundle_similarity_to_task": 0.0176
+        },
+        "code_chunks": {
+          "files": [
+            "scripts/elephant_cli.py",
+            "elephant_coder/env_utils.py",
+            "tests/test_elephant_cli.py"
+          ],
+          "count": 3,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 40,
+          "edge_count": 14,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_elephant_cli.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 6,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_elephant_cli.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": 0.0508
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0312
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": 0.0156
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0059
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": -0.0195
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0312
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": -0.0391
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": -0.0488
+          }
+        ]
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "elephant"
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T23:18:04Z",
+      "model": "gpt-4o-mini",
+      "model_fallbacks": [],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 695
+  },
+  "warnings": [],
+  "errors": []
+}

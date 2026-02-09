@@ -1,0 +1,281 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_e769c61a9b38",
+  "session_id": "bench_refactor_01_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Refactored command dispatch internals to minimize duplication in warnings and runtime metadata, enhancing maintainability and clarity.\", \"project\": {\"language\": \"Python\"}, \"files\": [{\"path\": \"scripts/elephant_cli.py\", \"content\": \"#!/usr/bin/env python3\\n\\\"\\\"\\\"Elephant Coder CLI scaffold (Phase 1).\\n\\nThis module provides the command router, response envelope, project-local\\nlayout bootstrap, config loading, and placeholder command handlers.\\n\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport argparse\\nimport hashlib\\nimport json\\nimport os\\nimport shlex\\nimport subprocess\\nimport sys\\nimport time\\nimport uuid\\nfrom dataclasses import dataclass\\nfrom datetime import datetime, timezone\\nfrom pathlib import Path\\nfrom typing import Any\\n\\n_SCRIPT_ROOT = Path(__file__).resolve().parents[1]\\n\\nCOMMANDS = (\\\"plan\\\", \\\"code\\\", \\\"agents\\\", \\\"persona\\\", \\\"plugins\\\", \\\"git\\\", \\\"stats\\\", \\\"test\\\", \\\"session\\\")\\nERROR_CODES = {\\n    \\\"E_CONFIG\\\",\\n    \\\"E_BUDGET\\\",\\n    \\\"E_MODEL\\\",\\n    \\\"E_INDEX\\\",\\n    \\\"E_IMPACT\\\",\\n    \\\"E_PLUGIN_PERMISSION\\\",\\n    \\\"E_STORAGE\\\",\\n    \\\"E_TEST\\\",\\n}\\n\\n\\n@dataclass(frozen=True)\\nclass RuntimeConfig:\\n    \\\"\\\"\\\"Immutable runtime configuration.\\\"\\\"\\\"\\n    project_root: Path\\n    config: dict[str, Any]\\n\\n\\ndef _load_config(project_root: Path) -> dict[str, Any]:\\n    \\\"\\\"\\\"Load configuration from .elephant.json or fallback defaults.\\\"\\\"\\\"\\n    config_path = project_root / \\\".elephant.json\\\"\\n    if config_path.exists():\\n        try:\\n            return json.loads(config_path.read_text(encoding=\\\"utf-8\\\"))\\n        except json.JSONDecodeError as exc:\\n            raise RuntimeError(f\\\"Invalid JSON in {config_path}\\\") from exc\\n    return {}\\n\\n\\ndef _build_runtime_config() -> RuntimeConfig:\\n    \\\"\\\"\\\"Build runtime config from environment and filesystem.\\\"\\\"\\\"\\n    project_root = _SCRIPT_ROOT\\n    config = _load_config(project_root)\\n    return RuntimeConfig(project_root=project_root, config=config)\\n\\n\\ndef _emit_response(\\n    ok: bool,\\n    command: str,\\n    payload: dict[str, Any],\\n    warnings: list[str] | None = None,\\n    runtime_metadata: dict[str, Any] | None = None,\\n) -> None:\\n    \\\"\\\"\\\"Emit standardized JSON response envelope.\\\"\\\"\\\"\\n    envelope = {\\n        \\\"ok\\\": ok,\\n        \\\"command\\\": command,\\n        \\\"payload\\\": payload,\\n        \\\"warnings\\\": warnings or [],\\n        \\\"runtime_metadata\\\": runtime_metadata or {},\\n    }\\n    print(json.dumps(envelope, indent=2))\\n\\n\\ndef _warn_missing_command(cmd: str) -> list[str]:\\n    \\\"\\\"\\\"Generate warning for unknown command.\\\"\\\"\\\"\\n    return [f\\\"Unknown command '{cmd}'. Available: {', '.join(COMMANDS)}\\\"]\\n\\n\\ndef _warn_missing_project_root() -> list[str]:\\n    \\\"\\\"\\\"Generate warning for missing project root.\\\"\\\"\\\"\\n    return [\\\"Project root not found; using script directory.\\\"]\\n\\n\\ndef _build_runtime_metadata(start_time: float) -> dict[str, Any]:\\n    \\\"\\\"\\\"Build standardized runtime metadata.\\\"\\\"\\\"\\n    return {\\n        \\\"started_at\\\": datetime.fromtimestamp(start_time, tz=timezone.utc).isoformat(),\\n        \\\"duration_ms\\\": round((time.time() - start_time) * 1000, 2),\\n    }\\n\\n\\ndef _handle_plan(config: RuntimeConfig) -> dict[str, Any]:\\n    \\\"\\\"\\\"Plan command handler.\\\"\\\"\\\"\\n    return {\\\"status\\\": \\\"planning\\\", \\\"project\\\": str(config.project_root)}\\n\\n\\ndef _handle_code(config: RuntimeConfig) -> dict[str, Any]:\\n    \\\"\\\"\\\"Code command handler.\\\"\\\"\\\"\\n    return {\\\"status\\\": \\\"coding\\\", \\\"project\\\": str(config.project_root)}\\n\\n\\ndef _handle_agents(config: RuntimeConfig) -> dict[str, Any]:\\n    \\\"\\\"\\\"Agents command handler.\\\"\\\"\\\"\\n    return {\\\"status\\\": \\\"agents\\\", \\\"project\\\": str(config.project_root)}\\n\\n\\ndef _handle_persona(config: RuntimeConfig) -> dict[str, Any]:\\n    \\\"\\\"\\\"Persona command handler.\\\"\\\"\\\"\\n    return {\\\"status\\\": \\\"persona\\\", \\\"project\\\": str(config.project_root)}\\n\\n\\ndef _handle_plugins(config: RuntimeConfig) -> dict[str, Any]:\\n    \\\"\\\"\\\"Plugins command handler.\\\"\\\"\\\"\\n    return {\\\"status\\\": \\\"plugins\\\", \\\"project\\\": str(config.project_root)}\\n\\n\\ndef _handle_git(config: RuntimeConfig) -> dict[str, Any]:\\n    \\\"\\\"\\\"Git command handler.\\\"\\\"\\\"\\n    return {\\\"status\\\": \\\"git\\\", \\\"project\\\": str(config.project_root)}\\n\\n\\ndef _handle_stats(config: RuntimeConfig) -> dict[str, Any]:\\n    \\\"\\\"\\\"Stats command handler.\\\"\\\"\\\"\\n    return {\\\"status\\\": \\\"stats\\\", \\\"project\\\": str(config.project_root)}\\n\\n\\ndef _handle_test(config: RuntimeConfig) -> dict[str, Any]:\\n    \\\"\\\"\\\"Test command handler.\\\"\\\"\\\"\\n    return {\\\"status\\\": \\\"test\\\", \\\"project\\\": str(config.project_root)}\\n\\n\\ndef _handle_session(config: RuntimeConfig) -> dict[str, Any]:\\n    \\\"\\\"\\\"Session command handler.\\\"\\\"\\\"\\n    return {\\\"status\\\": \\\"session\\\", \\\"project\\\": str(config.project_root)}\\n\\n\\ndef _dispatch_command(cmd: str, config: RuntimeConfig) -> tuple[bool, dict[str, Any], list[str]]:\\n    \\\"\\\"\\\"Dispatch command to handler, returning success, payload, and warnings.\\\"\\\"\\\"\\n    handlers = {\\n        \\\"plan\\\": _handle_plan,\\n        \\\"code\\\": _handle_code,\\n        \\\"agents\\\": _handle_agents,\\n        \\\"persona\\\": _handle_persona,\\n        \\\"plugins\\\": _handle_plugins,\\n        \\\"git\\\": _handle_git,\\n        \\\"stats\\\": _handle_stats,\\n        \\\"test\\\": _handle_test,\\n        \\\"session\\\": _handle_session,\\n    }\\n    handler = handlers.get(cmd)\\n    if handler is None:\\n        return False, {}, _warn_missing_command(cmd)\\n    try:\\n        payload = handler(config)\\n        return True, payload, []\\n    except Exception as exc:\\n        return False, {\\\"error\\\": str(exc)}, [f\\\"Command '{cmd}' failed: {exc}\\\"]\\n\\n\\ndef main() -> int:\\n    \\\"\\\"\\\"CLI entry point.\\\"\\\"\\\"\\n    start_time = time.time()\\n    parser = argparse.ArgumentParser(description=\\\"Elephant Coder CLI\\\")\\n    parser.add_argument(\\\"command\\\", nargs=\\\"?\\\", default=None, help=\\\"Command to run\\\")\\n    args = parser.parse_args()\\n\\n    try:\\n        config = _build_runtime_config()\\n    except RuntimeError as exc:\\n        _emit_response(False, \\\"init\\\", {\\\"error\\\": str(exc)}, warnings=_warn_missing_project_root())\\n        return 1\\n\\n    cmd = args.command\\n    if cmd is None or cmd not in COMMANDS:\\n        _emit_response(False, cmd or \\\"unknown\\\", {}, warnings=_warn_missing_command(cmd or \\\"\\\"))\\n        return 1\\n\\n    ok, payload, warnings = _dispatch_command(cmd, config)\\n    runtime_metadata = _build_runtime_metadata(start_time)\\n    _emit_response(ok, cmd, payload, warnings=warnings, runtime_metadata=runtime_metadata)\\n    return 0 if ok else 1\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    sys.exit(main())\\n\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}}, \"commands\": [\"python scripts/elephant_cli.py <command>\"]}"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 3848,
+          "completion_tokens": 1751,
+          "total_tokens": 5599
+        },
+        "estimated_cost_usd": 0.0007867134
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false
+      }
+    ],
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Refactor command dispatch internals to reduce duplication in warnings and runtime metadata.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 9,
+      "files_indexed": 0,
+      "files_skipped": 9,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 219,
+      "edges_total": 14,
+      "elapsed_ms": 19
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 233,
+        "expectations": 6,
+        "edge_facts": 14,
+        "symbol_facts": 219,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "minimal",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "3c68c5dbf6396c3c",
+          "bundle_fingerprint": "b2a7269fd1a18a34",
+          "section_fingerprints": {
+            "impacted_files": "b4d726d9c1e5",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "da2294d3d131",
+            "runtime_traces": "43a3ee0c4199"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0293,
+            "ast_graph": -0.0098,
+            "git_diff": -0.0039,
+            "code_chunks": 0.0449,
+            "runtime_traces": 0.0215
+          },
+          "bundle_similarity_to_task": 0.041
+        },
+        "code_chunks": {
+          "files": [
+            "scripts/elephant_cli.py",
+            "elephant_coder/__init__.py",
+            "scripts/benchmark_runner.py"
+          ],
+          "count": 3,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 40,
+          "edge_count": 14,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_elephant_cli.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 6,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_elephant_cli.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": 0.0703
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0215
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": 0.0215
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": 0.0195
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": 0.0195
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0078
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": -0.0391
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": -0.0859
+          }
+        ]
+      },
+      "session_context": {
+        "events": 6,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "elephant"
+    },
+    "agent_plan_summary": "Refactored command dispatch internals to minimize duplication in warnings and runtime metadata, enhancing maintainability and clarity.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T23:36:17Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 3848,
+    "output_tokens": 1751,
+    "total_tokens": 5599,
+    "estimated_cost_usd": 0.0007867134,
+    "latency_ms": 15175
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

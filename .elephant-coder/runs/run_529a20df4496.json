@@ -1,0 +1,293 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_529a20df4496",
+  "session_id": "full_strategy_20260209a_feature_02_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Add per-model reliability telemetry in stats including retries and fallback usage.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"elephant_coder/openrouter_client.py\", \"content\": \"\\\"\\\"\\\"Minimal OpenRouter client for Elephant Coder.\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport json\\nimport time\\nfrom dataclasses import dataclass, field\\nfrom typing import Any\\nfrom urllib import error, request\\n\\n\\n@dataclass\\nclass OpenRouterResult:\\n    \\\"\\\"\\\"Normalized OpenRouter response.\\\"\\\"\\\"\\n\\n    content: str\\n    usage: dict[str, int]\\n    estimated_cost_usd: float\\n    raw: dict[str, Any]\\n\\n\\nclass OpenRouterError(RuntimeError):\\n    \\\"\\\"\\\"OpenRouter request error.\\\"\\\"\\\"\\n\\n\\n@dataclass\\nclass ModelTelemetry:\\n    \\\"\\\"\\\"Per-model reliability telemetry.\\\"\\\"\\\"\\n    model_id: str\\n    total_requests: int = 0\\n    successful_requests: int = 0\\n    failed_requests: int = 0\\n    retries: int = 0\\n    fallback_used: int = 0\\n    total_latency_ms: float = 0.0\\n    last_request_at: float | None = None\\n\\n\\nclass OpenRouterClient:\\n    \\\"\\\"\\\"HTTP client for OpenRouter chat completions.\\\"\\\"\\\"\\n\\n    def __init__(\\n        self,\\n        api_key: str,\\n        *,\\n        base_url: str = \\\"https://openrouter.ai/api/v1\\\",\\n        app_name: str = \\\"elephant-coder\\\",\\n        max_retries: int = 2,\\n        fallback_model: str | None = None,\\n    ):\\n        if not api_key.strip():\\n            raise OpenRouterError(\\\"OPENROUTER_API_KEY is empty.\\\")\\n        self.api_key = api_key.strip()\\n        self.base_url = base_url.rstrip(\\\"/\\\")\\n        self.app_name = app_name\\n        self.max_retries = max_retries\\n        self.fallback_model = fallback_model\\n        self._telemetry: dict[str, ModelTelemetry] = {}\\n\\n    def _get_telemetry(self, model_id: str) -> ModelTelemetry:\\n        if model_id not in self._telemetry:\\n            self._telemetry[model_id] = ModelTelemetry(model_id=model_id)\\n        return self._telemetry[model_id]\\n\\n    def chat_completion(\\n        self,\\n        model: str,\\n        messages: list[dict[str, str]],\\n        **kwargs: Any,\\n    ) -> OpenRouterResult:\\n        \\\"\\\"\\\"Make a chat completion request with retry and fallback.\\\"\\\"\\\"\\n        telemetry = self._get_telemetry(model)\\n        telemetry.total_requests += 1\\n        start_time = time.perf_counter()\\n\\n        last_error: Exception | None = None\\n        for attempt in range(self.max_retries + 1):\\n            try:\\n                result = self._make_request(model, messages, **kwargs)\\n                telemetry.successful_requests += 1\\n                telemetry.last_request_at = time.time()\\n                latency_ms = (time.perf_counter() - start_time) * 1000\\n                telemetry.total_latency_ms += latency_ms\\n                return result\\n            except Exception as e:\\n                last_error = e\\n                if attempt < self.max_retries:\\n                    telemetry.retries += 1\\n                continue\\n\\n        # Fallback to fallback model if configured\\n        if self.fallback_model and self.fallback_model != model:\\n            telemetry.fallback_used += 1\\n            telemetry = self._get_telemetry(self.fallback_model)\\n            telemetry.total_requests += 1\\n            start_time = time.perf_counter()\\n            try:\\n                result = self._make_request(self.fallback_model, messages, **kwargs)\\n                telemetry.successful_requests += 1\\n                telemetry.last_request_at = time.time()\\n                latency_ms = (time.perf_counter() - start_time) * 1000\\n                telemetry.total_latency_ms += latency_ms\\n                return result\\n            except Exception as e:\\n                last_error = e\\n\\n        telemetry.failed_requests += 1\\n        telemetry.last_request_at = time.time()\\n        raise OpenRouterError(f\\\"Request failed after {self.max_retries + 1} attempts\\\") from last_error\\n\\n    def _make_request(\\n        self,\\n        model: str,\\n        messages: list[dict[str, str]],\\n        **kwargs: Any,\\n    ) -> OpenRouterResult:\\n        \\\"\\\"\\\"Make a single HTTP request to OpenRouter.\\\"\\\"\\\"\\n        payload = {\\n            \\\"model\\\": model,\\n            \\\"messages\\\": messages,\\n            **kwargs,\\n        }\\n        req = request.Request(\\n            f\\\"{self.base_url}/chat/completions\\\",\\n            data=json.dumps(payload).encode(\\\"utf-8\\\"),\\n            headers={\\n                \\\"Authorization\\\": f\\\"Bearer {self.api_key}\\\",\\n                \\\"HTTP-Referer\\\": f\\\"https://github.com/{self.app_name}\\\",\\n                \\\"X-Title\\\": self.app_name,\\n                \\\"Content-Type\\\": \\\"application/json\\\",\\n            },\\n        )\\n        try:\\n            with request.urlopen(req, timeout=60) as resp:\\n                raw = json.load(resp)\\n        except error.HTTPError as e:\\n            raise OpenRouterError(f\\\"HTTP {e.code}: {e.reason}\\\") from e\\n        except error.URLError as e:\\n            raise OpenRouterError(f\\\"Network error: {e.reason}\\\") from e\\n\\n        choice = raw[\\\"choices\\\"][0]\\n        usage = raw.get(\\\"usage\\\", {})\\n        return OpenRouterResult(\\n            content=choice[\\\"message\\\"][\\\"content\\\"],\\n            usage=usage,\\n            estimated_cost_usd=0.0,  # Placeholder; real cost requires model pricing\\n            raw=raw,\\n        )\\n\\n    def get_telemetry(self) -> dict[str, dict[str, Any]]:\\n        \\\"\\\"\\\"Return per-model reliability telemetry.\\\"\\\"\\\"\\n        return {\\n            model_id: {\\n                \\\"total_requests\\\": t.total_requests,\\n                \\\"successful_requests\\\": t.successful_requests,\\n                \\\"failed_requests\\\": t.failed_requests,\\n                \\\"retries\\\": t.retries,\\n                \\\"fallback_used\\\": t.fallback_used,\\n                \\\"avg_latency_ms\\\": t.total_latency_ms / t.total_requests if t.total_requests > 0 else 0.0,\\n                \\\"last_request_at\\\": t.last_request_at,\\n            }\\n            for model_id, t in self._telemetry.items()\\n        }\\n\\n    def reset_telemetry(self) -> None:\\n        \\\"\\\"\\\"Reset all telemetry counters.\\\"\\\"\\\"\\n        self._telemetry.clear()\\n\"}, {\"path\": \"elephant_coder/state_store.py\", \"content\": \"\\\"\\\"\\\"SQLite-backed state store for Elephant Coder.\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport sqlite3\\nfrom pathlib import Path\\nfrom typing import Any\\n\\n\\nclass StateStore:\\n    \\\"\\\"\\\"Persist indexed files, symbols, dependencies, and graph edges.\\\"\\\"\\\"\\n\\n    def __init__(self, db_path: Path):\\n        self.db_path = db_path\\n        self.db_path.parent.mkdir(parents=True, exist_ok=True)\\n        self._conn = sqlite3.connect(str(self.db_path))\\n        self._conn.row_factory = sqlite3.Row\\n        self._conn.execute(\\\"PRAGMA journal_mode=WAL\\\")\\n        self._conn.execute(\\\"PRAGMA synchronous=NORMAL\\\")\\n        self._init_schema()\\n\\n    def _init_schema(self) -> None:\\n        cur = self._conn.cursor()\\n        cur.executescript(\\n            \\\"\\\"\\\"\\n            CREATE TABLE IF NOT EXISTS indexed_files (\\n                file_path TEXT PRIMARY KEY,\\n                file_hash TEXT NOT NULL,\\n                mtime REAL NOT NULL,\\n                indexed_at REAL NOT NULL,\\n                parse_error TEXT\\n            );\\n\\n            CREATE TABLE IF NOT EXISTS symbols (\\n                id INTEGER PRIMARY KEY AUTOINCREMENT,\\n                file_path TEXT NOT NULL,\\n                symbol_name TEXT NOT NULL,\\n                qualname TEXT NOT NULL,\\n                kind TEXT NOT NULL,\\n                lineno INTEGER NOT NULL,\\n                signature TEXT NOT NULL\\n            );\\n\\n            CREATE TABLE IF NOT EXISTS imports (\\n                id INTEGER PRIMARY KEY AUTOINCREMENT,\\n                file_path TEXT NOT NULL,\\n                module TEXT NOT NULL\\n            );\\n\\n            CREATE TABLE IF NOT EXISTS calls (\\n                id INTEGER PRIMARY KEY AUTOINCREMENT,\\n                file_path TEXT NOT NULL,\\n                caller TEXT NOT NULL,\\n                callee TEXT NOT NULL\\n            );\\n\\n            CREATE TABLE IF NOT EXISTS model_telemetry (\\n                model_id TEXT PRIMARY KEY,\\n                total_requests INTEGER NOT NULL DEFAULT 0,\\n                successful_requests INTEGER NOT NULL DEFAULT 0,\\n                failed_requests INTEGER NOT NULL DEFAULT 0,\\n                retries INTEGER NOT NULL DEFAULT 0,\\n                fallback_used INTEGER NOT NULL DEFAULT 0,\\n                total_latency_ms REAL NOT NULL DEFAULT 0.0,\\n                last_request_at REAL\\n            );\\n            \\\"\\\"\\\"\\n        )\\n        self._conn.commit()\\n\\n    def upsert_model_telemetry(\\n        self,\\n        model_id: str,\\n        total_requests: int,\\n        successful_requests: int,\\n        failed_requests: int,\\n        retries: int,\\n        fallback_used: int,\\n        total_latency_ms: float,\\n        last_request_at: float | None = None,\\n    ) -> None:\\n        \\\"\\\"\\\"Upsert model telemetry record.\\\"\\\"\\\"\\n        cur = self._conn.cursor()\\n        cur.execute(\\n            \\\"\\\"\\\"\\n            INSERT INTO model_telemetry (\\n                model_id, total_requests, successful_requests, failed_requests,\\n                retries, fallback_used, total_latency_ms, last_request_at\\n            )\\n            VALUES (?, ?, ?, ?, ?, ?, ?, ?)\\n            ON CONFLICT(model_id) DO UPDATE SET\\n                total_requests = total_requests + excluded.total_requests,\\n                successful_requests = successful_requests + excluded.successful_requests,\\n                failed_requests = failed_requests + excluded.failed_requests,\\n                retries = retries + excluded.retries,\\n                fallback_used = fallback_used + excluded.fallback_used,\\n                total_latency_ms = total_latency_ms + excluded.total_latency_ms,\\n                last_request_at = excluded.last_request_at\\n            \\\"\\\"\\\",\\n            (model_id, total_requests, successful_requests, failed_requests, retries, fallback_used, total_latency_ms, last_request_at),\\n        )\\n        self._conn.commit()\\n\\n    def get_model_telemetry(self) -> list[dict[str, Any]]:\\n        \\\"\\\"\\\"Return all model telemetry records.\\\"\\\"\\\"\\n        cur = self._conn.cursor()\\n        cur.execute(\\n            \\\"\\\"\\\"\\n            SELECT model_id, total_requests, successful_requests, failed_requests,\\n                   retries, fallback_used, total_latency_ms, last_request_at\\n            FROM model_telemetry\\n            \\\"\\\"\\\"\\n        )\\n        return [\\n            {\\n                \\\"model_id\\\": row[\\\"model_id\\\"],\\n                \\\"total_requests\\\": row[\\\"total_requests\\\"],\\n                \\\"successful_requests\\\": row[\\\"successful_requests\\\"],\\n                \\\"failed_requests\\\": row[\\\"failed_requests\\\"],\\n                \\\"retries\\\": row[\\\"retries\\\"],\\n                \\\"fallback_used\\\": row[\\\"fallback_used\\\"],\\n                \\\"total_latency_ms\\\": row[\\\"total_latency_ms\\\"],\\n                \\\"last_request_at\\\": row[\\\"last_request_at\\\"],\\n            }\\n            for row in cur.fetchall()\\n        ]\\n\\n    def get_indexed_file_meta(self) -> dict[str, dict[str, Any]]:\\n        \\\"\\\"\\\"Return metadata for all indexed files.\\\"\\\"\\\"\\n        cur = self._conn.cursor()\\n        cur.execute(\\\"SELECT * FROM indexed_files\\\")\\n        return {\\n            row[\\\"file_path\\\"]: {\\n                \\\"file_hash\\\": row[\\\"file_hash\\\"],\\n                \\\"mtime\\\": row[\\\"mtime\\\"],\\n                \\\"indexed_at\\\": row[\\\"indexed_at\\\"],\\n                \\\"parse_error\\\": row[\\\"parse_error\\\"],\\n            }\\n            for row in cur.fetchall()\\n        }\\n\\n    def upsert_indexed_file(\\n        self, file_path: str, file_hash: str, mtime: float, indexed_at: float, parse_error: str | None\\n    ) -> None:\\n        \\\"\\\"\\\"Insert or update file metadata.\\\"\\\"\\\"\\n        cur = self._conn.cursor()\\n        cur.execute(\\n            \\\"\\\"\\\"\\n            INSERT INTO indexed_files (file_path, file_hash, mtime, indexed_at, parse_error)\\n            VALUES (?, ?, ?, ?, ?)\\n            ON CONFLICT(file_path) DO UPDATE SET\\n                file_hash = excluded.file_hash,\\n                mtime = excluded.mtime,\\n                indexed_at = excluded.indexed_at,\\n                parse_error = excluded.parse_error\\n            \\\"\\\"\\\",\\n            (file_path, file_hash, mtime, indexed_at, parse_error),\\n        )\\n        self._conn.commit()\\n\\n    def delete_file(self, file_path: str) -> None:\\n        \\\"\\\"\\\"Delete file metadata and associated symbols/imports/calls.\\\"\\\"\\\"\\n        cur = self._conn.cursor()\\n        cur.execute(\\\"DELETE FROM indexed_files WHERE file_path = ?\\\", (file_path,))\\n        cur.execute(\\\"DELETE FROM symbols WHERE file_path = ?\\\", (file_path,))\\n        cur.execute(\\\"DELETE FROM imports WHERE file_path = ?\\\", (file_path,"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 4007,
+          "completion_tokens": 3000,
+          "total_tokens": 7007
+        },
+        "estimated_cost_usd": 0.0011686851
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Add per-model reliability telemetry in stats including retries and fallback usage.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 10,
+      "files_indexed": 0,
+      "files_skipped": 10,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 245,
+      "edges_total": 15,
+      "elapsed_ms": 21
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 260,
+        "expectations": 7,
+        "edge_facts": 15,
+        "symbol_facts": 245,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "minimal",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "a0d04e1626879521",
+          "bundle_fingerprint": "faed443adaa593b3",
+          "section_fingerprints": {
+            "impacted_files": "ff39c038fdfd",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "d2fc54389245",
+            "runtime_traces": "f8ebf43a5ea5"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0137,
+            "ast_graph": 0.0605,
+            "git_diff": 0.0039,
+            "code_chunks": -0.0332,
+            "runtime_traces": 0.0645
+          },
+          "bundle_similarity_to_task": 0.0312
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/state_store.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/openrouter_client.py"
+          ],
+          "count": 3,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 40,
+          "edge_count": 15,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_benchmark_runner.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 6,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_benchmark_runner.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": 0.0781
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0508
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": 0.0352
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0039
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": -0.0098
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": -0.0215
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": -0.0234
+          },
+          {
+            "file_path": "tests/test_benchmark_runner.py",
+            "similarity": -0.0488
+          }
+        ]
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:21:01Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 4007,
+    "output_tokens": 3000,
+    "total_tokens": 7007,
+    "estimated_cost_usd": 0.0011686851,
+    "latency_ms": 18321
+  },
+  "warnings": [
+    "Structured plan contained no files; nothing was written unless bootstrap defaults were applied.",
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

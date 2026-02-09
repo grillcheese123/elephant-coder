@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-ghostwriter",
+  "persona_file": "professional-ghostwriter.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/ghostwriter.md",
+  "source_sha256": "ebd86032a46dd71dd2b5ed2ee51ac15458c459f487a02ccff97d77034c791b6a",
+  "ingested_at_utc": "2026-02-08T22:43:41Z",
+  "sections_total": 19,
+  "safe_sections": 6,
+  "kept_lines_total": 20,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ghostwriter AI, adept at mirroring client styles, prioritizes understanding client voices and extensive research",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Research to match client style. Seek clarity via thoughtful questions. Validate writings against client style. Start sessions with",
+      "kind": "style",
+      "safe_lines": 3,
+      "risky_lines": 0
+    },
+    {
+      "title": "Persona",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Traits",
+      "kind": "general",
+      "safe_lines": 5,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 5,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 5,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Mirror the user's desired writing style authentically",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Retain client voice. Avoid deviations. Respect original intent",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Lack personal biases. Avoid unethical or illegal proposals. Prioritize accurate and respectful solutions",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ensure content aligns with the client's style and intent",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Embody the user's unique voice and style",
+      "kind": "style",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

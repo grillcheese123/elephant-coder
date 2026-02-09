@@ -1,0 +1,289 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_3cb5d29073bf",
+  "session_id": "bench_test_04_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\":\"Write tests for baseline mode markers and context manifest fields in the Elephant Coder CLI.\",\"project\":{\"language\":\"python\"},\"files\":[{\"path\":\"tests/test_elephant_cli.py\",\"content\":\"\\\"\\\"\\\"Tests for Elephant Coder CLI scaffold.\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport importlib.util\\nimport json\\nimport sys\\nfrom collections.abc import Iterator\\nfrom pathlib import Path\\n\\n\\ndef _load_cli_module():\\n    root = Path(__file__).resolve().parents[1]\\n    cli_path = root / \\\"scripts\\\" / \\\"elephant_cli.py\\\"\\n    spec = importlib.util.spec_from_file_location(\\\"elephant_cli_local\\\", cli_path)\\n    if spec is None or spec.loader is None:\\n        raise RuntimeError(\\\"Unable to load scripts/elephant_cli.py\\\")\\n    module = importlib.util.module_from_spec(spec)\\n    sys.modules[spec.name] = module\\n    spec.loader.exec_module(module)\\n    return module\\n\\n\\nelephant_cli = _load_cli_module()\\n\\n\\ndef _parse(argv: list[str]):\\n    parser = elephant_cli._build_parser()\\n    return elephant_cli._parse(parser, argv)\\n\\n\\ndef test_normalize_argv_supports_slash_prefix():\\n    assert elephant_cli._normalize_argv([\\\"/plan\\\", \\\"--task\\\", \\\"x\\\"])[0] == \\\"plan\\\"\\n    assert elephant_cli._normalize_argv([\\\"plan\\\", \\\"--task\\\", \\\"x\\\"])[0] == \\\"plan\\\"\\n\\n\\ndef test_plan_command_envelope_and_run_record(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    args = _parse([\\\"plan\\\", \\\"--cwd\\\", str(tmp_path), \\\"--task\\\", \\\"add feature\\\", \\\"--output\\\", \\\"json\\\"])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is True\\n    assert response[\\\"command\\\"] == \\\"/plan\\\"\\n    assert \\\"plan_steps\\\" in response[\\\"data\\\"]\\n    assert \\\"cot_steps\\\" in response[\\\"data\\\"]\\n    assert response[\\\"data\\\"][\\\"plan_file\\\"].endswith(\\\"PLAN.md\\\")\\n    assert isinstance(response[\\\"metrics\\\"][\\\"latency_ms\\\"], int)\\n\\n    run_file = tmp_path / \\\".elephant-coder\\\" / \\\"runs\\\" / f\\\"{response['run_id']}.json\\\"\\n    assert run_file.exists()\\n    payload = json.loads(run_file.read_text(encoding=\\\"utf-8\\\"))\\n    assert payload[\\\"run_id\\\"] == response[\\\"run_id\\\"]\\n\\n    plan_file = tmp_path / \\\"PLAN.md\\\"\\n    assert plan_file.exists()\\n    plan_text = plan_file.read_text(encoding=\\\"utf-8\\\")\\n    assert \\\"# PLAN\\\" in plan_text\\n    assert \\\"## Chain of Thought (Structured)\\\" in plan_text\\n    assert \\\"## Execution Steps\\\" in plan_text\\n\\n\\ndef test_plan_uses_active_persona_guidance(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    elephant_cli.ensure_project_layout(tmp_path)\\n    (tmp_path / \\\".elephant-coder\\\" / \\\"personas\\\" / \\\"project-manager.md\\\").write_text(\\n        \\\"\\\\n\\\".join(\\n            [\\n                \\\"# Project Manager\\\",\\n                \\\"Track timeline and milestones.\\\",\\n                \\\"Manage dependencies and critical path.\\\",\\n                \\\"Maintain risk mitigation and stakeholder communication.\\\",\\n                \\\"Define acceptance criteria for delivery.\\\",\\n            ]\\n        )\\n        + \\\"\\\\n\\\",\\n        encoding=\\\"utf-8\\\",\\n    )\\n    (tmp_path / \\\".elephant-coder\\\" / \\\"personas\\\" / \\\"active.txt\\\").write_text(\\n        \\\"project-manager.md\\\\n\\\",\\n        encoding=\\\"utf-8\\\",\\n    )\\n\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    args = _parse([\\\"plan\\\", \\\"--cwd\\\", str(tmp_path), \\\"--task\\\", \\\"ship feature\\\", \\\"--output\\\", \\\"json\\\"])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is True\\n    data = response[\\\"data\\\"]\\n    assert data[\\\"active_persona\\\"] == \\\"project-manager.md\\\"\\n    assert data[\\\"persona_signals\\\"][\\\"timeline\\\"] is True\\n    assert data[\\\"persona_signals\\\"][\\\"critical_path\\\"] is True\\n    assert data[\\\"persona_signals\\\"][\\\"acceptance_criteria\\\"] is True\\n\\n\\ndef test_plan_warns_when_requested_persona_missing(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    elephant_cli.ensure_project_layout(tmp_path)\\n    (tmp_path / \\\".elephant-coder\\\" / \\\"personas\\\" / \\\"active.txt\\\").write_text(\\n        \\\"nonexistent.md\\\\n\\\",\\n        encoding=\\\"utf-8\\\",\\n    )\\n\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    args = _parse([\\\"plan\\\", \\\"--cwd\\\", str(tmp_path), \\\"--task\\\", \\\"ship feature\\\", \\\"--output\\\", \\\"json\\\"])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is True\\n    assert response[\\\"data\\\"][\\\"active_persona\\\"] == \\\"nonexistent.md\\\"\\n    assert response[\\\"data\\\"][\\\"persona_signals\\\"][\\\"missing\\\"] is True\\n\\n\\ndef test_budget_validation_error(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    args = _parse([\\\"plan\\\", \\\"--cwd\\\", str(tmp_path), \\\"--task\\\", \\\"add feature\\\", \\\"--output\\\", \\\"json\\\", \\\"--max-cost-usd\\\", \\\"0.0001\\\"])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is False\\n    assert response[\\\"error_code\\\"] == \\\"E_BUDGET\\\"\\n\\n\\ndef test_default_root_is_elephant_project():\\n    root = elephant_cli._default_elephant_root()\\n    assert (root / \\\"scripts\\\" / \\\"elephant_cli.py\\\").exists()\\n\\n\\ndef test_persona_ingest_stores_sanitized_asset(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    elephant_cli.ensure_project_layout(tmp_path)\\n\\n    persona_path = tmp_path / \\\".elephant-coder\\\" / \\\"personas\\\" / \\\"test.md\\\"\\n    persona_path.write_text(\\n        \\\"# Test Persona\\\\n\\\\nAvoid risky actions.\\\\n\\\\n```\\\\nprint('safe')\\\\n```\\\\n\\\",\\n        encoding=\\\"utf-8\\\",\\n    )\\n\\n    args = _parse([\\\"persona\\\", \\\"ingest\\\", \\\"test.md\\\", \\\"--cwd\\\", str(tmp_path)])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is True\\n    assert (tmp_path / \\\".elephant-coder\\\" / \\\"personas\\\" / \\\"test.md\\\").exists()\\n\\n\\ndef test_persona_ingest_keeps_fenced_markdown_content(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    elephant_cli.ensure_project_layout(tmp_path)\\n\\n    persona_path = tmp_path / \\\".elephant-coder\\\" / \\\"personas\\\" / \\\"fenced.md\\\"\\n    persona_path.write_text(\\n        \\\"# Fenced\\\\n\\\\n```python\\\\ndef hello():\\\\n    pass\\\\n```\\\\n\\\",\\n        encoding=\\\"utf-8\\\",\\n    )\\n\\n    args = _parse([\\\"persona\\\", \\\"ingest\\\", \\\"fenced.md\\\", \\\"--cwd\\\", str(tmp_path)])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is True\\n    content = (tmp_path / \\\".elephant-coder\\\" / \\\"personas\\\" / \\\"fenced.md\\\").read_text(encoding=\\\"utf-8\\\")\\n    assert \\\"```python\\\" in content\\n    assert \\\"def hello():\\\" in content\\n\\n\\ndef test_code_dry_run_works_without_api_key(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    monkeypatch.delenv(\\\"OPENROUTER_API_KEY\\\", raising=False)\\n    elephant_cli.ensure_project_layout(tmp_path)\\n\\n    args = _parse([\\\"code\\\", \\\"--cwd\\\", str(tmp_path), \\\"--task\\\", \\\"add feature\\\", \\\"--dry-run\\\"])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is True\\n    assert response[\\\"data\\\"][\\\"dry_run\\\"] is True\\n\\n\\ndef test_code_dry_run_baseline_mode_marks_mode(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    elephant_cli.ensure_project_layout(tmp_path)\\n\\n    args = _parse([\\\"code\\\", \\\"--cwd\\\", str(tmp_path), \\\"--task\\\", \\\"add feature\\\", \\\"--dry-run\\\", \\\"--mode\\\", \\\"baseline\\\"])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is True\\n    assert response[\\\"data\\\"][\\\"dry_run\\\"] is True\\n    assert response[\\\"data\\\"][\\\"mode\\\"] == \\\"baseline\\\"\\n\\n\\ndef test_code_missing_key_returns_model_error(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    monkeypatch.delenv(\\\"OPENROUTER_API_KEY\\\", raising=False)\\n    elephant_cli.ensure_project_layout(tmp_path)\\n\\n    args = _parse([\\\"code\\\", \\\"--cwd\\\", str(tmp_path), \\\"--task\\\", \\\"add feature\\\"])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is False\\n    assert response[\\\"error_code\\\"] == \\\"E_MODEL\\\"\\n\\n\\ndef test_code_uses_openrouter_and_reports_metrics(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    elephant_cli.ensure_project_layout(tmp_path)\\n\\n    class _FakeResult:\\n        def __init__(self):\\n            self.content = \\\"```json\\\\n{\\\\\\\"steps\\\\\\\": []}\\\\n```\\\"\\n            self.usage = {\\\"prompt_tokens\\\": 10, \\\"completion_tokens\\\": 5, \\\"total_tokens\\\": 15}\\n            self.estimated_cost_usd = 0.001\\n            self.raw = {}\\n\\n    class _FakeClient:\\n        def chat_completion(self, **kwargs):\\n            return _FakeResult()\\n\\n    monkeypatch.setattr(elephant_cli, \\\"_new_openrouter_client\\\", lambda _: _FakeClient())\\n\\n    args = _parse([\\\"code\\\", \\\"--cwd\\\", str(tmp_path), \\\"--task\\\", \\\"add feature\\\"])\\n    code, response = elephant_cli.execute_command(args)\\n\\n    assert code == 0\\n    assert response[\\\"ok\\\"] is True\\n    assert \\\"metrics\\\" in response\\n    assert \\\"latency_ms\\\" in response[\\\"metrics\\\"]\\n    assert \\\"input_tokens\\\" in response[\\\"metrics\\\"]\\n    assert \\\"output_tokens\\\" in response[\\\"metrics\\\"]\\n\\n\\ndef test_code_retries_on_transient_model_error(tmp_path: Path, monkeypatch):\\n    (tmp_path / \\\"pyproject.toml\\\").write_text(\\\"[project]\\\\nname='tmp'\\\\n\\\", encoding=\\\"utf-8\\\")\\n    monkeypatch.setenv(\\\"ELEPHANT_PROJECT_ROOT\\\", str(tmp_path))\\n    elephant_cli.ensure_project_layout(tmp_path)\\n\\n    class _FakeResult:\\n        def __init__(self):\\n            self.content = \\\""
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17275,
+          "completion_tokens": 3000,
+          "total_tokens": 20275
+        },
+        "estimated_cost_usd": 0.0020881575
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false
+      }
+    ],
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Write tests for baseline mode markers and context manifest fields.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 9,
+      "files_indexed": 0,
+      "files_skipped": 9,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 219,
+      "edges_total": 14,
+      "elapsed_ms": 19
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 233,
+        "expectations": 6,
+        "edge_facts": 14,
+        "symbol_facts": 219,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "4dfee64d7ce25d2e",
+          "bundle_fingerprint": "30ac07cffa6187f7",
+          "section_fingerprints": {
+            "impacted_files": "783dc745b251",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "359c14c2ea6a",
+            "runtime_traces": "05a227ddd550"
+          },
+          "similarity_to_task": {
+            "impacted_files": 0.0117,
+            "ast_graph": -0.0273,
+            "git_diff": 0.0254,
+            "code_chunks": -0.0664,
+            "runtime_traces": 0.0625
+          },
+          "bundle_similarity_to_task": 0.002
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/env_utils.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py",
+            "scripts/elephant_cli.py",
+            "scripts/benchmark_runner.py",
+            "elephant_coder/state_store.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/__init__.py",
+            "elephant_coder/openrouter_client.py"
+          ],
+          "count": 9,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 14,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0293
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": 0.0176
+          },
+          {
+            "file_path": "tests/test_index_engine.py",
+            "similarity": 0.0059
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": -0.0137
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": -0.0156
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": -0.0293
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0371
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": -0.0469
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": -0.0605
+          }
+        ]
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "baseline"
+    },
+    "agent_plan_summary": "",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T23:40:34Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17275,
+    "output_tokens": 3000,
+    "total_tokens": 20275,
+    "estimated_cost_usd": 0.0020881575,
+    "latency_ms": 21591
+  },
+  "warnings": [
+    "Structured plan contained no files; nothing was written unless bootstrap defaults were applied.",
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

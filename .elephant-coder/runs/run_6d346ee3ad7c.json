@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "command": "/persona",
+  "run_id": "run_6d346ee3ad7c",
+  "session_id": "sess_91e9ff60a91a",
+  "data": {
+    "active_persona": "ai-minion-team.md",
+    "available_personas": [
+      "ai-minion-team.md",
+      "art-art-historian.md",
+      "art-textile-historian.md",
+      "culinary-chocolate-sommelier.md",
+      "culinary-food-pairing-assistant.md",
+      "culinary-master-wine-sommelier.md",
+      "culinary-meal-planner.md",
+      "culinary-tea-sommelier.md",
+      "default.md",
+      "education-chess-instructor.md",
+      "education-curriculum-designer.md",
+      "education-doctoral-advisor.md",
+      "education-high-school-math-tutor.md"
+    ],
+    "prompt_library": {
+      "count": 12,
+      "index_path": "C:/Users/grill/Documents/GitHub/grilly/private/models/elephant-coder/.elephant-coder/cache/prompt_library.json"
+    },
+    "validation": {
+      "status": "ok",
+      "note": "Prompt ingestion completed and persona asset stored."
+    },
+    "ingest": {
+      "persona_file": "education-high-school-math-tutor.md",
+      "meta_file": "education-high-school-math-tutor.meta.json",
+      "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/education/high-school-math-tutor.md",
+      "source_sha256": "273e0bfcd8c3e50de365d218f9741376e9c42460ba52a82d89756845a4255832",
+      "sections_total": 21,
+      "safe_sections": 2,
+      "flagged_lines_count": 0,
+      "activate_applied": false
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T22:43:36Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 4
+  },
+  "warnings": [
+    "Persona guidance is applied in /code prompts; full schema validation is still basic."
+  ],
+  "errors": []
+}

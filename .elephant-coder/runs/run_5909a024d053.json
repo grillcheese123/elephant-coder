@@ -1,0 +1,292 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_5909a024d053",
+  "session_id": "full_strategy_20260209a_bugfix_02_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"The stats aggregation logic in benchmark_runner.py crashed due to malformed run records (e.g., missing fields like 'cmd' or 'ok'). The fix adds defensive parsing to skip invalid records and ensures aggregation functions handle missing or invalid data gracefully.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"scripts/benchmark_runner.py\", \"content\": \"#!/usr/bin/env python3\\n\\\"\\\"\\\"Benchmark runner for Elephant Coder protocol v1.\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport argparse\\nimport importlib.util\\nimport json\\nimport os\\nimport subprocess\\nimport sys\\nfrom dataclasses import dataclass\\nfrom datetime import datetime, timezone\\nfrom pathlib import Path\\nfrom statistics import mean\\nfrom typing import Any\\n\\n\\ndef _utc_now_iso() -> str:\\n    return datetime.now(timezone.utc).strftime(\\\"%Y-%m-%dT%H:%M:%SZ\\\")\\n\\n\\ndef _default_benchmark_id() -> str:\\n    stamp = datetime.now(timezone.utc).strftime(\\\"%Y%m%dT%H%M%SZ\\\")\\n    return f\\\"bench_{stamp}_{os.getpid()}\\\"\\n\\n\\ndef _sanitize_id(raw: str) -> str:\\n    value = \\\"\\\".join(ch for ch in str(raw).strip() if ch.isalnum() or ch in {\\\"-\\\", \\\"_\\\"})\\n    if not value:\\n        raise ValueError(\\\"benchmark/session id must contain at least one valid character\\\")\\n    return value\\n\\n\\ndef _session_log_path(project_root: Path, session_id: str) -> Path:\\n    safe = _sanitize_id(session_id)\\n    return project_root / \\\".elephant-coder\\\" / \\\"sessions\\\" / f\\\"{safe}.jsonl\\\"\\n\\n\\ndef _load_cli_module(project_root: Path):\\n    cli_path = project_root / \\\"scripts\\\" / \\\"elephant_cli.py\\\"\\n    spec = importlib.util.spec_from_file_location(\\\"elephant_cli\\\", cli_path)\\n    if spec and spec.loader:\\n        module = importlib.util.module_from_spec(spec)\\n        spec.loader.exec_module(module)\\n        return module\\n    raise RuntimeError(\\\"Could not load elephant_cli.py\\\")\\n\\n\\ndef _parse_run_record(line: str) -> dict[str, Any] | None:\\n    \\\"\\\"\\\"Parse a single JSONL run record, returning None if malformed.\\\"\\\"\\\"\\n    try:\\n        record = json.loads(line)\\n        if not isinstance(record, dict):\\n            return None\\n        # Require at least 'run' and 'cmd' fields\\n        if \\\"run\\\" not in record or \\\"cmd\\\" not in record:\\n            return None\\n        return record\\n    except (json.JSONDecodeError, TypeError):\\n        return None\\n\\n\\ndef _safe_float(value: Any, default: float = 0.0) -> float:\\n    \\\"\\\"\\\"Safely convert a value to float, returning default if invalid.\\\"\\\"\\\"\\n    try:\\n        return float(value)\\n    except (TypeError, ValueError):\\n        return default\\n\\n\\ndef _safe_bool(value: Any, default: bool = False) -> bool:\\n    \\\"\\\"\\\"Safely convert a value to bool, returning default if invalid.\\\"\\\"\\\"\\n    if isinstance(value, bool):\\n        return value\\n    if isinstance(value, str):\\n        return value.lower() in {\\\"true\\\", \\\"1\\\", \\\"yes\\\"}\\n    return default\\n\\n\\ndef aggregate_stats_from_session(session_path: Path) -> dict[str, Any]:\\n    \\\"\\\"\\\"Aggregate benchmark stats from a session log file, skipping malformed records.\\\"\\\"\\\"\\n    runs: list[dict[str, Any]] = []\\n    if not session_path.exists():\\n        return {\\\"count\\\": 0, \\\"success_count\\\": 0, \\\"fail_count\\\": 0, \\\"avg_latency_ms\\\": 0.0, \\\"avg_cost_usd\\\": 0.0}\\n\\n    with session_path.open(\\\"r\\\", encoding=\\\"utf-8\\\") as f:\\n        for line in f:\\n            line = line.strip()\\n            if not line:\\n                continue\\n            record = _parse_run_record(line)\\n            if record is None:\\n                continue\\n            runs.append(record)\\n\\n    success_count = sum(1 for r in runs if _safe_bool(r.get(\\\"ok\\\"), False))\\n    fail_count = len(runs) - success_count\\n    latencies = [_safe_float(r.get(\\\"latency_ms\\\")) for r in runs]\\n    costs = [_safe_float(r.get(\\\"cost_usd\\\")) for r in runs]\\n\\n    return {\\n        \\\"count\\\": len(runs),\\n        \\\"success_count\\\": success_count,\\n        \\\"fail_count\\\": fail_count,\\n        \\\"avg_latency_ms\\\": mean(latencies) if latencies else 0.0,\\n        \\\"avg_cost_usd\\\": mean(costs) if costs else 0.0,\\n    }\\n\\n\\ndef run_benchmark(project_root: Path, session_id: str, max_runs: int = 10) -> None:\\n    \\\"\\\"\\\"Run the benchmark suite and log results.\\\"\\\"\\\"\\n    cli = _load_cli_module(project_root)\\n    session_log = _session_log_path(project_root, session_id)\\n    session_log.parent.mkdir(parents=True, exist_ok=True)\\n\\n    for i in range(max_runs):\\n        try:\\n            result = cli.main([\\\"--code\\\", \\\"--quiet\\\"])\\n            ok = result == 0\\n        except Exception as e:\\n            ok = False\\n            result = str(e)\\n\\n        record = {\\n            \\\"run\\\": f\\\"run_{i:04d}\\\",\\n            \\\"cmd\\\": \\\"--code --quiet\\\",\\n            \\\"ok\\\": ok,\\n            \\\"latency_ms\\\": 0.0,\\n            \\\"tokens\\\": 0,\\n            \\\"cost_usd\\\": 0.0,\\n            \\\"timestamp\\\": _utc_now_iso(),\\n        }\\n        with session_log.open(\\\"a\\\", encoding=\\\"utf-8\\\") as f:\\n            f.write(json.dumps(record) + \\\"\\\\n\\\")\\n\\n    stats = aggregate_stats_from_session(session_log)\\n    print(f\\\"Benchmark complete. Stats: {stats}\\\")\\n\\n\\ndef main() -> int:\\n    parser = argparse.ArgumentParser(description=\\\"Elephant Coder benchmark runner\\\")\\n    parser.add_argument(\\\"--session\\\", default=_default_benchmark_id(), help=\\\"Session ID\\\")\\n    parser.add_argument(\\\"--max-runs\\\", type=int, default=10, help=\\\"Max runs\\\")\\n    args = parser.parse_args()\\n\\n    project_root = Path.cwd()\\n    run_benchmark(project_root, args.session, args.max_runs)\\n    return 0\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    sys.exit(main())\\n\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}, \"python\": [], \"pythonDev\": [], \"rust\": [], \"go\": [], \"cpp\": []}, \"commands\": [\"python scripts/benchmark_runner.py --session test_fix --max-runs 5\"]}"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 3701,
+          "completion_tokens": 1547,
+          "total_tokens": 5248
+        },
+        "estimated_cost_usd": 0.0017748225
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Fix stats aggregation to handle malformed run records without crashing.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 10,
+      "files_indexed": 0,
+      "files_skipped": 10,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 245,
+      "edges_total": 15,
+      "elapsed_ms": 21
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 260,
+        "expectations": 7,
+        "edge_facts": 15,
+        "symbol_facts": 245,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "minimal",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "35aa86513897d025",
+          "bundle_fingerprint": "ee1d4cbdf82d80f3",
+          "section_fingerprints": {
+            "impacted_files": "ff39c038fdfd",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "c5506db1720c",
+            "runtime_traces": "ce158e15005f"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0039,
+            "ast_graph": -0.0117,
+            "git_diff": 0.0215,
+            "code_chunks": -0.043,
+            "runtime_traces": 0.0156
+          },
+          "bundle_similarity_to_task": -0.0371
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/index_engine.py",
+            "elephant_coder/__init__.py",
+            "scripts/benchmark_runner.py"
+          ],
+          "count": 3,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 40,
+          "edge_count": 15,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_benchmark_runner.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 6,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_benchmark_runner.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": 0.0254
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0234
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": 0.0078
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": -0.002
+          },
+          {
+            "file_path": "tests/test_benchmark_runner.py",
+            "similarity": -0.0039
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": -0.0059
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": -0.0293
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": -0.0293
+          }
+        ]
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "The stats aggregation logic in benchmark_runner.py crashed due to malformed run records (e.g., missing fields like 'cmd' or 'ok'). The fix adds defensive parsing to skip invalid records and ensures aggregation functions handle missing or invalid data gracefully.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:18:50Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 3701,
+    "output_tokens": 1547,
+    "total_tokens": 5248,
+    "estimated_cost_usd": 0.0017748225,
+    "latency_ms": 13957
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

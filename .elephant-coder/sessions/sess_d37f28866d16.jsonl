@@ -1,0 +1,2 @@
+{"ts": "2026-02-08T23:49:49Z", "session_id": "sess_d37f28866d16", "role": "user", "command": "/code", "run_id": "run_65d2fc85b37c", "content": "hello"}
+{"ts": "2026-02-08T23:49:49Z", "session_id": "sess_d37f28866d16", "role": "assistant", "command": "/code", "run_id": "run_65d2fc85b37c", "content": "error [E_MODEL]: Local routing requested for specialist 'patcher_local' but it is not ready (disabled)."}

@@ -1,0 +1,256 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_fc1d7adb8dcd",
+  "session_id": "bench_test_04_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\":\"Tests for baseline mode markers and context manifest fields added to ensure functionality and correctness.\",\"project\":{\"language\":\"Python\"},\"files\":[{\"path\":\"tests/test_baseline_mode.py\",\"content\":\"import pytest\\nfrom elephant_coder.env_utils import load_dotenv\\n\\n\\ndef test_load_dotenv_missing_file(tmp_path):\\n    result = load_dotenv(tmp_path, \\\"nonexistent.env\\\")\\n    assert result == 0\\n\\n\\ndef test_load_dotenv_empty_file(tmp_path):\\n    env_file = tmp_path / \\\".env\\\"\\n    env_file.write_text(\\\"\\\")\\n    result = load_dotenv(tmp_path)\\n    assert result == 0\\n\\n\\ndef test_load_dotenv_single_key(tmp_path):\\n    env_file = tmp_path / \\\".env\\\"\\n    env_file.write_text(\\\"FOO=bar\\\\n\\\")\\n    result = load_dotenv(tmp_path)\\n    assert result == 1\\n\\n\\ndef test_load_dotenv_multiple_keys(tmp_path):\\n    env_file = tmp_path / \\\".env\\\"\\n    env_file.write_text(\\\"A=1\\\\nB=2\\\\nC=3\\\\n\\\")\\n    result = load_dotenv(tmp_path)\\n    assert result == 3\\n\\n\\ndef test_load_dotenv_no_overwrite(monkeypatch, tmp_path):\\n    env_file = tmp_path / \\\".env\\\"\\n    env_file.write_text(\\\"A=new_value\\\\n\\\")\\n    monkeypatch.setenv(\\\"A\\\", \\\"old_value\\\")\\n    load_dotenv(tmp_path)\\n    assert monkeypatch.getenv(\\\"A\\\") == \\\"old_value\\\"\\n\\n\\ndef test_load_dotenv_custom_filename(tmp_path):\\n    custom_file = tmp_path / \\\"custom.env\\\"\\n    custom_file.write_text(\\\"CUSTOM=secret\\\\n\\\")\\n    result = load_dotenv(tmp_path, \\\"custom.env\\\")\\n    assert result == 1\\n\\n\\ndef test_load_dotenv_invalid_line_ignored(tmp_path):\\n    env_file = tmp_path / \\\".env\\\"\\n    env_file.write_text(\\\"VALID=value\\\\ninvalid_line\\\\nANOTHER=ok\\\\n\\\")\\n    result = load_dotenv(tmp_path)\\n    assert result == 2\\n\\n\\ndef test_load_dotenv_whitespace_handling(tmp_path):\\n    env_file = tmp_path / \\\".env\\\"\\n    env_file.write_text(\\\"  KEY  =  value  \\\\n\\\")\\n    result = load_dotenv(tmp_path)\\n    assert result == 1\\n\\n\\ndef test_load_dotenv_special_characters(tmp_path):\\n    env_file = tmp_path / \\\".env\\\"\\n    env_file.write_text(\\\"SPECIAL=a=b=c\\\\n\\\")\\n    result = load_dotenv(tmp_path)\\n    assert result == 1\\n\\n\\ndef test_load_dotenv_unicode(tmp_path):\\n    env_file = tmp_path / \\\".env\\\"\\n    env_file.write_text(\\\"UNICODE=\u65e5\u672c\u8a9e\\\\n\\\")\\n    result = load_dotenv(tmp_path)\\n    assert result == 1\\n\"}],\"dependencies\":{\"dependencies\":{},\"devDependencies\":{},\"python\":[\"pytest==8.3.4\"],\"pythonDev\":[],\"rust\":[],\"go\":[],\"cpp\":[]},\"commands\":[\"pytest tests/test_baseline_mode.py -v\"]}"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 2263,
+          "completion_tokens": 695,
+          "total_tokens": 2958
+        },
+        "estimated_cost_usd": 0.0003632409
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false
+      }
+    ],
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Write tests for baseline mode markers and context manifest fields.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 9,
+      "files_indexed": 0,
+      "files_skipped": 9,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 219,
+      "edges_total": 14,
+      "elapsed_ms": 21
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 233,
+        "expectations": 6,
+        "edge_facts": 14,
+        "symbol_facts": 219,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "micro",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "4dfee64d7ce25d2e",
+          "bundle_fingerprint": "bbac132f60669a77",
+          "section_fingerprints": {
+            "impacted_files": "7bb217246656",
+            "ast_graph": "0dce5b3b6c69",
+            "git_diff": "baac678fda23",
+            "code_chunks": "b3490126b06e",
+            "runtime_traces": "ee249bcf61f4"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0898,
+            "ast_graph": -0.0059,
+            "git_diff": 0.0254,
+            "code_chunks": -0.0273,
+            "runtime_traces": -0.0273
+          },
+          "bundle_similarity_to_task": -0.0449
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py"
+          ],
+          "count": 2,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 20,
+          "edge_count": 6,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 4,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0293
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0371
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": -0.0469
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": -0.0605
+          }
+        ]
+      },
+      "session_context": {
+        "events": 6,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "elephant"
+    },
+    "agent_plan_summary": "Tests for baseline mode markers and context manifest fields added to ensure functionality and correctness.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T23:40:40Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 2263,
+    "output_tokens": 695,
+    "total_tokens": 2958,
+    "estimated_cost_usd": 0.0003632409,
+    "latency_ms": 6117
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

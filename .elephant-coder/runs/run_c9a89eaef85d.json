@@ -1,0 +1,256 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_c9a89eaef85d",
+  "session_id": "bench_test_03_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\":\"Tests for loading benchmark summaries in /stats when result artifacts exist.\",\"project\":{\"language\":\"Python\"},\"files\":[{\"path\":\"tests/test_benchmark_summary.py\",\"content\":\"import os\\nimport json\\nimport pytest\\nfrom pathlib import Path\\nfrom elephant_coder.state_store import StateStore\\n\\n\\nclass TestBenchmarkSummaryLoading:\\n    \\\"\\\"\\\"Tests for benchmark summary loading in /stats when result artifacts exist.\\\"\\\"\\\"\\n\\n    @pytest.fixture(autouse=True)\\n    def setup(self, tmp_path: Path):\\n        \\\"\\\"\\\"Set up a temporary directory structure for testing.\\\"\\\"\\\"\\n        self.stats_dir = tmp_path / \\\"stats\\\"\\n        self.stats_dir.mkdir()\\n        self.state_store = StateStore(tmp_path)\\n\\n    def test_load_benchmark_summary_success(self):\\n        \\\"\\\"\\\"Test successful loading of a benchmark summary when artifact exists.\\\"\\\"\\\"\\n        benchmark_name = \\\"test_benchmark\\\"\\n        summary_data = {\\n            \\\"total_cases\\\": 10,\\n            \\\"passed\\\": 8,\\n            \\\"failed\\\": 2,\\n            \\\"duration_seconds\\\": 12.5,\\n            \\\"timestamp\\\": \\\"2025-01-01T00:00:00Z\\\"\\n        }\\n        artifact_path = self.stats_dir / f\\\"{benchmark_name}.json\\\"\\n        with open(artifact_path, \\\"w\\\") as f:\\n            json.dump(summary_data, f)\\n\\n        result = self.state_store.load_benchmark_summary(benchmark_name)\\n\\n        assert result == summary_data\\n\\n    def test_load_benchmark_summary_missing_artifact(self):\\n        \\\"\\\"\\\"Test behavior when benchmark summary artifact does not exist.\\\"\\\"\\\"\\n        benchmark_name = \\\"nonexistent_benchmark\\\"\\n\\n        result = self.state_store.load_benchmark_summary(benchmark_name)\\n\\n        assert result is None\\n\\n    def test_load_benchmark_summary_invalid_json(self):\\n        \\\"\\\"\\\"Test behavior when benchmark summary artifact contains invalid JSON.\\\"\\\"\\\"\\n        benchmark_name = \\\"invalid_benchmark\\\"\\n        artifact_path = self.stats_dir / f\\\"{benchmark_name}.json\\\"\\n        with open(artifact_path, \\\"w\\\") as f:\\n            f.write(\\\"not valid json\\\")\\n\\n        with pytest.raises(json.JSONDecodeError):\\n            self.state_store.load_benchmark_summary(benchmark_name)\\n\\n    def test_load_benchmark_summary_empty_artifact(self):\\n        \\\"\\\"\\\"Test behavior when benchmark summary artifact is empty.\\\"\\\"\\\"\\n        benchmark_name = \\\"empty_benchmark\\\"\\n        artifact_path = self.stats_dir / f\\\"{benchmark_name}.json\\\"\\n        with open(artifact_path, \\\"w\\\") as f:\\n            f.write(\\\"\\\")\\n\\n        with pytest.raises(json.JSONDecodeError):\\n            self.state_store.load_benchmark_summary(benchmark_name)\\n\\n    def test_load_benchmark_summary_partial_data(self):\\n        \\\"\\\"\\\"Test loading when benchmark summary has partial expected fields.\\\"\\\"\\\"\\n        benchmark_name = \\\"partial_benchmark\\\"\\n        summary_data = {\\n            \\\"total_cases\\\": 5,\\n            \\\"passed\\\": 5\\n            # missing other fields\\n        }\\n        artifact_path = self.stats_dir / f\\\"{benchmark_name}.json\\\"\\n        with open(artifact_path, \\\"w\\\") as f:\\n            json.dump(summary_data, f)\\n\\n        result = self.state_store.load_benchmark_summary(benchmark_name)\\n\\n        assert result == summary_data\\n        assert result[\\\"total_cases\\\"] == 5\\n        assert result[\\\"passed\\\"] == 5\\n\\n    def test_load_multiple_benchmark_summaries(self):\\n        \\\"\\\"\\\"Test loading multiple benchmark summaries independently.\\\"\\\"\\\"\\n        benchmarks = {\\n            \\\"benchmark_a\\\": {\\\"total_cases\\\": 3, \\\"passed\\\": 3},\\n            \\\"benchmark_b\\\": {\\\"total_cases\\\": 5, \\\"passed\\\": 4},\\n            \\\"benchmark_c\\\": {\\\"total_cases\\\": 10, \\\"passed\\\": 7}\\n        }\\n\\n        for name, data in benchmarks.items():\\n            artifact_path = self.stats_dir / f\\\"{name}.json\\\"\\n            with open(artifact_path, \\\"w\\\") as f:\\n                json.dump(data, f)\\n\\n        for name, expected_data in benchmarks.items():\\n            result = self.state_store.load_benchmark_summary(name)\\n            assert result == expected_data\\n\\n    def test_load_benchmark_summary_special_characters_in_name(self):\\n        \\\"\\\"\\\"Test loading benchmark summary with special characters in name.\\\"\\\"\\\"\\n        benchmark_name = \\\"test-benchmark_v2.0\\\"\\n        summary_data = {\\\"total_cases\\\": 2, \\\"passed\\\": 1}\\n        artifact_path = self.stats_dir / f\\\"{benchmark_name}.json\\\"\\n        with open(artifact_path, \\\"w\\\") as f:\\n            json.dump(summary_data, f)\\n\\n        result = self.state_store.load_benchmark_summary(benchmark_name)\\n\\n        assert result == summary_data\\n\\n    def test_load_benchmark_summary_nested_directory(self):\\n        \\\"\\\"\\\"Test loading benchmark summary from nested directory under /stats.\\\"\\\"\\\"\\n        nested_dir = self.stats_dir / \\\"subdir\\\"\\n        nested_dir.mkdir()\\n        benchmark_name = \\\"nested_benchmark\\\"\\n        summary_data = {\\\"total_cases\\\": 1, \\\"passed\\\": 1}\\n        artifact_path = nested_dir / f\\\"{benchmark_name}.json\\\"\\n        with open(artifact_path, \\\"w\\\") as f:\\n            json.dump(summary_data, f)\\n\\n        # Assuming StateStore.load_benchmark_summary supports subdirectories\\n        result = self.state_store.load_benchmark_summary(f\\\"subdir/{benchmark_name}\\\")\\n\\n        assert result == summary_data\\n\\n    def test_load_benchmark_summary_large_data(self):\\n        \\\"\\\"\\\"Test loading a large benchmark summary.\\\"\\\"\\\"\\n        benchmark_name = \\\"large_benchmark\\\"\\n        summary_data = {\\n            \\\"total_cases\\\": 1000,\\n            \\\"passed\\\": 950,\\n            \\\"failed\\\": 50,\\n            \\\"duration_seconds\\\": 123.45,\\n            \\\"timestamp\\\": \\\"2025-01-01T00:00:00Z\\\",\\n            \\\"details\\\": [{\\\"case_id\\\": i, \\\"status\\\": \\\"passed\\\" if i < 950 else \\\"failed\\\"} for i in range(1000)]\\n        }\\n        artifact_path = self.stats_dir / f\\\"{benchmark_name}.json\\\"\\n        with open(artifact_path, \\\"w\\\") as f:\\n            json.dump(summary_data, f)\\n\\n        result = self.state_store.load_benchmark_summary(benchmark_name)\\n\\n        assert result[\\\"total_cases\\\"] == 1000\\n        assert len(result[\\\"details\\\"]) == 1000\\n\\n    def test_load_benchmark_summary_unicode_content(self):\\n        \\\"\\\"\\\"Test loading benchmark summary with Unicode content.\\\"\\\"\\\"\\n        benchmark_name = \\\"unicode_benchmark\\\"\\n        summary_data = {\\n            \\\"total_cases\\\": 2,\\n            \\\"passed\\\": 2,\\n            \\\"description\\\": \\\"\u6d4b\u8bd5\u63cf\u8ff0 \ud83d\ude80\\\"\\n        }\\n        artifact_path = self.stats_dir / f\\\"{benchmark_name}.json\\\"\\n        with open(artifact_path, \\\"w\\\", encoding=\\\"utf-8\\\") as f:\\n            json.dump(summary_data, f, ensure_ascii=False)\\n\\n        result = self.state_store.load_benchmark_summary(benchmark_name)\\n\\n        assert result[\\\"description\\\"] == \\\"\u6d4b\u8bd5\u63cf\u8ff0 \ud83d\ude80\\\"\\n\\n\\nclass TestBenchmarkSummaryIntegration:\\n    \\\"\\\"\\\"Integration tests for benchmark summary loading.\\\"\\\"\\\"\\n\\n    @pytest.fixture(autouse=True)\\n    def setup(self, tmp_path: Path):\\n        \\\"\\\"\\\"Set up integration test environment.\\\"\\\"\\\"\\n        self.stats_dir = tmp_path / \\\"stats\\\"\\n        self.stats_dir.mkdir()\\n        self.state_store = StateStore(tmp_path)\\n\\n    def test_end_to_end_benchmark_summary_workflow(self):\\n        \\\"\\\"\\\"Test complete workflow of saving and loading benchmark summaries.\\\"\\\"\\\"\\n        benchmark_name = \\\"integration_test\\\"\\n        original_data = {\\n            \\\"total_cases\\\": 20,\\n            \\\"passed\\\": 18,\\n            \\\"failed\\\": 2,\\n            \\\"duration_seconds\\\": 45.6,\\n            \\\"timestamp\\\": \\\"2025-01-02T12:00:00Z\\\"\\n        }\\n\\n        # Save benchmark summary\\n        artifact_path = self.stats_dir / f\\\"{benchmark_name}.json\\\"\\n        with open(artifact_path, \\\"w\\\") as f:\\n            json.dump(original_data, f)\\n\\n        # Load benchmark summary\\n        loaded_data = self.state_store.load_benchmark_summary(benchmark_name)\\n\\n        assert loaded_data == original_data\\n        assert loaded_data[\\\"total_cases\\\"] == 20\\n        assert loaded_data[\\\"passed\\\"] == 18\\n        assert loaded_data[\\\"failed\\\"] == 2\\n        assert loaded_data[\\\"duration_seconds\\\"] == 45.6\\n\"}], \"dependencies\":{\"dependencies\":{},\"devDependencies\":{},\"python\":[\"pytest==7.4.0\"],\"pythonDev\":[],\"rust\":[],\"go\":[],\"cpp\":[]},\"commands\":[\"pytest tests/test_benchmark_summary.py -v\"]}"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 2217,
+          "completion_tokens": 2032,
+          "total_tokens": 4249
+        },
+        "estimated_cost_usd": 0.0007571421
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false
+      }
+    ],
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Write tests for benchmark summary loading in /stats when result artifacts exist.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 9,
+      "files_indexed": 0,
+      "files_skipped": 9,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 219,
+      "edges_total": 14,
+      "elapsed_ms": 18
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 233,
+        "expectations": 6,
+        "edge_facts": 14,
+        "symbol_facts": 219,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "micro",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "a6a7bfd1f3ad92f4",
+          "bundle_fingerprint": "5baa53236662c8e1",
+          "section_fingerprints": {
+            "impacted_files": "7bb217246656",
+            "ast_graph": "0dce5b3b6c69",
+            "git_diff": "baac678fda23",
+            "code_chunks": "55f31363a5d2",
+            "runtime_traces": "d28a50d347ec"
+          },
+          "similarity_to_task": {
+            "impacted_files": 0.0098,
+            "ast_graph": -0.082,
+            "git_diff": 0.0312,
+            "code_chunks": 0.0039,
+            "runtime_traces": -0.0273
+          },
+          "bundle_similarity_to_task": -0.0352
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/env_utils.py",
+            "elephant_coder/__init__.py"
+          ],
+          "count": 2,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 20,
+          "edge_count": 6,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 4,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0312
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0059
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": -0.0195
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0312
+          }
+        ]
+      },
+      "session_context": {
+        "events": 6,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "elephant"
+    },
+    "agent_plan_summary": "Tests for loading benchmark summaries in /stats when result artifacts exist.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T23:40:13Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 2217,
+    "output_tokens": 2032,
+    "total_tokens": 4249,
+    "estimated_cost_usd": 0.0007571421,
+    "latency_ms": 14609
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

@@ -1,0 +1,2 @@
+{"ts": "2026-02-08T23:56:07Z", "session_id": "bench_20260208T235600Z_12652_bugfix_01_elephant_r1", "role": "user", "command": "/code", "run_id": "run_3a1a96ecbfb8", "content": "Fix session slash-command parsing edge cases where shorthand arguments are misinterpreted."}
+{"ts": "2026-02-08T23:56:07Z", "session_id": "bench_20260208T235600Z_12652_bugfix_01_elephant_r1", "role": "assistant", "command": "/code", "run_id": "run_3a1a96ecbfb8", "content": "No checks executed in dry-run mode."}

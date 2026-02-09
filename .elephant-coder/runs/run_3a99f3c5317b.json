@@ -1,0 +1,298 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_3a99f3c5317b",
+  "session_id": "bench_20260209T000043Z_10900_test_01_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Write regression tests for interactive shorthand parsing in session mode by testing the _rewrite_interactive_command_parts function in elephant_cli.py. The tests should cover basic rewriting, slash-to-command prefix mapping, and handling of malformed input.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"tests/test_session_shorthand.py\", \"content\": \"\\\"\\\"\\\"Tests for interactive shorthand parsing in session mode.\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport importlib.util\\nimport sys\\nfrom pathlib import Path\\n\\n\\ndef _load_cli_module():\\n    root = Path(__file__).resolve().parents[1]\\n    cli_path = root / \\\"scripts\\\" / \\\"elephant_cli.py\\\"\\n    spec = importlib.util.spec_from_file_location(\\\"elephant_cli_local\\\", cli_path)\\n    if spec is None or spec.loader is None:\\n        raise RuntimeError(\\\"Unable to load scripts/elephant_cli.py\\\")\\n    module = importlib.util.module_from_spec(spec)\\n    sys.modules[spec.name] = module\\n    spec.loader.exec_module(module)\\n    return module\\n\\n\\nelephant_cli = _load_cli_module()\\n\\n\\ndef test_rewrite_interactive_command_parts_basic():\\n    \\\"\\\"\\\"Basic rewriting of command parts.\\\"\\\"\\\"\\n    parts = [\\\"plan\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_slash_prefix():\\n    \\\"\\\"\\\"Slash prefix should be converted to command name.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_empty():\\n    \\\"\\\"\\\"Empty input should return empty list.\\\"\\\"\\\"\\n    parts = []\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == []\\n\\n\\ndef test_rewrite_interactive_command_parts_only_slash():\\n    \\\"\\\"\\\"Slash alone should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"/\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_multiple_slashes():\\n    \\\"\\\"\\\"Multiple slash-prefixed commands should be rewritten.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\", \\\"/code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\", \\\"code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_mixed_slash_and_normal():\\n    \\\"\\\"\\\"Mixed slash and normal commands should be rewritten correctly.\\\"\\\"\\\"\\n    parts = [\\\"plan\\\", \\\"/code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\", \\\"code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_flags():\\n    \\\"\\\"\\\"Flags and arguments should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/session\\\", \\\"--id\\\", \\\"test123\\\", \\\"--output\\\", \\\"json\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"session\\\", \\\"--id\\\", \\\"test123\\\", \\\"--output\\\", \\\"json\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_equals():\\n    \\\"\\\"\\\"Arguments with equals signs should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\", \\\"--task=add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\", \\\"--task=add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_quoted_args():\\n    \\\"\\\"\\\"Quoted arguments should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\", \\\"--task\\\", '\\\"add feature\\\"']\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\", \\\"--task\\\", '\\\"add feature\\\"\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_special_chars():\\n    \\\"\\\"\\\"Special characters in arguments should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\", \\\"--task\\\", \\\"add-feature_v2\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\", \\\"--task\\\", \\\"add-feature_v2\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_unicode():\\n    \\\"\\\"\\\"Unicode characters in arguments should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\", \\\"--task\\\", \\\"\u6dfb\u52a0\u529f\u80fd\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\", \\\"--task\\\", \\\"\u6dfb\u52a0\u529f\u80fd\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_long_command():\\n    \\\"\\\"\\\"Long command names should be handled correctly.\\\"\\\"\\\"\\n    parts = [\\\"/verylongcommandname\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"verylongcommandname\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_numeric_command():\\n    \\\"\\\"\\\"Numeric command names should be handled correctly.\\\"\\\"\\\"\\n    parts = [\\\"/123\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"123\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_mixed_case():\\n    \\\"\\\"\\\"Mixed case command names should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/PlAn\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"PlAn\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_trailing_slash():\\n    \\\"\\\"\\\"Trailing slash should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan/\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan/\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_leading_whitespace():\\n    \\\"\\\"\\\"Leading whitespace in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"  /plan\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"  plan\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_trailing_whitespace():\\n    \\\"\\\"\\\"Trailing whitespace in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan  \\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan  \\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_internal_whitespace():\\n    \\\"\\\"\\\"Internal whitespace in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan  code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan  code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_multiple_spaces():\\n    \\\"\\\"\\\"Multiple spaces in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan   code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan   code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_tabs():\\n    \\\"\\\"\\\"Tabs in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\tcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\tcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_newlines():\\n    \\\"\\\"\\\"Newlines in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\ncode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\ncode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_control_chars():\\n    \\\"\\\"\\\"Control characters in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\x00code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\x00code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_null_bytes():\\n    \\\"\\\"\\\"Null bytes in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\x00code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\x00code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_surrogate_pairs():\\n    \\\"\\\"\\\"Surrogate pairs in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\uD800\\\\uDC00code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\uD800\\\\uDC00code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_bom():\\n    \\\"\\\"\\\"Byte order mark in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\uFEFFcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\uFEFFcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_zero_width_chars():\\n    \\\"\\\"\\\"Zero width characters in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\u200Bcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\u200Bcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_rtl_chars():\\n    \\\"\\\"\\\"Right-to-left characters in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\u061Ccode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\u061Ccode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_emoji():\\n    \\\"\\\"\\\"Emoji in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\U0001F600code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\U0001F600code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_private_use():\\n    \\\"\\\"\\\"Private use characters in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\uE000code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\uE000code\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_unassigned():\\n    \\\"\\\"\\\"Unassigned code points in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\uF8FFcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\uF8FFcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_replacement_char():\\n    \\\"\\\"\\\"Replacement character in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\uFFFDcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\uFFFDcode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n\\ndef test_rewrite_interactive_command_parts_with_infinity():\\n    \\\"\\\"\\\"Infinity in command should be preserved.\\\"\\\"\\\"\\n    parts = [\\\"/plan\\\\u221Ecode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n    result = elephant_cli._rewrite_interactive_command_parts(parts)\\n    assert result == [\\\"plan\\\\u221Ecode\\\", \\\"--task\\\", \\\"add feature\\\"]\\n\\n"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17309,
+          "completion_tokens": 3000,
+          "total_tokens": 20309
+        },
+        "estimated_cost_usd": 0.0020905137
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "reviewer_local",
+      "selection_reason": "task-heuristic role=reviewer"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Write regression tests for interactive shorthand parsing in session mode.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 9,
+      "files_indexed": 0,
+      "files_skipped": 9,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 240,
+      "edges_total": 14,
+      "elapsed_ms": 20
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 254,
+        "expectations": 6,
+        "edge_facts": 14,
+        "symbol_facts": 240,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "ca2006da4cd87227",
+          "bundle_fingerprint": "20ae07cd9021aaf7",
+          "section_fingerprints": {
+            "impacted_files": "783dc745b251",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "24ce12400427",
+            "runtime_traces": "05a227ddd550"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0078,
+            "ast_graph": -0.0195,
+            "git_diff": 0.0098,
+            "code_chunks": 0.0176,
+            "runtime_traces": -0.0352
+          },
+          "bundle_similarity_to_task": 0.0
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/openrouter_client.py",
+            "scripts/elephant_cli.py",
+            "tests/test_index_engine.py",
+            "elephant_coder/index_engine.py",
+            "tests/test_elephant_cli.py"
+          ],
+          "count": 9,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 14,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": 0.041
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": 0.0352
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0273
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0059
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": 0.0059
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": -0.0098
+          },
+          {
+            "file_path": "tests/test_index_engine.py",
+            "similarity": -0.0176
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.041
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": -0.0488
+          }
+        ]
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "baseline"
+    },
+    "agent_plan_summary": "",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:08:33Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17309,
+    "output_tokens": 3000,
+    "total_tokens": 20309,
+    "estimated_cost_usd": 0.0020905137,
+    "latency_ms": 21347
+  },
+  "warnings": [
+    "Structured plan contained no files; nothing was written unless bootstrap defaults were applied.",
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

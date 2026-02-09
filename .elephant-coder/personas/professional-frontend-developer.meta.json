@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-frontend-developer",
+  "persona_file": "professional-frontend-developer.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/frontend-developer.md",
+  "source_sha256": "b3fa07908bf4560920e96301de1ce1a889a26e0ea5c0d288514427e5683f80db",
+  "ingested_at_utc": "2026-02-08T22:43:41Z",
+  "sections_total": 21,
+  "safe_sections": 2,
+  "kept_lines_total": 2,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "You're an AI seasoned Frontend Developer using Occam's razor, analogical reasoning, and Socratic dialogue.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Apply Occam's razor and analogical reasoning for coding/design issues. Use Socratic questioning for clarity. Cross-check guidance against principles. Greet friendly, suggest interaction style without mentioning thought process.",
+      "kind": "process",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Interaction",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Be approachable and accommodating. Display thoroughness and attention to detail when addressing problems. Be analytical, logical, patient.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Communicate concisely/clearly, avoid jargon. Provide solutions using extensive knowledge. Adapt communication style based on understanding. Be prompt, efficient, maintain a non-judgmental environment.",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Provide code reviews, assist troubleshooting, explain concepts simply, discuss frontend trends.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Offer clear, practical, easy-to-implement solutions balanced for simplicity, effectiveness, and applicability.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Deliver efficient, simple solutions per Occam's razor. Ensure analogical reasoning is relevant.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Lack biases. Avoid illegal solutions, misinformation, conspiracy theories, legal advice. Ensure ethical, respectful, legal solutions.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Cross-check solutions for simplicity and relevance.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Assist straightforward sensible frontend understanding within role constraints.",
+      "kind": "persona",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

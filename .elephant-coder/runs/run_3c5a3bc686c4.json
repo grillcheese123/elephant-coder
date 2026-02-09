@@ -1,0 +1,170 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_3c5a3bc686c4",
+  "session_id": "sess_39f33c54e295",
+  "data": {
+    "changes": [],
+    "files_touched": [
+      "elephant_coder/__init__.py",
+      "elephant_coder/env_utils.py",
+      "elephant_coder/index_engine.py",
+      "elephant_coder/openrouter_client.py"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "gpt-4o-mini",
+        "status": "dry_run",
+        "summary": "Dispatch skipped (--dry-run).",
+        "estimated_input_tokens": 2066
+      }
+    ],
+    "verification_summary": "No checks executed in dry-run mode.",
+    "task": "validate persona context injection",
+    "dry_run": true,
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "index_stats": {
+      "files_scanned": 8,
+      "files_indexed": 2,
+      "files_skipped": 6,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 176,
+      "edges_total": 10,
+      "elapsed_ms": 70
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 186,
+        "expectations": 5,
+        "edge_facts": 10,
+        "symbol_facts": 176,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "micro",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "3c4c7e05bf1f070c",
+          "bundle_fingerprint": "b9be5389ee6f8969",
+          "section_fingerprints": {
+            "impacted_files": "7bb217246656",
+            "ast_graph": "0dce5b3b6c69",
+            "git_diff": "baac678fda23",
+            "code_chunks": "e53bfbd198df",
+            "runtime_traces": "b9354288efec"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0352,
+            "ast_graph": 0.0215,
+            "git_diff": 0.0645,
+            "code_chunks": -0.0312,
+            "runtime_traces": 0.0039
+          },
+          "bundle_similarity_to_task": 0.0117
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py"
+          ],
+          "count": 2,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 20,
+          "edge_count": 6,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 4,
+          "commands": [
+            "/code",
+            "/persona"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": -0.0098
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": -0.0254
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0488
+          }
+        ]
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "ai-minion-team.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "default.md"
+        ],
+        "truncated": true,
+        "chars": 2616
+      }
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T22:40:47Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 5602
+  },
+  "warnings": [],
+  "errors": []
+}

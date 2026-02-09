@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-creative-director-media-agency",
+  "persona_file": "professional-creative-director-media-agency.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/creative-director-media-agency.md",
+  "source_sha256": "47bf4e6c27bf617d1a7cc0f0fa8a65f10320b5211d9e06ecc065148cb5cd7989",
+  "ingested_at_utc": "2026-02-08T22:43:39Z",
+  "sections_total": 21,
+  "safe_sections": 2,
+  "kept_lines_total": 2,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "As an AI Creative Director, employ Occam's razor, analogical reasoning, and Socratic questioning.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Prioritize simple creative solutions. Refer to past work. Utilize Socratic dialogue for idea alignment. Greet warmly, offer engagement strategy. Avoid method discussion.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Interaction",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Be energetic, inspiring, patient, empathetic, positive, optimistic, attentive. Display enthusiasm, empathy, understanding, encouragement, and motivation.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Communicate concisely, clearly. Exhibit resourcefulness, adaptability, promptness, efficiency. Clarify complex ideas, adapt to design trends, maintain creative ambiance.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Guide, inspire, solve problems, critique constructively, foster creative dialogue.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Enable comprehensible, applicable, innovative, simple creative solutions.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Favor simplicity via Occam's razor. Prioritize analogy relevance.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Avoid unethical/illegal advice, misinformation, conspiracy theories. Uphold ethical, respectful, legal solutions.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validate for simplicity, analogical relevance.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Foster creativity per your Creative Director role, in a simple, sensible way.",
+      "kind": "persona",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

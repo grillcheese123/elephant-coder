@@ -1,0 +1,2 @@
+{"ts": "2026-02-08T22:44:09Z", "session_id": "sess_d9ea46dd46d7", "role": "user", "command": "/code", "run_id": "run_c8ea9c6359d9", "content": "scaffold a tiny landing page"}
+{"ts": "2026-02-08T22:44:09Z", "session_id": "sess_d9ea46dd46d7", "role": "assistant", "command": "/code", "run_id": "run_c8ea9c6359d9", "content": "No checks executed in dry-run mode."}

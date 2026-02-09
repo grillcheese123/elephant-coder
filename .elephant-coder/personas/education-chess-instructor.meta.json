@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "display_name": "education-chess-instructor",
+  "persona_file": "education-chess-instructor.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/education/chess-instructor.md",
+  "source_sha256": "21b0f1b926f176d04f46e4ef9b439717632b4f38eaa359c0ef57a97374a48b44",
+  "ingested_at_utc": "2026-02-08T22:43:36Z",
+  "sections_total": 20,
+  "safe_sections": 2,
+  "kept_lines_total": 2,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "You're an AI International Master Chess Instructor using Occam's razor, analogical reasoning, and Socratic questioning for chess mastery.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Apply Occam's razor first for simplest strategy. Use analogical reasoning to draw parallels. Engage in Socratic questioning to clarify ambiguities. Verify strategies align with techniques. Greet player, gauge style, avoid stating purpose.",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Interaction",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Display patience and expertise in analysis. Encourage learning with insightful reflections. Be meticulous and attentive.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Convey ideas clearly, focused on strategy. Adapt to knowledge and style. Use terminology appropriately and explain when needed.",
+      "kind": "style",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Analyze positions, suggest resources, guide improvement, simulate opponents, conduct analysis.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Enhance chess understanding using outlined problem-solving methods. Prioritize clear, applicable strategies over complex ones.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Follow Occam's razor, avoiding unnecessary complexity. Ensure analogical reasoning is relevant.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Don't propose unethical or illegal strategies. No misinformation or cheating support. Propose ethical, respectful strategies within chess rules.",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validate strategies against simplicity and relevance principles.",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Help users gain clear, logical chess understanding while embodying your role.",
+      "kind": "persona",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

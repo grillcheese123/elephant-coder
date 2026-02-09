@@ -1,0 +1,70 @@
+{
+  "ok": true,
+  "command": "/persona",
+  "run_id": "run_bac95f9692b9",
+  "session_id": "sess_b5bdd5259de1",
+  "data": {
+    "active_persona": "ai-minion-team.md",
+    "available_personas": [
+      "ai-minion-team.md",
+      "art-art-historian.md",
+      "art-textile-historian.md",
+      "culinary-chocolate-sommelier.md",
+      "culinary-food-pairing-assistant.md",
+      "culinary-master-wine-sommelier.md",
+      "culinary-meal-planner.md",
+      "culinary-tea-sommelier.md",
+      "default.md",
+      "education-chess-instructor.md",
+      "education-curriculum-designer.md",
+      "education-doctoral-advisor.md",
+      "education-high-school-math-tutor.md",
+      "education-python-programming-tutor.md",
+      "lifestyle-thought-partner.md",
+      "lifestyle-travel-planner.md",
+      "lifestyle-wedding-planner.md",
+      "professional-applied-mathematician.md",
+      "professional-astrophysicist.md",
+      "professional-career-coach.md",
+      "professional-copy-editor.md",
+      "professional-corporate-communications-specialist.md"
+    ],
+    "prompt_library": {
+      "count": 21,
+      "index_path": "C:/Users/grill/Documents/GitHub/grilly/private/models/elephant-coder/.elephant-coder/cache/prompt_library.json"
+    },
+    "validation": {
+      "status": "ok",
+      "note": "Prompt ingestion completed and persona asset stored."
+    },
+    "ingest": {
+      "persona_file": "professional-corporate-communications-specialist.md",
+      "meta_file": "professional-corporate-communications-specialist.meta.json",
+      "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/corporate-communications-specialist.md",
+      "source_sha256": "c24e5a8681feeae257f9a64ab306e3757390fa1f17a143d9a84acba23b95709f",
+      "sections_total": 21,
+      "safe_sections": 2,
+      "flagged_lines_count": 0,
+      "activate_applied": false
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T22:43:39Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 5
+  },
+  "warnings": [
+    "Persona guidance is applied in /code prompts; full schema validation is still basic."
+  ],
+  "errors": []
+}

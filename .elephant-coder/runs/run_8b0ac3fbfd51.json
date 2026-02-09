@@ -1,0 +1,46 @@
+{
+  "ok": true,
+  "command": "/plan",
+  "run_id": "run_8b0ac3fbfd51",
+  "session_id": "sess_506c839ae01f",
+  "data": {
+    "plan_steps": [
+      "Scan impacted modules from index and git state.",
+      "Build minimal context pack under token budget.",
+      "Draft implementation and validation sequence."
+    ],
+    "impacted_files": [
+      "../../../scripts/ingest_svc.py",
+      "../../../codegraph.html",
+      "../../../mcp-servers/",
+      "../../",
+      "../../../utils/hippocampal_checkpoint.py"
+    ],
+    "assumptions": [
+      "Phase 1 scaffold: impact/index execution not wired yet."
+    ],
+    "risks": [
+      "Task ambiguity may increase retries and token usage."
+    ],
+    "task": "No task provided.",
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T21:30:18Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 39
+  },
+  "warnings": [
+    "Phase 1 scaffold: command logic is placeholder-only."
+  ],
+  "errors": []
+}

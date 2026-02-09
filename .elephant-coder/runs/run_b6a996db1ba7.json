@@ -1,0 +1,21 @@
+{
+  "ok": false,
+  "command": "/code",
+  "run_id": "run_b6a996db1ba7",
+  "session_id": "bench_test_03_baseline_r1",
+  "data": {},
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 4942
+  },
+  "warnings": [],
+  "errors": [
+    {
+      "code": "E_BUDGET",
+      "message": "Model prompt tokens 13022 exceeded max-input-tokens 12000."
+    }
+  ]
+}

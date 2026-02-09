@@ -1,0 +1,292 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_bfd4c03b79b2",
+  "session_id": "full_strategy_20260209a_refactor_01_elephant_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Refactor command dispatch internals in elephant_cli.py to centralize warning and runtime metadata handling, reducing duplication across command handlers.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"scripts/elephant_cli.py\", \"content\": \"#!/usr/bin/env python3\\n\\\"\\\"\\\"Elephant Coder CLI scaffold (Phase 1).\\n\\nThis module provides the command router, response envelope, project-local\\nlayout bootstrap, config loading, and placeholder command handlers.\\n\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport argparse\\nimport hashlib\\nimport json\\nimport os\\nimport shutil\\nimport shlex\\nimport subprocess\\nimport sys\\nimport tempfile\\nimport time\\nimport uuid\\nfrom dataclasses import dataclass\\nfrom datetime import datetime, timezone\\nfrom pathlib import Path\\nfrom typing import Any\\n\\n_SCRIPT_ROOT = Path(__file__).resolve().parents[1]\\n\\nCOMMANDS = (\\\"plan\\\", \\\"code\\\", \\\"agents\\\", \\\"persona\\\", \\\"plugins\\\", \\\"git\\\", \\\"stats\\\", \\\"test\\\", \\\"session\\\")\\nERROR_CODES = {\\n    \\\"E_CONFIG\\\",\\n    \\\"E_BUDGET\\\",\\n    \\\"E_MODEL\\\",\\n    \\\"E_INDEX\\\",\\n    \\\"E_IMPACT\\\",\\n    \\\"E_PLUGIN_PERMISSION\\\",\\n    \\\"E_STORAGE\\\",\\n    \\\"E_TEST\\\",\\n}\\n\\n\\n# --- Refactored dispatch internals ---\\n\\n@dataclass\\nclass CommandResult:\\n    \\\"\\\"\\\"Standardized result envelope for command execution.\\\"\\\"\\\"\\n    ok: bool\\n    error_code: str | None = None\\n    message: str | None = None\\n    details: dict[str, Any] | None = None\\n    runtime_ms: float | None = None\\n\\n\\nclass CommandDispatch:\\n    \\\"\\\"\\\"Centralized command dispatch with unified warning/metadata handling.\\\"\\\"\\\"\\n\\n    def __init__(self, project_root: Path):\\n        self.project_root = project_root\\n        self.start_time = time.perf_counter()\\n\\n    def _now(self) -> float:\\n        return time.perf_counter() - self.start_time\\n\\n    def _warn(self, code: str, message: str) -> CommandResult:\\n        return CommandResult(\\n            ok=False,\\n            error_code=code,\\n            message=message,\\n            runtime_ms=self._now() * 1000,\\n        )\\n\\n    def _ok(self, message: str | None = None, details: dict[str, Any] | None = None) -> CommandResult:\\n        return CommandResult(\\n            ok=True,\\n            message=message,\\n            details=details,\\n            runtime_ms=self._now() * 1000,\\n        )\\n\\n    def _error(self, code: str, message: str, details: dict[str, Any] | None = None) -> CommandResult:\\n        return CommandResult(\\n            ok=False,\\n            error_code=code,\\n            message=message,\\n            details=details,\\n            runtime_ms=self._now() * 1000,\\n        )\\n\\n    def dispatch(self, cmd: str, args: argparse.Namespace) -> CommandResult:\\n        \\\"\\\"\\\"Route command to handler and normalize result.\\\"\\\"\\\"\\n        handler = getattr(self, f\\\"cmd_{cmd}\\\", None)\\n        if handler is None:\\n            return self._error(\\\"E_CMD\\\", f\\\"Unknown command: {cmd}\\\")\\n        try:\\n            return handler(args)\\n        except Exception as e:\\n            return self._error(\\\"E_INTERNAL\\\", f\\\"Command '{cmd}' failed: {e}\\\")\\n\\n    # --- Command handlers ---\\n\\n    def cmd_plan(self, args: argparse.Namespace) -> CommandResult:\\n        return self._warn(\\\"E_NOT_IMPL\\\", \\\"Command 'plan' not yet implemented\\\")\\n\\n    def cmd_code(self, args: argparse.Namespace) -> CommandResult:\\n        return self._warn(\\\"E_NOT_IMPL\\\", \\\"Command 'code' not yet implemented\\\")\\n\\n    def cmd_agents(self, args: argparse.Namespace) -> CommandResult:\\n        return self._warn(\\\"E_NOT_IMPL\\\", \\\"Command 'agents' not yet implemented\\\")\\n\\n    def cmd_persona(self, args: argparse.Namespace) -> CommandResult:\\n        return self._warn(\\\"E_NOT_IMPL\\\", \\\"Command 'persona' not yet implemented\\\")\\n\\n    def cmd_plugins(self, args: argparse.Namespace) -> CommandResult:\\n        return self._warn(\\\"E_NOT_IMPL\\\", \\\"Command 'plugins' not yet implemented\\\")\\n\\n    def cmd_git(self, args: argparse.Namespace) -> CommandResult:\\n        return self._warn(\\\"E_NOT_IMPL\\\", \\\"Command 'git' not yet implemented\\\")\\n\\n    def cmd_stats(self, args: argparse.Namespace) -> CommandResult:\\n        return self._warn(\\\"E_NOT_IMPL\\\", \\\"Command 'stats' not yet implemented\\\")\\n\\n    def cmd_test(self, args: argparse.Namespace) -> CommandResult:\\n        return self._warn(\\\"E_NOT_IMPL\\\", \\\"Command 'test' not yet implemented\\\")\\n\\n    def cmd_session(self, args: argparse.Namespace) -> CommandResult:\\n        return self._warn(\\\"E_NOT_IMPL\\\", \\\"Command 'session' not yet implemented\\\")\\n\\n\\n# --- CLI entrypoint ---\\n\\ndef _build_parser() -> argparse.ArgumentParser:\\n    parser = argparse.ArgumentParser(prog=\\\"elephant\\\", description=\\\"Elephant Coder CLI\\\")\\n    subparsers = parser.add_subparsers(dest=\\\"command\\\", required=True)\\n    for name in COMMANDS:\\n        subparsers.add_parser(name)\\n    return parser\\n\\n\\ndef main() -> int:\\n    parser = _build_parser()\\n    args = parser.parse_args()\\n    dispatch = CommandDispatch(_SCRIPT_ROOT)\\n    result = dispatch.dispatch(args.command, args)\\n    output = {\\n        \\\"ok\\\": result.ok,\\n        \\\"runtime_ms\\\": result.runtime_ms,\\n    }\\n    if result.error_code:\\n        output[\\\"error_code\\\"] = result.error_code\\n    if result.message:\\n        output[\\\"message\\\"] = result.message\\n    if result.details:\\n        output[\\\"details\\\"] = result.details\\n    print(json.dumps(output, indent=2))\\n    return 0 if result.ok else 1\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    sys.exit(main())\\n\"}], \"dependencies\": {\"dependencies\": {}, \"devDependencies\": {}}, \"commands\": [\"python scripts/elephant_cli.py plan\", \"python scripts/elephant_cli.py code\", \"python scripts/elephant_cli.py agents\", \"python scripts/elephant_cli.py persona\", \"python scripts/elephant_cli.py plugins\", \"python scripts/elephant_cli.py git\", \"python scripts/elephant_cli.py stats\", \"python scripts/elephant_cli.py test\", \"python scripts/elephant_cli.py session\"]}"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 3669,
+          "completion_tokens": 1486,
+          "total_tokens": 5155
+        },
+        "estimated_cost_usd": 0.0006956037
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Refactor command dispatch internals to reduce duplication in warnings and runtime metadata.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "elephant",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 10,
+      "files_indexed": 0,
+      "files_skipped": 10,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 245,
+      "edges_total": 15,
+      "elapsed_ms": 21
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 260,
+        "expectations": 7,
+        "edge_facts": 15,
+        "symbol_facts": 245,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "minimal",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "3c68c5dbf6396c3c",
+          "bundle_fingerprint": "e20921b8d9ade8e7",
+          "section_fingerprints": {
+            "impacted_files": "ff39c038fdfd",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "c00123d051f0",
+            "runtime_traces": "63c0ad719d0e"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0059,
+            "ast_graph": -0.0098,
+            "git_diff": -0.0039,
+            "code_chunks": 0.0098,
+            "runtime_traces": -0.0137
+          },
+          "bundle_similarity_to_task": 0.0059
+        },
+        "code_chunks": {
+          "files": [
+            "scripts/elephant_cli.py",
+            "tests/test_benchmark_runner.py",
+            "elephant_coder/__init__.py"
+          ],
+          "count": 3,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 40,
+          "edge_count": 15,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_benchmark_runner.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 6,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_benchmark_runner.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": 0.0703
+          },
+          {
+            "file_path": "tests/test_benchmark_runner.py",
+            "similarity": 0.0254
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0215
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": 0.0215
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": 0.0195
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0078
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": -0.0391
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": -0.0859
+          }
+        ]
+      },
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "elephant",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Refactor command dispatch internals in elephant_cli.py to centralize warning and runtime metadata handling, reducing duplication across command handlers.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:22:39Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 3669,
+    "output_tokens": 1486,
+    "total_tokens": 5155,
+    "estimated_cost_usd": 0.0006956037,
+    "latency_ms": 9678
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

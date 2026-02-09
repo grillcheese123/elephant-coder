@@ -1,0 +1,44 @@
+{
+  "protocol_version": "v1-realworld-scratch",
+  "description": "Real-world quality tasks from a new repository from scratch.",
+  "tasks": [
+    {
+      "task_id": "scratch_python_01",
+      "category": "quality",
+      "prompt": "Initialize a new Python project from scratch with pyproject.toml, src/hello_app/main.py exposing get_message()->str that returns 'hello world', and tests/test_smoke.py using unittest to validate the message.",
+      "checks": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; req=['pyproject.toml','src/hello_app/main.py','tests/test_smoke.py']; sys.exit(0 if all(Path(p).exists() for p in req) else 1)\"",
+        "uv run --python 3.12 python -m py_compile src/hello_app/main.py tests/test_smoke.py",
+        "uv run --python 3.12 python -m unittest discover -s tests -p \"test_*.py\" -v"
+      ],
+      "expected_files": [
+        "pyproject.toml",
+        "src/hello_app/main.py",
+        "tests/test_smoke.py"
+      ]
+    },
+    {
+      "task_id": "scratch_readme_02",
+      "category": "quality",
+      "prompt": "Create README.md for this new project with setup, run, and test instructions.",
+      "checks": [
+        "uv run --python 3.12 python -c \"from pathlib import Path; import sys; p=Path('README.md'); sys.exit(0 if p.exists() and len(p.read_text(encoding='utf-8', errors='replace').strip()) >= 60 else 1)\""
+      ],
+      "expected_files": [
+        "README.md"
+      ]
+    },
+    {
+      "task_id": "scratch_cli_03",
+      "category": "quality",
+      "prompt": "Add run_hello.py that imports get_message from src/hello_app/main.py and prints the message.",
+      "checks": [
+        "uv run --python 3.12 python -m py_compile run_hello.py",
+        "uv run --python 3.12 python run_hello.py"
+      ],
+      "expected_files": [
+        "run_hello.py"
+      ]
+    }
+  ]
+}

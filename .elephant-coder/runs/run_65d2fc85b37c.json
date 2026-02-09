@@ -1,0 +1,21 @@
+{
+  "ok": false,
+  "command": "/code",
+  "run_id": "run_65d2fc85b37c",
+  "session_id": "sess_d37f28866d16",
+  "data": {},
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 6061
+  },
+  "warnings": [],
+  "errors": [
+    {
+      "code": "E_MODEL",
+      "message": "Local routing requested for specialist 'patcher_local' but it is not ready (disabled)."
+    }
+  ]
+}

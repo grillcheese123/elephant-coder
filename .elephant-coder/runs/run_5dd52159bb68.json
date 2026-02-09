@@ -1,0 +1,308 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_5dd52159bb68",
+  "session_id": "full_prompt_parity_20260209a_refactor_02_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\": \"Refactor context-profile selection into cleaner strategy functions for maintainability.\", \"project\": {\"language\": \"python\"}, \"files\": [{\"path\": \"scripts/elephant_cli.py\", \"content\": \"#!/usr/bin/env python3\\n\\\"\\\"\\\"Elephant Coder CLI scaffold (Phase 1).\\n\\nThis module provides the command router, response envelope, project-local\\nlayout bootstrap, config loading, and placeholder command handlers.\\n\\\"\\\"\\\"\\n\\nfrom __future__ import annotations\\n\\nimport argparse\\nimport hashlib\\nimport json\\nimport os\\nimport shutil\\nimport shlex\\nimport subprocess\\nimport sys\\nimport tempfile\\nimport time\\nimport uuid\\nfrom dataclasses import dataclass\\nfrom datetime import datetime, timezone\\nfrom pathlib import Path\\nfrom typing import Any\\n\\n_SCRIPT_ROOT = Path(__file__).resolve().parents[1]\\n\\nCOMMANDS = (\\\"plan\\\", \\\"code\\\", \\\"agents\\\", \\\"persona\\\", \\\"plugins\\\", \\\"git\\\", \\\"stats\\\", \\\"test\\\", \\\"session\\\")\\nERROR_CODES = {\\n    \\\"E_CONFIG\\\",\\n    \\\"E_BUDGET\\\",\\n    \\\"E_MODEL\\\",\\n    \\\"E_INDEX\\\",\\n    \\\"E_IMPACT\\\",\\n    \\\"E_PLUGIN_PERMISSION\\\",\\n    \\\"E_STORAGE\\\",\\n    \\\"E_TEST\\\",\\n}\\n\\n\\n@dataclass(frozen=True)\\nclass RuntimeConfig:\\n    \\\"\\\"\\\"Runtime configuration after defaults, file config, and CLI overrides.\\\"\\\"\\\"\\n\\n    output: str\\n    default_model: str\\n    model_fallbacks: tuple[str, ...]\\n    model_max_retries: int\\n    model_retry_backoff_sec: float\\n    max_input_tokens: int\\n    max_output_tokens: int\\n    max_cost_usd: float\\n\\n\\nclass CLIError(RuntimeError):\\n    \\\"\\\"\\\"Known CLI-level exception with stable error code.\\\"\\\"\\\"\\n\\n    def __init__(self, code: str, message: str):\\n        if code not in ERROR_CODES:\\n            raise ValueError(f\\\"Unknown CLI error code: {code}\\\")\\n        super().__init__(message)\\n        self.code = code\\n        self.message = message\\n\\n\\ndef _utc_now_iso() -> str:\\n    \\\"\\\"\\\"Return UTC timestamp in RFC3339-like format.\\\"\\\"\\\"\\n    return datetime.now(timezone.utc).strftime(\\\"%Y-%m-%dT%H:%M:%SZ\\\")\\n\\n\\ndef _make_id(prefix: str) -> str:\\n    \\\"\\\"\\\"Build a short deterministic-looking run/session ID.\\\"\\\"\\\"\\n    return f\\\"{prefix}_{uuid.uuid4().hex[:12]}\\\"\\n\\n\\ndef _normalize_argv(argv: list[str]) -> list[str]:\\n    \\\"\\\"\\\"Map slash commands to argparse command names.\\\"\\\"\\\"\\n    if not argv:\\n        return argv\\n    if argv[0].startswith(\\\"/\\\") and len(argv[0]) > 1:\\n        argv = [argv[0][1:]] + argv[1:]\\n    return argv\\n\\n\\ndef _parse_scalar(value: str) -> Any:\\n    \\\"\\\"\\\"Parse scalar config values from text.\\\"\\\"\\\"\\n    raw = value.strip()\\n    low = raw.lower()\\n    if low in {\\\"true\\\", \\\"false\\\"}:\\n        return low == \\\"true\\\"\\n    try:\\n        if \\\".\\\" in raw:\\n            return float(raw)\\n        return int(raw)\\n    except ValueError:\\n        pass\\n    if \\\",\\\" in raw:\\n        return [part.strip() for part in raw.split(\\\",\\\") if part.strip()]\\n    return raw\\n\\n\\ndef _default_config_map() -> dict[str, Any]:\\n    \\\"\\\"\\\"Return flat default config values.\\\"\\\"\\\"\\n    return {\\n        \\\"output.default\\\": \\\"text\\\",\\n        \\\"model.default\\\": \\\"gpt-4o-mini\\\",\\n        \\\"model.fallbacks\\\": [],\\n        \\\"model.max_retries\\\": 2,\\n        \\\"model.retry_backoff_sec\\\": 1.0,\\n        \\\"budgets.max_input_tokens\\\": 12000,\\n        \\\"budgets.max_output_tokens\\\": 3000,\\n        \\\"budgets.max_cost_usd\\\": 1.0,\\n        \\\"plugins.allowed_permissions\\\": [],\\n    }\\n\\n\\ndef _gguf_registry_path(project_root: Path) -> Path:\\n    \\\"\\\"\\\"Return path to local GGUF specialist registry.\\\"\\\"\\\"\\n    return project_root / \\\".elephant-coder\\\" / \\\"gguf_specialists.json\\\"\\n\\n\\ndef _default_gguf_registry() -> dict[str, Any]:\\n    \\\"\\\"\\\"Return default GGUF specialist registry scaffold.\\\"\\\"\\\"\\n    return {\\n        \\\"version\\\": \\\"v1\\\",\\n        \\\"specialists\\\": [],\\n    }\\n\\n\\ndef _load_gguf_registry(project_root: Path) -> dict[str, Any]:\\n    \\\"\\\"\\\"Load GGUF specialist registry or return default.\\\"\\\"\\\"\\n    registry_path = _gguf_registry_path(project_root)\\n    if registry_path.exists():\\n        try:\\n            payload = json.loads(registry_path.read_text(encoding=\\\"utf-8\\\", errors=\\\"replace\\\"))\\n            if isinstance(payload, dict):\\n                return payload\\n        except Exception:\\n            pass\\n    return _default_gguf_registry()\\n\\n\\ndef _specialist_ready(spec: dict[str, Any]) -> tuple[bool, str]:\\n    \\\"\\\"\\\"Check if a specialist is ready for use.\\\"\\\"\\\"\\n    if not isinstance(spec, dict):\\n        return False, \\\"invalid spec\\\"\\n    name = str(spec.get(\\\"name\\\", \\\"\\\")).strip()\\n    if not name:\\n        return False, \\\"missing name\\\"\\n    gguf = str(spec.get(\\\"gguf\\\", \\\"\\\")).strip()\\n    if not gguf:\\n        return False, \\\"missing gguf\\\"\\n    return True, \\\"\\\"\\n\\n\\ndef _normalized_specialists(project_root: Path) -> list[dict[str, Any]]:\\n    \\\"\\\"\\\"Return list of ready specialists.\\\"\\\"\\\"\\n    registry = _load_gguf_registry(project_root)\\n    raw = registry.get(\\\"specialists\\\", [])\\n    if not isinstance(raw, list):\\n        return []\\n    out: list[dict[str, Any]] = []\\n    for item in raw:\\n        if not isinstance(item, dict):\\n            continue\\n        ready, reason = _specialist_ready(item)\\n        if ready:\\n            out.append(item)\\n    return out\\n\\n\\ndef _select_local_specialist(project_root: Path, task: str, requested: str | None) -> tuple[dict[str, Any] | None, str]:\\n    \\\"\\\"\\\"Select a local specialist for the given task.\\\"\\\"\\\"\\n    specialists = _normalized_specialists(project_root)\\n    if not specialists:\\n        return None, \\\"no specialists configured\\\"\\n    if requested:\\n        for spec in specialists:\\n            if str(spec.get(\\\"name\\\", \\\"\\\")).strip() == requested:\\n                return spec, \\\"\\\"\\n        return None, f\\\"requested specialist '{requested}' not found\\\"\\n    # Default: first ready specialist\\n    return specialists[0], \\\"\\\"\\n\\n\\ndef _route_for_code() -> tuple[dict[str, Any], list[str]]:\\n    \\\"\\\"\\\"Return default code route and fallback models.\\\"\\\"\\\"\\n    return {\\\"model\\\": \\\"gpt-4o-mini\\\"}, (\\\"gpt-4o\\\", \\\"claude-3-5-sonnet\\\", \\\"deepseek-coder-v2\\\")\\n\\n\\ndef _messages_to_local_prompt(messages: list[dict[str, str]]) -> str:\\n    \\\"\\\"\\\"Convert messages to a simple prompt string.\\\"\\\"\\\"\\n    parts: list[str] = []\\n    for msg in messages:\\n        role = str(msg.get(\\\"role\\\", \\\"user\\\")).strip()\\n        content = str(msg.get(\\\"content\\\", \\\"\\\")).strip()\\n        if role in {\\\"user\\\", \\\"assistant\\\"}:\\n            parts.append(f\\\"{role.upper()}: {content}\\\")\\n    return \\\"\\\\n\\\\n\\\".join(parts)\\n\\n\\ndef _run_local_specialist_inference() -> tuple[str, dict[str, int], float]:\\n    \\\"\\\"\\\"Run local specialist inference (placeholder).\\\"\\\"\\\"\\n    return \\\"placeholder response\\\", {\\\"prompt_tokens\\\": 10, \\\"completion_tokens\\\": 5, \\\"total_tokens\\\": 15}, 0.001\\n\\n\\ndef _default_elephant_root() -> Path:\\n    \\\"\\\"\\\"Return default Elephant root directory.\\\"\\\"\\\"\\n    home = Path.home()\\n    return home / \\\".elephant-coder\\\"\\n\\n\\ndef detect_project_root(start_path: str | Path) -> Path:\\n    \\\"\\\"\\\"Walk upward to find project root.\\\"\\\"\\\"\\n    path = Path(start_path).resolve()\\n    for parent in [path, *path.parents]:\\n        if (parent / \\\"pyproject.toml\\\").exists() or (parent / \\\".elephant-coder\\\").exists():\\n            return parent\\n    return path\\n\\n\\ndef ensure_project_layout(project_root: Path) -> Path:\\n    \\\"\\\"\\\"Create required directories and files for Elephant project layout.\\\"\\\"\\\"\\n    dirs = [\\n        project_root / \\\".elephant-coder\\\" / \\\"runs\\\",\\n        project_root / \\\".elephant-coder\\\" / \\\"sessions\\\",\\n        project_root / \\\".elephant-coder\\\" / \\\"personas\\\",\\n        project_root / \\\".elephant-coder\\\" / \\\"benchmarks\\\",\\n    ]\\n    for d in dirs:\\n        d.mkdir(parents=True, exist_ok=True)\\n    return project_root\\n\\n\\ndef load_config(project_root: Path) -> dict[str, Any]:\\n    \\\"\\\"\\\"Load config from pyproject.toml or defaults.\\\"\\\"\\\"\\n    config: dict[str, Any] = _default_config_map()\\n    pyproject = project_root / \\\"pyproject.toml\\\"\\n    if pyproject.exists():\\n        try:\\n            import tomllib\\n        except ImportError:\\n            try:\\n                import tomli as tomllib\\n            except ImportError:\\n                tomllib = None\\n        if tomllib:\\n            try:\\n                data = tomllib.loads(pyproject.read_text(encoding=\\\"utf-8\\\", errors=\\\"replace\\\"))\\n                cfg = data.get(\\\"tool\\\", {}).get(\\\"elephant\\\", {})\\n                if isinstance(cfg, dict):\\n                    config.update(cfg)\\n            except Exception:\\n                pass\\n    return config\\n\\n\\ndef resolve_runtime_config(args: argparse.Namespace, config: dict[str, Any]) -> RuntimeConfig:\\n    \\\"\\\"\\\"Build RuntimeConfig from args and config.\\\"\\\"\\\"\\n    output = getattr(args, \\\"output\\\", \\\"text\\\") or config.get(\\\"output.default\\\", \\\"text\\\")\\n    default_model = getattr(args, \\\"model\\\", None) or config.get(\\\"model.default\\\", \\\"gpt-4o-mini\\\")\\n    fallbacks_raw = config.get(\\\"model.fallbacks\\\", [])\\n    fallbacks = tuple(str(f).strip() for f in fallbacks_raw if str(f).strip()) if isinstance(fallbacks_raw, list) else ()\\n    max_retries = int(config.get(\\\"model.max_retries\\\", 2))\\n    retry_backoff = float(config.get(\\\"model.retry_backoff_sec\\\", 1.0))\\n    max_input = int(config.get(\\\"budgets.max_input_tokens\\\", 12000))\\n    max_output = int(config.get(\\\"budgets.max_output_tokens\\\", 3000))\\n    max_cost = float(config.get(\\\"budgets.max_cost_usd\\\", 1.0))\\n    return RuntimeConfig(\\n        output=output,\\n        default_model=default_model,\\n        model_fallbacks=fallbacks,\\n        model_max_retries=max_retries,\\n        model_retry_backoff_sec=retry_backoff,\\n        max_input_tokens=max_input,\\n        max_output_tokens=max_output,\\n        max_cost_usd=max_cost,\\n    )\\n\\n\\ndef _build_response() -> dict[str, Any]:\\n    \\\"\\\"\\\"Build standard response envelope.\\\"\\\"\\\"\\n    return {\\n        \\\"ok\\\": True,\\n        \\\"run_id\\\": _make_id(\\\"run\\\"),\\n        \\\"timestamp\\\": _utc_now_iso(),\\n        \\\"metrics\\\": {\\\"latency_ms\\\": 0},\\n    }\\n\\n\\ndef _write_run_record(base: Path, response: dict[str, Any]) -> None:\\n    \\\"\\\"\\\"Write run record to disk.\\\"\\\"\\\"\\n    runs_dir = base / \\\".elephant-coder\\\" / \\\"runs\\\"\\n    runs_dir.mkdir(parents=True, exist_ok=True)\\n    run_file = runs_dir / f\\\"{response['run_id']}.json\\\"\\n    run_file.write_text(json.dumps(response, indent=2, ensure_ascii=False), encoding=\\\"utf-8\\\")\\n\\n\\ndef _session_log_path(project_root: Path, session_id: str) -> Path:\\n    \\\"\\\"\\\"Return path to session log.\\\"\\\"\\\"\\n    safe = \\\"\\\".join(ch for ch in str(session_id).strip() if ch.isalnum() or ch in {\\\"-\\\", \\\"_\\\"})\\n    return project_root / \\\".elephant-coder\\\" / \\\"sessions\\\" / f\\\"{safe}.jsonl\\\"\\n\\n\\ndef _append_session_event(project_root: Path, session_id: str, role: str, content: str) -> None:\\n    \\\"\\\"\\\"Append an event to the session log.\\\"\\\"\\\"\\n    log_path = _session_log_path(project_root, session_id)\\n    log_path.parent.mkdir(parents=True, exist_ok=True)\\n    event = {\\n        \\\"timestamp\\\": _utc_now_iso(),\\"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17940,
+          "completion_tokens": 3000,
+          "total_tokens": 20940
+        },
+        "estimated_cost_usd": 0.0124443
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": true,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Refactor context-profile selection into cleaner strategy functions for maintainability.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 10,
+      "files_indexed": 0,
+      "files_skipped": 10,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 245,
+      "edges_total": 15,
+      "elapsed_ms": 21
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 260,
+        "expectations": 7,
+        "edge_facts": 15,
+        "symbol_facts": 245,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "093e081c7921a8bb",
+          "bundle_fingerprint": "a2a6239fd813a18e",
+          "section_fingerprints": {
+            "impacted_files": "f806eb95d316",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "a7b4918bb8d3",
+            "runtime_traces": "05a227ddd550"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0039,
+            "ast_graph": -0.0312,
+            "git_diff": 0.002,
+            "code_chunks": 0.002,
+            "runtime_traces": 0.0195
+          },
+          "bundle_similarity_to_task": 0.0117
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/openrouter_client.py",
+            "tests/test_elephant_cli.py",
+            "elephant_coder/__init__.py",
+            "scripts/benchmark_runner.py",
+            "tests/test_benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/state_store.py",
+            "tests/test_index_engine.py",
+            "elephant_coder/index_engine.py"
+          ],
+          "count": 10,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 15,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_benchmark_runner.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": 0.041
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": 0.0215
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0195
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": 0.0195
+          },
+          {
+            "file_path": "tests/test_benchmark_runner.py",
+            "similarity": 0.0117
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": 0.0098
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": -0.0098
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": -0.0098
+          },
+          {
+            "file_path": "tests/test_index_engine.py",
+            "similarity": -0.0371
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0488
+          }
+        ]
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "baseline",
+      "benchmark_parity": true
+    },
+    "agent_plan_summary": "",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:36:16Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17940,
+    "output_tokens": 3000,
+    "total_tokens": 20940,
+    "estimated_cost_usd": 0.0124443,
+    "latency_ms": 62131
+  },
+  "warnings": [
+    "Structured plan contained no files; nothing was written unless bootstrap defaults were applied.",
+    "Apply-to-disk skipped (--no-apply).",
+    "Benchmark parity mode enabled; elephant-only session context compression is disabled."
+  ],
+  "errors": []
+}

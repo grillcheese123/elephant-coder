@@ -1,0 +1,21 @@
+{
+  "ok": false,
+  "command": "/code",
+  "run_id": "run_0e7be61d7b3c",
+  "session_id": "sess_0e936984775d",
+  "data": {},
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 6166
+  },
+  "warnings": [],
+  "errors": [
+    {
+      "code": "E_BUDGET",
+      "message": "Estimated prompt tokens 1221 exceed max-input-tokens 800."
+    }
+  ]
+}

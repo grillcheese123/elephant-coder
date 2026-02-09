@@ -1,0 +1,146 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_be2a1f56f56a",
+  "session_id": "sess_flawless_err",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "{\"summary\":\"No impacted files detected. The task is to ensure that the key fails as expected.\",\"project\":{\"language\":\"Python\"},\"files\":[],\"dependencies\":{\"dependencies\":{},\"devDependencies\":{},\"python\":[],\"pythonDev\":[],\"rust\":[],\"go\":[],\"cpp\":[]},\"commands\":[]}"
+      }
+    ],
+    "files_touched": [
+      "pyproject.toml"
+    ],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "gpt-4o-mini",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 2917,
+          "completion_tokens": 61,
+          "total_tokens": 2978
+        },
+        "estimated_cost_usd": 0.0004694085
+      }
+    ],
+    "verification_summary": "Applied agent plan to disk with language bootstrap/dependency setup.",
+    "task": "should fail key",
+    "dry_run": false,
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "index_stats": {
+      "files_scanned": 8,
+      "files_indexed": 2,
+      "files_skipped": 6,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 154,
+      "edges_total": 10,
+      "elapsed_ms": 74
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 164,
+        "expectations": 5,
+        "edge_facts": 10,
+        "symbol_facts": 154,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "minimal",
+    "context_manifest": {
+      "modalities": {
+        "code_chunks": {
+          "files": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py"
+          ],
+          "count": 3,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 40,
+          "edge_count": 10,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/elephant_cli.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 6,
+          "commands": [
+            "/code"
+          ]
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/elephant_cli.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "session_context": {
+        "events": 0,
+        "truncated": false
+      }
+    },
+    "agent_plan_summary": "No impacted files detected. The task is to ensure that the key fails as expected.",
+    "apply_report": {
+      "files_written": [
+        "pyproject.toml"
+      ],
+      "files_written_count": 1,
+      "bootstrap_languages": [
+        "python"
+      ],
+      "dependencies_install": [],
+      "applied_from_structured_plan": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T22:27:18Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 2917,
+    "output_tokens": 61,
+    "total_tokens": 2978,
+    "estimated_cost_usd": 0.0004694085,
+    "latency_ms": 7384
+  },
+  "warnings": [
+    "Structured plan contained no files; nothing was written unless bootstrap defaults were applied."
+  ],
+  "errors": []
+}

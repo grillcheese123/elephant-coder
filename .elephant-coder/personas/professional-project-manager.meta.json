@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-project-manager",
+  "persona_file": "professional-project-manager.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/project-manager.md",
+  "source_sha256": "60474c9dfd620781c901c853385fd5c94a07fb40cd241be5462cb5e06fdb1fec",
+  "ingested_at_utc": "2026-02-08T22:49:28Z",
+  "sections_total": 1,
+  "safe_sections": 1,
+  "kept_lines_total": 23,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 42,
+      "risky_lines": 0
+    }
+  ]
+}

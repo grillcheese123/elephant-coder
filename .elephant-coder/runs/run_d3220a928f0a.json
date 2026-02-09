@@ -1,0 +1,99 @@
+{
+  "ok": true,
+  "command": "/agents",
+  "run_id": "run_d3220a928f0a",
+  "session_id": "sess_cfdb68253e16",
+  "data": {
+    "agents": [
+      {
+        "agent_id": "orchestrator",
+        "role": "main_ai",
+        "status": "ready",
+        "shared_context": "global_context"
+      },
+      {
+        "agent_id": "worker_template",
+        "role": "coder",
+        "status": "idle",
+        "private_context": "agent_context"
+      }
+    ],
+    "local_specialists": [
+      {
+        "id": "planner_local",
+        "role": "planner",
+        "enabled": false,
+        "backend": "llama_cpp_cli",
+        "binary": "llama-cli",
+        "model_path": "",
+        "args": [],
+        "ready": false,
+        "ready_reason": "disabled"
+      },
+      {
+        "id": "patcher_local",
+        "role": "patcher",
+        "enabled": false,
+        "backend": "llama_cpp_cli",
+        "binary": "llama-cli",
+        "model_path": "",
+        "args": [],
+        "ready": false,
+        "ready_reason": "disabled"
+      },
+      {
+        "id": "reviewer_local",
+        "role": "reviewer",
+        "enabled": false,
+        "backend": "llama_cpp_cli",
+        "binary": "llama-cli",
+        "model_path": "",
+        "args": [],
+        "ready": false,
+        "ready_reason": "disabled"
+      }
+    ],
+    "local_specialists_summary": {
+      "configured": 3,
+      "enabled": 0,
+      "ready": 0,
+      "registry_path": "C:/Users/grill/Documents/GitHub/grilly/private/models/elephant-coder/.elephant-coder/gguf_specialists.json"
+    },
+    "routing_policy": {
+      "default_model": "qwen/qwen3-coder-next",
+      "strategy": "token_first_moe_auto",
+      "supports_routes": [
+        "auto",
+        "openrouter",
+        "local"
+      ],
+      "local_enabled": false,
+      "local_ready": false
+    },
+    "default_model": "qwen/qwen3-coder-next",
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T23:49:43Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 3
+  },
+  "warnings": [
+    "Agent lifecycle and OpenRouter dispatch remain scaffold-only in current phase."
+  ],
+  "errors": []
+}

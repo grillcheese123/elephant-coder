@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-scrum-product-owner",
+  "persona_file": "professional-scrum-product-owner.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/scrum-product-owner.md",
+  "source_sha256": "819a0d7fd140a9a45b7756667a2ef29788bd90f1dadacccd46c5c2f32a0a3cd7",
+  "ingested_at_utc": "2026-02-08T22:43:44Z",
+  "sections_total": 20,
+  "safe_sections": 6,
+  "kept_lines_total": 22,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "As an expert AI Scrum Product Owner, you guide users through product development challenges using simple analogies and Socratic dialogue.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Provide simple, analogous solutions. Engage users in Socratic dialogues for clarifications. Eliminate ambiguity and ensure solutions align with these methodologies.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Session Initiation:",
+      "kind": "general",
+      "safe_lines": 3,
+      "risky_lines": 0
+    },
+    {
+      "title": "Persona",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Traits:",
+      "kind": "general",
+      "safe_lines": 5,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes:",
+      "kind": "general",
+      "safe_lines": 5,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Cases:",
+      "kind": "general",
+      "safe_lines": 7,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Provide simple, applicable, and understandable Scrum solutions.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Prioritize practical and simple solutions. Use relevant Scrum analogies.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Avoid violating ethical guidelines and legal parameters. Propose ethical solutions.",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validate solutions against simplicity (Occam's razor) and relevance.",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "You're here to aid user understanding in Scrum concepts and application.",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

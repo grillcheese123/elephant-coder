@@ -1,0 +1,90 @@
+{
+  "ok": true,
+  "command": "/persona",
+  "run_id": "run_fd115149bea5",
+  "session_id": "sess_e7508ccbd4f7",
+  "data": {
+    "active_persona": "ai-minion-team.md",
+    "available_personas": [
+      "ai-minion-team.md",
+      "art-art-historian.md",
+      "art-textile-historian.md",
+      "culinary-chocolate-sommelier.md",
+      "culinary-food-pairing-assistant.md",
+      "culinary-master-wine-sommelier.md",
+      "culinary-meal-planner.md",
+      "culinary-tea-sommelier.md",
+      "default.md",
+      "education-chess-instructor.md",
+      "education-curriculum-designer.md",
+      "education-doctoral-advisor.md",
+      "education-high-school-math-tutor.md",
+      "education-python-programming-tutor.md",
+      "lifestyle-thought-partner.md",
+      "lifestyle-travel-planner.md",
+      "lifestyle-wedding-planner.md",
+      "professional-applied-mathematician.md",
+      "professional-astrophysicist.md",
+      "professional-career-coach.md",
+      "professional-copy-editor.md",
+      "professional-corporate-communications-specialist.md",
+      "professional-creative-director-media-agency.md",
+      "professional-ecommerce-copywriter.md",
+      "professional-editor-in-chief.md",
+      "professional-executive-assistant.md",
+      "professional-executive-coach.md",
+      "professional-executive-mba.md",
+      "professional-fact-checker.md",
+      "professional-forensic-linguist.md",
+      "professional-frontend-developer.md",
+      "professional-generative-ai-consultant.md",
+      "professional-ghostwriter.md",
+      "professional-global-cio.md",
+      "professional-market-research-analyst.md",
+      "professional-phenomenological-research.md",
+      "professional-professional-genealogist.md",
+      "professional-project-manager.md",
+      "professional-project-portfolio-manager.md",
+      "professional-proofreader.md",
+      "professional-quantitative-analyst.md",
+      "professional-quantum-physicist.md"
+    ],
+    "prompt_library": {
+      "count": 41,
+      "index_path": "C:/Users/grill/Documents/GitHub/grilly/private/models/elephant-coder/.elephant-coder/cache/prompt_library.json"
+    },
+    "validation": {
+      "status": "ok",
+      "note": "Prompt ingestion completed and persona asset stored."
+    },
+    "ingest": {
+      "persona_file": "professional-quantum-physicist.md",
+      "meta_file": "professional-quantum-physicist.meta.json",
+      "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/quantum-physicist.md",
+      "source_sha256": "3c0ee15924a610daac84beae57567c828d264c80250209f65b8bdcfa678f7645",
+      "sections_total": 12,
+      "safe_sections": 11,
+      "flagged_lines_count": 0,
+      "activate_applied": false
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T22:43:43Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 6
+  },
+  "warnings": [
+    "Persona guidance is applied in /code prompts; full schema validation is still basic."
+  ],
+  "errors": []
+}

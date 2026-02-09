@@ -1,0 +1,306 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_96a8b8795f94",
+  "session_id": "full_strategy_20260209a_feature_02_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\n  \"summary\": \"Add per-model reliability telemetry in stats including retries and fallback usage.\",\n  \"project\": {\n    \"language\": \"python\"\n  },\n  \"files\": [\n    {\n      \"path\": \"elephant_coder/state_store.py\",\n      \"content\": \"            CREATE TABLE IF NOT EXISTS model_telemetry (\\n                id INTEGER PRIMARY KEY AUTOINCREMENT,\\n                run_id TEXT NOT NULL,\\n                model TEXT NOT NULL,\\n                attempt INTEGER NOT NULL,\\n                success INTEGER NOT NULL,\\n                retries INTEGER NOT NULL DEFAULT 0,\\n                fallback_used INTEGER NOT NULL DEFAULT 0,\\n                latency_ms INTEGER NOT NULL,\\n                tokens_in INTEGER NOT NULL,\\n                tokens_out INTEGER NOT NULL,\\n                cost_usd REAL NOT NULL,\\n                timestamp REAL NOT NULL\\n            );\\n\\n            CREATE INDEX IF NOT EXISTS idx_telemetry_run ON model_telemetry(run_id);\\n            CREATE INDEX IF NOT EXISTS idx_telemetry_model ON model_telemetry(model);\\n            CREATE INDEX IF NOT EXISTS idx_telemetry_ts ON model_telemetry(timestamp);\\n            \\\"\\\"\\\"\\n        )\\n        self._conn.commit()\\n\\n    def record_model_telemetry(\\n        self,\\n        run_id: str,\\n        model: str,\\n        attempt: int,\\n        success: bool,\\n        retries: int,\\n        fallback_used: bool,\\n        latency_ms: int,\\n        tokens_in: int,\\n        tokens_out: int,\\n        cost_usd: float,\\n    ) -> None:\\n        \\\"\\\"\\\"Record per-model reliability telemetry.\\\"\\\"\\\"\\n        self._conn.execute(\\n            \\\"\\\"\\\"\\n            INSERT INTO model_telemetry\\n            (run_id, model, attempt, success, retries, fallback_used, latency_ms, tokens_in, tokens_out, cost_usd, timestamp)\\n            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\\n            \\\"\\\"\\\",\\n            (\\n                run_id,\\n                model,\\n                attempt,\\n                1 if success else 0,\\n                retries,\\n                1 if fallback_used else 0,\\n                latency_ms,\\n                tokens_in,\\n                tokens_out,\\n                cost_usd,\\n                time.time(),\\n            ),\\n        )\\n        self._conn.commit()\\n\\n    def get_model_telemetry_stats(self) -> list[dict[str, Any]]:\\n        \\\"\\\"\\\"Return aggregated reliability stats per model.\\\"\\\"\\\"\\n        rows = self._conn.execute(\\n            \\\"\\\"\\\"\\n            SELECT\\n                model,\\n                COUNT(*) AS attempts,\\n                SUM(success) AS successes,\\n                SUM(retries) AS total_retries,\\n                SUM(fallback_used) AS fallbacks,\\n                ROUND(AVG(latency_ms), 2) AS avg_latency_ms,\\n                ROUND(AVG(tokens_in), 0) AS avg_tokens_in,\\n                ROUND(AVG(tokens_out), 0) AS avg_tokens_out,\\n                ROUND(SUM(cost_usd), 6) AS total_cost_usd\\n            FROM model_telemetry\\n            GROUP BY model\\n            ORDER BY attempts DESC\\n            \\\"\\\"\\\"\\n        ).fetchall()\\n        return [dict(row) for row in rows]\\n\"\n    }\n  ],\n  \"dependencies\": {\n    \"dependencies\": {},\n    \"devDependencies\": {},\n    \"python\": [],\n    \"pythonDev\": [],\n    \"rust\": [],\n    \"go\": [],\n    \"cpp\": []\n  },\n  \"commands\": [\n    \"python -c \\\"from elephant_coder.state_store import StateStore; from pathlib import Path; s = StateStore(Path('test.db')); s.record_model_telemetry('run1', 'gpt-4o-mini', 1, True, 0, False, 123, 100, 20, 0.001); print(s.get_model_telemetry_stats())\\\"\"\n  ]\n}\n```"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17926,
+          "completion_tokens": 854,
+          "total_tokens": 18780
+        },
+        "estimated_cost_usd": 0.0014959098
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false,
+        "route": "openrouter"
+      }
+    ],
+    "routing": {
+      "route": "openrouter",
+      "reason": "auto fallback to openrouter",
+      "local_specialist": "patcher_local",
+      "selection_reason": "task-heuristic role=patcher"
+    },
+    "router_mode": "auto",
+    "requested_specialist": null,
+    "benchmark_parity": false,
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Add per-model reliability telemetry in stats including retries and fallback usage.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 10,
+      "files_indexed": 0,
+      "files_skipped": 10,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 245,
+      "edges_total": 15,
+      "elapsed_ms": 25
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 260,
+        "expectations": 7,
+        "edge_facts": 15,
+        "symbol_facts": 245,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "a0d04e1626879521",
+          "bundle_fingerprint": "a0a6239dd215a5f6",
+          "section_fingerprints": {
+            "impacted_files": "f806eb95d316",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "c0f1227c469d",
+            "runtime_traces": "05a227ddd550"
+          },
+          "similarity_to_task": {
+            "impacted_files": 0.0176,
+            "ast_graph": 0.0605,
+            "git_diff": 0.0039,
+            "code_chunks": -0.0293,
+            "runtime_traces": 0.0215
+          },
+          "bundle_similarity_to_task": 0.0293
+        },
+        "code_chunks": {
+          "files": [
+            "elephant_coder/state_store.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/openrouter_client.py",
+            "tests/test_index_engine.py",
+            "tests/test_elephant_cli.py",
+            "elephant_coder/index_engine.py",
+            "scripts/benchmark_runner.py",
+            "elephant_coder/__init__.py",
+            "scripts/elephant_cli.py",
+            "tests/test_benchmark_runner.py"
+          ],
+          "count": 10,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 15,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_benchmark_runner.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_benchmark_runner.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": 0.0781
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": 0.0508
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": 0.0352
+          },
+          {
+            "file_path": "tests/test_index_engine.py",
+            "similarity": 0.0352
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": 0.0195
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0039
+          },
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": -0.0098
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": -0.0215
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": -0.0234
+          },
+          {
+            "file_path": "tests/test_benchmark_runner.py",
+            "similarity": -0.0488
+          }
+        ]
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "baseline",
+      "benchmark_parity": false
+    },
+    "agent_plan_summary": "Add per-model reliability telemetry in stats including retries and fallback usage.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-09T00:20:43Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17926,
+    "output_tokens": 854,
+    "total_tokens": 18780,
+    "estimated_cost_usd": 0.0014959098,
+    "latency_ms": 7136
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

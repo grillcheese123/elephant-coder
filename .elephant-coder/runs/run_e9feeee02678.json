@@ -1,0 +1,288 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_e9feeee02678",
+  "session_id": "bench_bugfix_05_baseline_r1",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "```json\n{\n  \"summary\": \"The /plan command writes PLAN.md to the project root but does not guarantee it is updated after each run. Analysis of _command_plan and _apply_agent_plan shows that plan file writing is conditional on plan_has_file_writes, which is not triggered for PLAN.md itself. The fix ensures PLAN.md is always written after a successful /plan run by explicitly calling _write_text_if_changed for the plan file.\",\n  \"project\": {\n    \"language\": \"python\"\n  },\n  \"files\": [\n    {\n      \"path\": \"scripts/elephant_cli.py\",\n      \"content\": \"def _command_plan(args: argparse.Namespace, project_root: Path) -> dict[str, Any]:\\n    session_id = _make_id(\\\"sess\\\")\\n    start_ms = int(time.time() * 1000)\\n    try:\\n        config = load_config(project_root)\\n        runtime = resolve_runtime_config(args, config)\\n        persona_text, persona_name, persona_signals, persona_adjustments = _load_persona_guidance(\\n            project_root, args.persona\\n        )\\n        index = _new_index_service(project_root)\\n        try:\\n            index.refresh_index()\\n            code_messages = _build_code_messages(index, project_root, args.task)\\n        finally:\\n            index.close()\\n        openrouter = _new_openrouter_client(runtime.output_api_key)\\n        messages = [\\n            {\\\"role\\\": \\\"system\\\", \\\"content\\\": persona_text},\\n            {\\\"role\\\": \\\"user\\\", \\\"content\\\": f\\\"Task:\\\\n\\\\n{args.task}\\\"},\\n            *code_messages,\\n        ]\\n        model_list = _ordered_models(runtime.default_model, runtime.model_fallbacks)\\n        result = None\\n        for model in model_list:\\n            try:\\n                result = openrouter.chat_completion(\\n                    model=model,\\n                    messages=messages,\\n                    max_tokens=runtime.max_output_tokens,\\n                    temperature=0.2,\\n                    timeout_sec=60,\\n                )\\n                break\\n            except OpenRouterError as exc:\\n                msg = str(exc)\\n                if _is_fatal_model_error(msg):\\n                    raise\\n                if model == model_list[-1]:\\n                    raise\\n                continue\\n        if result is None:\\n            raise CLIError(\\\"E_MODEL\\\", \\\"No model succeeded\\\")\\n        agent_plan = _normalize_agent_plan(result.content)\\n        plan_steps = agent_plan.get(\\\"plan\\\", [])\\n        cot_steps = agent_plan.get(\\\"cot\\\", [])\\n        plan_file_path = project_root / \\\"PLAN.md\\\"\\n        plan_content = _build_plan_markdown(args.task, plan_steps, cot_steps)\\n        _write_text_if_changed(plan_file_path, plan_content)\\n        latency_ms = int(time.time() * 1000) - start_ms\\n        response = _build_response()\\n        response[\\\"run_id\\\"] = _make_id(\\\"run\\\")\\n        response[\\\"command\\\"] = \\\"/plan\\\"\\n        response[\\\"ok\\\"] = True\\n        response[\\\"data\\\"] = {\\n            \\\"plan_steps\\\": plan_steps,\\n            \\\"cot_steps\\\": cot_steps,\\n            \\\"plan_file\\\": str(plan_file_path.relative_to(project_root)),\\n            \\\"active_persona\\\": persona_name,\\n            \\\"persona_signals\\\": persona_signals,\\n            \\\"persona_adjustments\\\": persona_adjustments,\\n        }\\n        response[\\\"metrics\\\"] = {\\n            \\\"input_tokens\\\": result.usage.get(\\\"prompt_tokens\\\", 0),\\n            \\\"output_tokens\\\": result.usage.get(\\\"completion_tokens\\\", 0),\\n            \\\"latency_ms\\\": latency_ms,\\n            \\\"estimated_cost_usd\\\": result.estimated_cost_usd,\\n        }\\n        _write_run_record(project_root, response)\\n        return response\\n    except CLIError as exc:\\n        latency_ms = int(time.time() * 1000) - start_ms\\n        response = _build_response()\\n        response[\\\"ok\\\"] = False\\n        response[\\\"error_code\\\"] = exc.code\\n        response[\\\"error_message\\\"] = exc.message\\n        response[\\\"metrics\\\"] = {\\\"latency_ms\\\": latency_ms}\\n        return response\"\n    }\n  ],\n  \"dependencies\": {\n    \"dependencies\": {},\n    \"devDependencies\": {},\n    \"python\": [],\n    \"pythonDev\": [],\n    \"rust\": [],\n    \"go\": [],\n    \"cpp\": []\n  },\n  \"commands\": [\n    \"python -m scripts.elephant_cli plan --task \\\"Fix plan file persistence\\\"\"\n  ]\n}\n```"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "qwen/qwen3-coder-next",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 17286,
+          "completion_tokens": 984,
+          "total_tokens": 18270
+        },
+        "estimated_cost_usd": 0.0014901678
+      }
+    ],
+    "selected_model": "qwen/qwen3-coder-next",
+    "model_candidates": [
+      "qwen/qwen3-coder-next",
+      "gpt-4o-mini"
+    ],
+    "retry_count": 0,
+    "model_attempts": [
+      {
+        "model": "qwen/qwen3-coder-next",
+        "attempt": 1,
+        "success": true,
+        "error": "",
+        "retryable": false,
+        "fatal": false
+      }
+    ],
+    "verification_summary": "Model output generated; apply-to-disk skipped (--no-apply).",
+    "task": "Fix plan file persistence so PLAN.md is always updated after a /plan run.",
+    "dry_run": false,
+    "no_apply": true,
+    "mode": "baseline",
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "active_persona": "professional-project-manager.md",
+    "index_stats": {
+      "files_scanned": 9,
+      "files_indexed": 0,
+      "files_skipped": 9,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 219,
+      "edges_total": 14,
+      "elapsed_ms": 18
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 233,
+        "expectations": 6,
+        "edge_facts": 14,
+        "symbol_facts": 219,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "context_profile": "baseline_large",
+    "context_manifest": {
+      "modalities": {
+        "vsa_structure": {
+          "enabled": true,
+          "error": null,
+          "dim": 1024,
+          "task_fingerprint": "174bcaafd879e043",
+          "bundle_fingerprint": "22ad47dfb851aee3",
+          "section_fingerprints": {
+            "impacted_files": "783dc745b251",
+            "ast_graph": "a24f08beb8ad",
+            "git_diff": "baac678fda23",
+            "code_chunks": "42f9dc7a3cd2",
+            "runtime_traces": "05a227ddd550"
+          },
+          "similarity_to_task": {
+            "impacted_files": -0.0469,
+            "ast_graph": 0.0078,
+            "git_diff": -0.0137,
+            "code_chunks": -0.0176,
+            "runtime_traces": -0.0391
+          },
+          "bundle_similarity_to_task": -0.0156
+        },
+        "code_chunks": {
+          "files": [
+            "scripts/benchmark_runner.py",
+            "elephant_coder/state_store.py",
+            "scripts/elephant_cli.py",
+            "elephant_coder/__init__.py",
+            "elephant_coder/openrouter_client.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py"
+          ],
+          "count": 9,
+          "truncated": true
+        },
+        "ast_graph_features": {
+          "symbol_count": 180,
+          "edge_count": 14,
+          "files_considered": [
+            "elephant_coder/__init__.py",
+            "elephant_coder/env_utils.py",
+            "elephant_coder/index_engine.py",
+            "elephant_coder/openrouter_client.py",
+            "elephant_coder/state_store.py",
+            "scripts/benchmark_runner.py",
+            "scripts/elephant_cli.py",
+            "tests/test_elephant_cli.py",
+            "tests/test_index_engine.py"
+          ]
+        },
+        "git_diff": {
+          "line_count": 1,
+          "is_empty": true
+        },
+        "test_runtime_traces": {
+          "count": 0,
+          "commands": [],
+          "disabled": true
+        }
+      },
+      "impacted_files_used": [
+        "elephant_coder/__init__.py",
+        "elephant_coder/env_utils.py",
+        "elephant_coder/index_engine.py",
+        "elephant_coder/openrouter_client.py",
+        "elephant_coder/state_store.py",
+        "scripts/benchmark_runner.py",
+        "scripts/elephant_cli.py",
+        "tests/test_elephant_cli.py",
+        "tests/test_index_engine.py"
+      ],
+      "vsa_file_ranking": {
+        "enabled": true,
+        "error": null,
+        "dim": 1024,
+        "top_similarities": [
+          {
+            "file_path": "scripts/benchmark_runner.py",
+            "similarity": 0.0742
+          },
+          {
+            "file_path": "elephant_coder/state_store.py",
+            "similarity": 0.0566
+          },
+          {
+            "file_path": "scripts/elephant_cli.py",
+            "similarity": 0.041
+          },
+          {
+            "file_path": "elephant_coder/__init__.py",
+            "similarity": 0.0352
+          },
+          {
+            "file_path": "elephant_coder/openrouter_client.py",
+            "similarity": 0.0293
+          },
+          {
+            "file_path": "tests/test_elephant_cli.py",
+            "similarity": 0.0137
+          },
+          {
+            "file_path": "tests/test_index_engine.py",
+            "similarity": -0.0098
+          },
+          {
+            "file_path": "elephant_coder/env_utils.py",
+            "similarity": -0.0137
+          },
+          {
+            "file_path": "elephant_coder/index_engine.py",
+            "similarity": -0.0254
+          }
+        ]
+      },
+      "persona": {
+        "active_persona": "professional-project-manager.md",
+        "available_personas": [
+          "ai-minion-team.md",
+          "art-art-historian.md",
+          "art-textile-historian.md",
+          "culinary-chocolate-sommelier.md",
+          "culinary-food-pairing-assistant.md",
+          "culinary-master-wine-sommelier.md",
+          "culinary-meal-planner.md",
+          "culinary-tea-sommelier.md",
+          "default.md",
+          "education-chess-instructor.md",
+          "education-curriculum-designer.md",
+          "education-doctoral-advisor.md",
+          "education-high-school-math-tutor.md",
+          "education-python-programming-tutor.md",
+          "lifestyle-thought-partner.md",
+          "lifestyle-travel-planner.md",
+          "lifestyle-wedding-planner.md",
+          "professional-applied-mathematician.md",
+          "professional-astrophysicist.md",
+          "professional-career-coach.md",
+          "professional-copy-editor.md",
+          "professional-corporate-communications-specialist.md",
+          "professional-creative-director-media-agency.md",
+          "professional-ecommerce-copywriter.md",
+          "professional-editor-in-chief.md",
+          "professional-executive-assistant.md",
+          "professional-executive-coach.md",
+          "professional-executive-mba.md",
+          "professional-fact-checker.md",
+          "professional-forensic-linguist.md",
+          "professional-frontend-developer.md",
+          "professional-generative-ai-consultant.md",
+          "professional-ghostwriter.md",
+          "professional-global-cio.md",
+          "professional-market-research-analyst.md",
+          "professional-phenomenological-research.md",
+          "professional-professional-genealogist.md",
+          "professional-project-manager.md",
+          "professional-project-portfolio-manager.md",
+          "professional-proofreader.md",
+          "professional-quantitative-analyst.md",
+          "professional-quantum-physicist.md",
+          "professional-resume-writer.md",
+          "professional-scrum-product-owner.md",
+          "professional-social-media-professional.md",
+          "professional-technical-writer.md",
+          "professional-web3-expert.md"
+        ],
+        "truncated": false,
+        "chars": 1308
+      },
+      "mode": "baseline"
+    },
+    "agent_plan_summary": "The /plan command writes PLAN.md to the project root but does not guarantee it is updated after each run. Analysis of _command_plan and _apply_agent_plan shows that plan file writing is conditional on plan_has_file_writes, which is not triggered for PLAN.md itself. The fix ensures PLAN.md is always written after a successful /plan run by explicitly calling _write_text_if_changed for the plan file.",
+    "apply_report": {
+      "files_written": [],
+      "files_written_count": 0,
+      "bootstrap_languages": [],
+      "dependencies_install": [],
+      "post_commands": [],
+      "no_apply": true
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T23:31:29Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 24000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 2.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 17286,
+    "output_tokens": 984,
+    "total_tokens": 18270,
+    "estimated_cost_usd": 0.0014901678,
+    "latency_ms": 8476
+  },
+  "warnings": [
+    "Apply-to-disk skipped (--no-apply)."
+  ],
+  "errors": []
+}

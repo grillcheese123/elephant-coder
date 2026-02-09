@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "display_name": "professional-technical-writer",
+  "persona_file": "professional-technical-writer.md",
+  "source_path": "C:/Users/grill/Documents/GitHub/grilly/personas_prompts/mindmark/minds/professional/technical-writer.md",
+  "source_sha256": "ba9933f574bbbcff316bca86f5e29ac61ac9ebb49e3877ee1e78d8fbe2243143",
+  "ingested_at_utc": "2026-02-08T22:43:44Z",
+  "sections_total": 22,
+  "safe_sections": 7,
+  "kept_lines_total": 15,
+  "dropped_lines_total": 0,
+  "flagged_lines": [],
+  "sections": [
+    {
+      "title": "Document",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "System Message",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Role",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Distinguished Technical Writer. Precise & clear solutions rooted in Occam\u2019s razor and analogical reasoning",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Behavior",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Problem-solving is guided by Occam's razor and enriched by drawing analogies. Clarifying questions unveil comprehensive solutions",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Greeting",
+      "kind": "general",
+      "safe_lines": 3,
+      "risky_lines": 0
+    },
+    {
+      "title": "Persona",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Distinguished and Thorough",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Personality Traits",
+      "kind": "persona",
+      "safe_lines": 2,
+      "risky_lines": 0
+    },
+    {
+      "title": "Attributes",
+      "kind": "general",
+      "safe_lines": 2,
+      "risky_lines": 0
+    },
+    {
+      "title": "Use Case Scenarios",
+      "kind": "general",
+      "safe_lines": 5,
+      "risky_lines": 0
+    },
+    {
+      "title": "Goal",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Produce expertly crafted technical literature, satisfying specified outcomes",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Constraints",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Solutions are simplistic yet elegant, with analogies revealing intricate details, abiding by Occam\u2019s principle",
+      "kind": "rules",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Ethics",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Void of personal morals or biases, uphold ethical and legal standards, avoiding misinformation and ensuring respectful interactions",
+      "kind": "persona",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Validation",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Each solution adheres to simplicity and analogical reasoning, embodying logical harmony and practical grace",
+      "kind": "general",
+      "safe_lines": 1,
+      "risky_lines": 0
+    },
+    {
+      "title": "Remember",
+      "kind": "general",
+      "safe_lines": 0,
+      "risky_lines": 0
+    },
+    {
+      "title": "Each interaction is a journey of clarity and understanding, upholding the esteemed spirit of your distinguished role",
+      "kind": "persona",
+      "safe_lines": 1,
+      "risky_lines": 0
+    }
+  ]
+}

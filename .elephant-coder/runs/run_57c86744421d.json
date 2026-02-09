@@ -1,0 +1,78 @@
+{
+  "ok": true,
+  "command": "/code",
+  "run_id": "run_57c86744421d",
+  "session_id": "sess_9a8eb7983a8c",
+  "data": {
+    "changes": [
+      {
+        "agent_id": "worker_1",
+        "type": "model_output",
+        "content": "- **Modularization**: Break down large components into smaller, reusable modules to enhance maintainability and testability.\n- **Dependency Injection**: Implement dependency injection to decouple components, making it easier to manage dependencies and improve testability.\n- **Configuration Management**: Centralize configuration settings to streamline environment management and reduce hard-coded values throughout the codebase.\n\n*Assumptions*: The project"
+      }
+    ],
+    "files_touched": [],
+    "agent_reports": [
+      {
+        "agent_id": "worker_1",
+        "model": "gpt-4o-mini",
+        "status": "completed",
+        "summary": "OpenRouter response received.",
+        "usage": {
+          "prompt_tokens": 82,
+          "completion_tokens": 80,
+          "total_tokens": 162
+        },
+        "estimated_cost_usd": 5.9697e-05
+      }
+    ],
+    "verification_summary": "No local patch apply/verification yet; response only.",
+    "task": "Return 3 bullet points to improve this project architecture.",
+    "dry_run": false,
+    "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder",
+    "index_stats": {
+      "files_scanned": 8,
+      "files_indexed": 0,
+      "files_skipped": 8,
+      "files_deleted": 0,
+      "parse_errors": 0,
+      "symbols_total": 102,
+      "edges_total": 10,
+      "elapsed_ms": 14
+    },
+    "impact_report": {
+      "changed_files": [],
+      "impacted": [],
+      "direct_count": 0,
+      "transitive_count": 0,
+      "world_model": {
+        "enabled": true,
+        "error": null,
+        "facts": 112,
+        "expectations": 5,
+        "edge_facts": 10,
+        "symbol_facts": 102,
+        "symbol_facts_truncated": 0
+      },
+      "world_predicted_files": [],
+      "max_depth": 8
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T21:59:19Z",
+      "model": "gpt-4o-mini",
+      "max_input_tokens": 12000,
+      "max_output_tokens": 80,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 82,
+    "output_tokens": 80,
+    "total_tokens": 162,
+    "estimated_cost_usd": 5.9697e-05,
+    "latency_ms": 6765
+  },
+  "warnings": [],
+  "errors": []
+}

@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "command": "/stats",
+  "run_id": "run_76f57b02eb77",
+  "session_id": "sess_5e131d962875",
+  "data": {
+    "token_metrics": {
+      "total_tokens": 1011990,
+      "avg_tokens_per_run": 3999
+    },
+    "cost_metrics": {
+      "total_cost_usd": 0.140348,
+      "avg_cost_per_run_usd": 0.000555
+    },
+    "latency_metrics": {
+      "note": "Per-command latency tracking present in run records."
+    },
+    "quality_metrics": {
+      "note": "Benchmark summary loaded from benchmark_results.json.",
+      "benchmark_summary": {
+        "path": "C:/Users/grill/Documents/GitHub/grilly/private/models/elephant-coder/.elephant-coder/runs/benchmark_results.json",
+        "generated_at_utc": "2026-02-08T23:41:01Z",
+        "tasks_total": 20,
+        "runs_total": 40,
+        "token_reduction_pct": 79.49,
+        "quality_delta_pct_points": 0.0,
+        "latency_delta_ms": -14221,
+        "baseline_success_rate": 100.0,
+        "elephant_success_rate": 100.0
+      }
+    },
+    "reliability_metrics": {
+      "code_runs_total": 188,
+      "code_runs_ok": 145,
+      "code_success_rate": 77.13,
+      "retry_recovered_runs": 0,
+      "fallback_runs": 0,
+      "total_retry_count": 0,
+      "model_attempts_total": 145,
+      "model_attempts_success": 145,
+      "model_attempts_failed": 0,
+      "model_attempt_success_rate": 100.0,
+      "error_codes": {
+        "E_BUDGET": 42,
+        "E_MODEL": 1
+      },
+      "per_model": {
+        "gpt-4o-mini": {
+          "attempts": 103,
+          "success": 103,
+          "failed": 0,
+          "success_rate": 100.0
+        },
+        "qwen/qwen3-coder-next": {
+          "attempts": 42,
+          "success": 42,
+          "failed": 0,
+          "success_rate": 100.0
+        }
+      },
+      "route_counts": {
+        "openrouter": 1
+      }
+    },
+    "memory_metrics": {
+      "project_storage": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder\\.elephant-coder",
+      "runs_recorded": 253
+    },
+    "index_metrics": {
+      "indexed_files": 9,
+      "symbols": 237,
+      "imports": 76,
+      "calls": 2634,
+      "edges": 14,
+      "parse_errors": 0
+    },
+    "runtime": {
+      "resolved_at_utc": "2026-02-08T23:50:51Z",
+      "model": "qwen/qwen3-coder-next",
+      "model_fallbacks": [
+        "gpt-4o-mini"
+      ],
+      "model_max_retries": 2,
+      "model_retry_backoff_sec": 1.0,
+      "max_input_tokens": 12000,
+      "max_output_tokens": 3000,
+      "max_cost_usd": 1.0,
+      "project_root": "C:\\Users\\grill\\Documents\\GitHub\\grilly\\private\\models\\elephant-coder"
+    }
+  },
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "latency_ms": 74
+  },
+  "warnings": [],
+  "errors": []
+}
